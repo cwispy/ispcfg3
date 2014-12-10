@@ -143,6 +143,18 @@ function ispconfig_ConfigOptions() {
 
 function ispconfig_CreateAccount( $params ) {
 
+    $productid          = $params['pid'];
+    $domain             = strtolower( $params['domain'] );
+    $username           = $params['username'];
+    $password           = $params['password'];
+    $clientsdetails     = $params['clientsdetails'];
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $soapsvrurl         = $params['configoption3'];
+    $soapsvrssl         = $params['configoption4'];
+    $templateid         = $params['configoption5'];
+    $designtheme        = $params['configoption6'];
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
