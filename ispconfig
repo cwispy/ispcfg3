@@ -154,6 +154,19 @@ function ispconfig_CreateAccount( $params ) {
     $soapsvrssl         = $params['configoption4'];
     $templateid         = $params['configoption5'];
     $designtheme        = $params['configoption6'];
+    $globalphp          = $params['configoption7'];
+    $chrootenable       = $params['configoption8'];
+    $webcreation        = $params['configoption9'];
+    $domaintool         = $params['configoption10'];
+    $webwriteprotect    = $params['configoption11'];
+    $webquota           = $params['configoption12'];
+    $webtraffic         = $params['configoption13'];
+    $websettings        = explode( ',',$params['configoption14'] );
+    $subdomain          = $params['configoption15'];
+    $phpmode            = $params['configoption16'];
+    $webactive          = $params['configoption17'];
+    $dns                = $params['configoption18'];
+    $dnssettings        = explode( ',', $params['configoption19'] );
     
     if ( $soapsvrssl == 'on' ) {
         
