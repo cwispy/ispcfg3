@@ -119,10 +119,6 @@ function ispconfig_ConfigOptions() {
                                     . 'eg: ns1.domain.tld,ns2.domain.tld,'
                                     . 'webmaster,1' 
             ),
-        'Username Handling' => array(
-                    'Type' => 'yesno',
-                    'Description' => 'Please read documentation'
-            ),
         'ISPConfig Language' => array(
                     'Type' => 'dropdown',
                     'Options' => 'ar,bg,br,cz,de,el,en,es,fi,fr,hu,hr,id,it,ja,'
@@ -167,6 +163,9 @@ function ispconfig_CreateAccount( $params ) {
     $webactive          = $params['configoption17'];
     $dns                = $params['configoption18'];
     $dnssettings        = explode( ',', $params['configoption19'] );
+    $defaultlanguage    = $params['configoption20'];
+    $addmaildomain      = $params['configoption21'];
+    $addftpuser         = $params['configoption22'];
     
     if ( $soapsvrssl == 'on' ) {
         
