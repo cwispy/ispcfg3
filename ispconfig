@@ -167,6 +167,18 @@ function ispconfig_CreateAccount( $params ) {
     $addmaildomain      = $params['configoption21'];
     $addftpuser         = $params['configoption22'];
     
+    $nameserver1        = $dnssettings[0];
+    $nameserver2        = $dnssettings[1];
+    $soaemail           = $dnssettings[2] . '.' . $domain;
+    $dnstemplate        = $dnssettings[3];
+    
+    $enablecgi          = $websettings[0];
+    $enablessi          = $websettings[1];
+    $enableruby         = $websettings[2];
+    $enablesuexec       = $websettings[3];
+    $enableerrordocs    = $websettings[4];
+    $enablessl          = $websettings[5];
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
