@@ -143,32 +143,282 @@ function ispconfig_ConfigOptions() {
 
 function ispconfig_CreateAccount( $params ) {
 
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
 
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;
 }
 
 function ispconfig_TerminateAccount( $params ) {
 
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
+
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+    
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;
 }
 
 function ispconfig_ChangePackage( $params ) {
+
+
+    if ( $soapsvrssl == 'on' ) {
         
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
+
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+    
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;
 }
 
 function ispconfig_SuspendAccount( $params ) {
     
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
+
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+    
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;
 }
 
 function ispconfig_UnsuspendAccount( $params ) {
 
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
+
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+    
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;		
 }
 
 function ispconfig_ChangePassword( $params ) {
 
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
+        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        
+    }
+
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                                array( 'location' => $soap_url, 
+                                        'uri' => $soap_uri, 
+                                        'exceptions' => 1, 
+                                        'trace' => false 
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $soapuser, $soappassword );
+        
+    } catch (SoapFault $e) {
+        
+        $error = 'SOAP Error: ' . $e->getMessage();
+        $successful = 0;
+        
+    }
+    
+    if ( $successful == 1 ) {
+        
+        $result = "success";
+        
+    } else {
+        
+        $result = "error";
+        
+    }
     return $result;
 }
 
