@@ -178,5 +178,6 @@ function ispconfig_LoginLink( $params ) {
 
 function ispconfig_ClientArea( $params ) {
 
+    $code = '';
     return $code;
 }
