@@ -318,7 +318,12 @@ function ispconfig_ChangePackage( $params ) {
 }
 
 function ispconfig_SuspendAccount( $params ) {
-    
+
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $soapsvrurl         = $params['configoption3'];
+    $username           = $params['username'];
+    $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
         
@@ -344,23 +349,47 @@ function ispconfig_SuspendAccount( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-        
+
+        $result_id = $client->client_get_by_username( $session_id, $username );
+        $sys_userid = $result_id['client_id'];
+        $sys_groupid = $result_id['groups'];
+
+        $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
+
+        $z = 0;
+        foreach ($domain_id as $idx) {
+            
+            $idx[$z] = $domain_id[$z]['domain_id'];
+            $client_record = $client->sites_web_domain_get( $session_id, $idx[$z] );
+            $client_record['active'] = 'n';
+
+            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
+        }
+
+        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $domain_id,'','');
+
+        if ($client->logout( $session_id )) {
+        }
+
+        $successful = '1';
+    
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
-        $successful = 0;
+        $successful = '0';
         
     }
-    
-    if ( $successful == 1 ) {
-        
-        $result = "success";
-        
+
+    if ($successful == 1) {
+
+        $result = 'success';
+
     } else {
-        
-        $result = "error";
-        
+
+        $result = 'Error: ' . $error;
+
     }
+
     return $result;
 }
 
@@ -398,21 +427,20 @@ function ispconfig_UnsuspendAccount( $params ) {
         $session_id = $client->login( $soapuser, $soappassword );
 
         $result_id = $client->client_get_by_username( $session_id, $username );
-
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
 
         $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
         
-        $index = 0;
-        foreach ($domain_id as $ids) {
+        $z = 0;
+        foreach ($domain_id as $idx) {
                         
-            $ids[$index] = $domain_id[$index]['domain_id'];
+            $idx[$z] = $domain_id[$z]['domain_id'];
 
-            $client_record = $client->sites_web_domain_get( $session_id, $ids[$index] );
+            $client_record = $client->sites_web_domain_get( $session_id, $idx[$z] );
             $client_record['active'] = 'y';
 
-            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $ids[$index], $client_record );
+            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
         }
         
         logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $domain_id,'','');
