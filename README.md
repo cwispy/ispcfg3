@@ -1,4 +1,4 @@
-ispcfg
+ispcfg3
 ======
 
 ISPConfig module for WHMCS
