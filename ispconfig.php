@@ -413,6 +413,12 @@ function ispconfig_UnsuspendAccount( $params ) {
 
 function ispconfig_ChangePassword( $params ) {
 
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $soapsvrurl         = $params['configoption3'];
+    $username           = $params['username'];
+    $password           = $params['password'];
+    $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
         
@@ -438,24 +444,50 @@ function ispconfig_ChangePassword( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
+
+        $domain_id = $client->client_get_by_username( $session_id, $username );
+
+        $client_id = $domain_id['client_id'];
+
+        $returnresult = $client->client_change_password( $session_id, $client_id, $password );
+
+        logModuleCall('ispconfig','ChangePassword', $clientsdetails, $returnresult,'','');
+        
+        if ($client->logout( $session_id )) {
+
+        }
+
+        if ($returnresult == 1 ) {
+            
+            $successful = '1';
+            
+        } else {
+            
+            $successful = '0';
+            $result = "Password change failed";
+            
+        }
+        
         
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
-        $successful = 0;
+        $successful = '0';
         
     }
     
-    if ( $successful == 1 ) {
+    if ($successful == 1) {
         
-        $result = "success";
+        $result = 'success';
         
     } else {
         
-        $result = "error";
+        $result = 'Error:' . $e . '';
         
     }
+
     return $result;
+    
 }
 
 function ispconfig_LoginLink( $params ) {
