@@ -482,7 +482,7 @@ function ispconfig_ChangePassword( $params ) {
         
     } else {
         
-        $result = 'Error:' . $e . '';
+        $result = 'Error: ' . $error;
         
     }
 
