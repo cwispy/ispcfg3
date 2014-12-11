@@ -366,6 +366,11 @@ function ispconfig_SuspendAccount( $params ) {
 
 function ispconfig_UnsuspendAccount( $params ) {
 
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $soapsvrurl         = $params['configoption3'];
+    $username           = $params['username'];
+    $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
         
@@ -381,34 +386,60 @@ function ispconfig_UnsuspendAccount( $params ) {
 
     try {
         /* Connect to SOAP Server */
-        $client = new SoapClient( null, 
-                                array( 'location' => $soap_url, 
-                                        'uri' => $soap_uri, 
-                                        'exceptions' => 1, 
-                                        'trace' => false 
+        $client = new SoapClient( null,
+                                array( 'location' => $soap_url,
+                                        'uri' => $soap_uri,
+                                        'exceptions' => 1,
+                                        'trace' => false
                                     )
                                 );
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
+
+        $result_id = $client->client_get_by_username( $session_id, $username );
+
+        $sys_userid = $result_id['client_id'];
+        $sys_groupid = $result_id['groups'];
+
+        $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
+        
+        $index = 0;
+        foreach ($domain_id as $ids) {
+                        
+            $ids[$index] = $domain_id[$index]['domain_id'];
+
+            $client_record = $client->sites_web_domain_get( $session_id, $ids[$index] );
+            $client_record['active'] = 'y';
+
+            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $ids[$index], $client_record );
+        }
+        
+        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $domain_id,'','');
+        
+        if ($client->logout( $session_id )) {
+        }
+
+        $successful = '1';
         
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
-        $successful = 0;
+        $successful = '0';
         
     }
-    
-    if ( $successful == 1 ) {
-        
-        $result = "success";
-        
+
+    if ($successful == 1) {
+
+        $result = 'success';
+
     } else {
-        
-        $result = "error";
-        
+
+        $result = 'Error: ' . $error;
+
     }
-    return $result;		
+
+    return $result;
 }
 
 function ispconfig_ChangePassword( $params ) {
