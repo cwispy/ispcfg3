@@ -272,6 +272,12 @@ function ispconfig_TerminateAccount( $params ) {
 
 function ispconfig_ChangePackage( $params ) {
 
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $soapsvrurl         = $params['configoption3'];
+    $username           = $params['username'];
+    $soapsvrssl         = $params['configoption4'];
+    $templateid         = $params['configoption5'];
 
     if ( $soapsvrssl == 'on' ) {
         
@@ -297,23 +303,40 @@ function ispconfig_ChangePackage( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-        
+
+        $domain_id = $client->client_get_by_username( $session_id, $username );
+
+        $client_id = $domain_id['client_id'];
+
+        $client_record = $client->client_get( $session_id, $client_id );
+        $client_record['template_master'] = $templateid;
+        $reseller_id = $client->client_get( $session_id, $client_id );
+        $parent_client_id = $resellerid['parent_client_id'];
+
+        $affected_rows = $client->client_update( $session_id, $client_id, $parent_client_id, $client_record );
+
+        if ($client->logout( $session_id )) {
+        }
+
+        $successful = '1';
+    
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
-        $successful = 0;
+        $successful = '0';
         
     }
-    
-    if ( $successful == 1 ) {
-        
-        $result = "success";
-        
+
+    if ($successful == 1) {
+
+        $result = 'success';
+
     } else {
-        
-        $result = "error";
-        
+
+        $result = 'Error: ' . $error;
+
     }
+
     return $result;
 }
 
@@ -353,7 +376,9 @@ function ispconfig_SuspendAccount( $params ) {
         $result_id = $client->client_get_by_username( $session_id, $username );
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
-
+        $resellerid = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $resellerid['parent_client_id'];
+        
         $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
 
         $z = 0;
@@ -366,7 +391,11 @@ function ispconfig_SuspendAccount( $params ) {
             $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
         }
 
-        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $domain_id,'','');
+        $resellerid['locked'] = 'y';
+        $resellerid['password'] = '';
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
+        
+        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
 
         if ($client->logout( $session_id )) {
         }
@@ -429,6 +458,8 @@ function ispconfig_UnsuspendAccount( $params ) {
         $result_id = $client->client_get_by_username( $session_id, $username );
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
+        $resellerid = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $resellerid['parent_client_id'];
 
         $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
         
@@ -443,11 +474,15 @@ function ispconfig_UnsuspendAccount( $params ) {
             $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
         }
         
-        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $domain_id,'','');
+        $resellerid['locked'] = 'n';
+        $resellerid['password'] = '';
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
+                            
+        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
         
         if ($client->logout( $session_id )) {
         }
-
+        
         $successful = '1';
         
     } catch (SoapFault $e) {
@@ -546,15 +581,41 @@ function ispconfig_ChangePassword( $params ) {
     }
 
     return $result;
-    
 }
 
 function ispconfig_LoginLink( $params ) {
 
+    $soapsvrurl         = $params['configoption3'];
+    $soapsvrssl         = $params['configoption4'];
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soapsvrurl = 'https://' . $soapsvrurl . '';
+        
+    } else {
+        
+        $soapsvrurl = 'http://' . $soapsvrurl . '';
+        
+    }
+
+    echo '<a href="' . $soapsvrurl . '" target="_blank" style="color:#cc0000">Login to Controlpanel</a>';
 }
 
 function ispconfig_ClientArea( $params ) {
 
-    $code = '';
+    $soapsvrurl         = $params['configoption3'];
+    $soapsvrssl         = $params['configoption4'];
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soapsvrurl = 'https://' . $soapsvrurl . '';
+        
+    } else {
+        
+        $soapsvrurl = 'http://' . $soapsvrurl . '';
+        
+    }
+
+    $code = '<a href=' . $soapsvrurl . ' target="_blank"><b>CONTROLPANEL LOGIN</b></a>';
     return $code;
 }
