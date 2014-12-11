@@ -224,8 +224,15 @@ function ispconfig_CreateAccount( $params ) {
 }
 
 function ispconfig_TerminateAccount( $params ) {
-
-
+    
+    $soapuser           = $params['configoption1'];
+    $soappassword       = $params['configoption2'];
+    $username           = $params['username'];
+    $soapsvrurl         = $params['configoption3'];
+    $domaintool         = $params['configoption10'];
+    $domain             = $params['domain'];
+    $soapsvrssl         = $params['configoption4'];
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
@@ -251,22 +258,49 @@ function ispconfig_TerminateAccount( $params ) {
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
         
+        $domain_id = $client->client_get_by_username( $session_id, $username );
+
+        $group_id = $domain_id['default_group'];
+        $client_id = $domain_id['client_id'];
+
+        if ( $domaintool == 'on' ) {
+
+            $result = $client->domains_get_all_by_user( $session_id, $group_id );
+            $key = '0';
+            foreach ( $result as $key => $value ) {
+                if ( $result[$key]['domain'] = $domain ) {
+                    $primary_id = $result[$key]['domain_id'];
+                    continue;
+                }
+            }
+            $result = $client->domains_domain_delete( $session_id, $primary_id );
+        }
+
+        $domain_id = $client->client_delete_everything( $session_id, $client_id );
+
+        if ( $client->logout( $session_id ) ) {
+            
+        }
+
+        $successful = '1';
+        
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
         $successful = 0;
         
     }
-    
+
     if ( $successful == 1 ) {
         
         $result = "success";
         
     } else {
         
-        $result = "error";
+        $result = $error;
         
     }
+
     return $result;
 }
 
