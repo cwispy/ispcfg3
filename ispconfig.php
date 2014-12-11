@@ -21,9 +21,9 @@
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
 ini_set("display_errors", 1);
-openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
+openlog( "ispcfg3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 
-function ispconfig_ConfigOptions() {
+function ispcfg3_ConfigOptions() {
     $configarray = array(
         'ISPConfig Remote Username' => array(
                     'Type' => 'text',
@@ -139,7 +139,7 @@ function ispconfig_ConfigOptions() {
     return $configarray;
 }
 
-function ispconfig_CreateAccount( $params ) {
+function ispcfg3_CreateAccount( $params ) {
 
     $productid          = $params['pid'];
     $domain             = strtolower( $params['domain'] );
@@ -259,7 +259,7 @@ function ispconfig_CreateAccount( $params ) {
     return $result;
 }
 
-function ispconfig_TerminateAccount( $params ) {
+function ispcfg3_TerminateAccount( $params ) {
     
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -340,7 +340,7 @@ function ispconfig_TerminateAccount( $params ) {
     return $result;
 }
 
-function ispconfig_ChangePackage( $params ) {
+function ispcfg3_ChangePackage( $params ) {
 
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -410,7 +410,7 @@ function ispconfig_ChangePackage( $params ) {
     return $result;
 }
 
-function ispconfig_SuspendAccount( $params ) {
+function ispcfg3_SuspendAccount( $params ) {
 
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -465,7 +465,7 @@ function ispconfig_SuspendAccount( $params ) {
         $resellerid['password'] = '';
         $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
         
-        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
+        logModuleCall('ispcfg3','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
 
         if ($client->logout( $session_id )) {
         }
@@ -492,7 +492,7 @@ function ispconfig_SuspendAccount( $params ) {
     return $result;
 }
 
-function ispconfig_UnsuspendAccount( $params ) {
+function ispcfg3_UnsuspendAccount( $params ) {
 
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -548,7 +548,7 @@ function ispconfig_UnsuspendAccount( $params ) {
         $resellerid['password'] = '';
         $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
                             
-        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
+        logModuleCall('ispcfg3','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
         
         if ($client->logout( $session_id )) {
         }
@@ -575,7 +575,7 @@ function ispconfig_UnsuspendAccount( $params ) {
     return $result;
 }
 
-function ispconfig_ChangePassword( $params ) {
+function ispcfg3_ChangePassword( $params ) {
 
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -615,7 +615,7 @@ function ispconfig_ChangePassword( $params ) {
 
         $returnresult = $client->client_change_password( $session_id, $client_id, $password );
 
-        logModuleCall('ispconfig','ChangePassword', $clientsdetails, $returnresult,'','');
+        logModuleCall('ispcfg3','ChangePassword', $clientsdetails, $returnresult,'','');
         
         if ($client->logout( $session_id )) {
 
@@ -653,7 +653,7 @@ function ispconfig_ChangePassword( $params ) {
     return $result;
 }
 
-function ispconfig_LoginLink( $params ) {
+function ispcfg3_LoginLink( $params ) {
 
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
@@ -671,7 +671,7 @@ function ispconfig_LoginLink( $params ) {
     echo '<a href="' . $soapsvrurl . '" target="_blank" style="color:#cc0000">Login to Controlpanel</a>';
 }
 
-function ispconfig_ClientArea( $params ) {
+function ispcfg3_ClientArea( $params ) {
 
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
