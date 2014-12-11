@@ -207,6 +207,39 @@ function ispconfig_CreateAccount( $params ) {
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
         
+        $fullname = htmlspecialchars_decode( $clientsdetails['firstname'] );
+        $fullname .= ' ' . htmlspecialchars_decode( $clientsdetails['lastname'] );
+        
+        $companyname = htmlspecialchars_decode( $clientsdetails['companyname'] );
+        $address = $clientsdetails['address1'];
+        if (!empty($clientsdetails['address2'])) {
+            $address .= ',' . $clientsdetails['address2'];
+        }
+        $zip = $clientsdetails['postcode'];
+        $city = $clientsdetails['city'];
+        $state = $clientsdetails['state'];
+        $mail = $clientsdetails['email'];
+        $country = $clientsdetails['country'];
+        $phonenumber = $clientsdetails['phonenumberformatted'];
+        $customerno = $clientsdetails['userid'];
+        
+        $sql = 'SELECT serverid FROM tblservergroupsrel WHERE groupid  = '
+                . '( SELECT servergroup FROM tblproducts '
+                . 'WHERE id = "' . $productid . '")';
+        $res = mysql_query( $sql );
+        $servernames = array();
+
+        $i = 0;
+        while ($groupservers = mysql_fetch_array( $res )) {
+            $sql = 'SELECT hostname FROM tblservers '
+                    . 'WHERE id  = "' . $groupservers['serverid'] . '"';
+            $db_erg = mysql_query( $sql );
+            $servernames2 = mysql_fetch_array( $db_erg );
+            $servernames[$i] = $servernames2['hostname'];
+            $i++;
+        }
+        
+        
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
