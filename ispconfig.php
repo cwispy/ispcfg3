@@ -173,13 +173,14 @@ function ispconfig_CreateAccount( $params ) {
     $nameserver2        = $dnssettings[1];
     $soaemail           = $dnssettings[2] . '.' . $domain;
     $dnstemplate        = $dnssettings[3];
-    
-    $enablecgi          = $websettings[0];
-    $enablessi          = $websettings[1];
-    $enableruby         = $websettings[2];
-    $enablesuexec       = $websettings[3];
-    $enableerrordocs    = $websettings[4];
-    $enablessl          = $websettings[5];
+
+    $websettings[0] == 'n' ? $enablecgi = '' : $enablecgi = 'y';
+    $websettings[1] == 'n' ? $enablessi = '' : $enablessi = 'y';
+    $websettings[2] == 'n' ? $enableruby = '' : $enableruby = 'y';
+    $websettings[3] == 'n' ? $enablesuexec = '' : $enablesuexec = 'y';
+    $websettings[4] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
+    $websettings[5] == 'n' ? $enablessl = '' : $enablessl = 'y';
+    $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
     
     if ( $soapsvrssl == 'on' ) {
         
