@@ -117,7 +117,7 @@ function ispconfig_ConfigOptions() {
                     'Size' => '20',
                     'Description' => 'Syntax: NS1,NS2,Emailname,Templateid '
                                     . 'eg: ns1.domain.tld,ns2.domain.tld,'
-                                    . 'webmaster,1' 
+                                    . 'webmaster,1'
             ),
         'ISPConfig Language' => array(
                     'Type' => 'dropdown',
@@ -127,11 +127,13 @@ function ispconfig_ConfigOptions() {
             ),
         'Create Maildomain' => array( 
                     'Type' => 'yesno',
-                    'Description' => 'Tick to enable'
+                    'Description' => 'Tick to create the Email Domain '
+                                    . 'automatically during setup'
             ),
         'Create FTP-Account' => array(
                     'Type' => 'yesno',
-                    'Description' => 'Tick to enable'
+                    'Description' => 'Tick to create the FTP Accounts '
+                                    . 'automatically during setup'
             )
         );
     return $configarray;
