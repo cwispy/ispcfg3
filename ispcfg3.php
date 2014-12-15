@@ -21,7 +21,7 @@
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
 ini_set("display_errors", 1);
-openlog( "ispcfg3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
+openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 
 function ispcfg3_ConfigOptions() {
     $configarray = array(
@@ -171,7 +171,7 @@ function ispcfg3_CreateAccount( $params ) {
     
     $nameserver1        = $dnssettings[0];
     $nameserver2        = $dnssettings[1];
-    $soaemail           = $dnssettings[2] . '.' . $domain;
+    $soaemail           = $dnssettings[2] . '.' . $domain.'.';
     $dnstemplate        = $dnssettings[3];
 
     $websettings[0] == 'n' ? $enablecgi = '' : $enablecgi = 'y';
@@ -181,7 +181,7 @@ function ispcfg3_CreateAccount( $params ) {
     $websettings[4] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
     $websettings[5] == 'n' ? $enablessl = '' : $enablessl = 'y';
     $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
-    
+
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
@@ -205,8 +205,8 @@ function ispcfg3_CreateAccount( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
-        
+        $session_id = $client->login( $soapuser, $soappassword );      
+
         $fullname = htmlspecialchars_decode( $clientsdetails['firstname'] );
         $fullname .= ' ' . htmlspecialchars_decode( $clientsdetails['lastname'] );
         
@@ -223,27 +223,264 @@ function ispcfg3_CreateAccount( $params ) {
         $phonenumber = $clientsdetails['phonenumberformatted'];
         $customerno = $clientsdetails['userid'];
         
+        /* Get the serverid's from WHMCS */
         $sql = 'SELECT serverid FROM tblservergroupsrel WHERE groupid  = '
                 . '( SELECT servergroup FROM tblproducts '
                 . 'WHERE id = "' . $productid . '")';
         $res = mysql_query( $sql );
         $servernames = array();
 
+        /* Loop through the serverid's and retrieve the hostnames of the
+         * servers from WHMCS
+         */
         $i = 0;
         while ($groupservers = mysql_fetch_array( $res )) {
             $sql = 'SELECT hostname FROM tblservers '
                     . 'WHERE id  = "' . $groupservers['serverid'] . '"';
-            $db_erg = mysql_query( $sql );
-            $servernames2 = mysql_fetch_array( $db_erg );
+            $db_result = mysql_query( $sql );
+            $servernames2 = mysql_fetch_array( $db_result );
             $servernames[$i] = $servernames2['hostname'];
             $i++;
         }
         
+        $i = 0;
+        $j = 1;
+        $server = array();
+
+        while ($j <= count( $servernames )) {
+            /* Retreive the serverid from ispconfig */
+            $result = $client->server_get_serverid_by_name( $session_id, $servernames[$i] );
+
+            /* Retrieve the services for the server from ispconfig */
+            $servicesresult = $client->server_get_functions( $session_id, $result[0]['server_id'] );
+            
+            /* Loop through the results to find the services on each server */
+            
+            if ($servicesresult[0]['mail_server'] == 1 ) {
+                $server['mail_server'][$i]['server_id'] = $result[0]['server_id'];
+                $server['mail_server'][$i]['hostname'] = $servernames[$i];
+            }
+            if ($servicesresult[0]['web_server'] == 1 ) {
+                $server['web_server'][$i]['server_id'] = $result[0]['server_id'];
+                $server['web_server'][$i]['hostname'] = $servernames[$i];
+            }
+            if ($servicesresult[0]['dns_server'] == 1 ) {
+                $server['dns_server'][$i]['server_id'] = $result[0]['server_id'];
+                $server['dns_server'][$i]['hostname'] = $servernames[$i];
+            }
+            if ($servicesresult[0]['file_server'] == 1 ) {
+                $server['file_server'][$i]['server_id'] = $result[0]['server_id'];
+                $server['file_server'][$i]['hostname'] = $servernames[$i];
+            }
+            if ($servicesresult[0]['db_server'] == 1 ) {
+                $server['db_server'][$i]['server_id'] = $result[0]['server_id'];
+                $server['db_server'][$i]['hostname'] = $servernames[$i];
+            }
+        logModuleCall('ispconfig','CreateClient',$result[0]['server_id'],$server,'','');
+            ++$i;
+            ++$j;
+        }
+        
+        logModuleCall('ispconfig','CreateClient',$servicesresult,$server,'','');
+
+        if (count( $server['mail_server'] ) == 1 ) {
+            
+            $defaultmailserver = $server['mail_server'][0]['server_id'];
+            
+        } else {
+            
+            $defaultmailserver = rand(1, count( $server['mail_server'] ) );
+            
+        }
+        
+        if (count( $server['web_server'] ) == 1 ) {
+            
+            $defaultwebserver = $server['web_server'][0]['server_id'];
+            
+        } else {
+            
+            $defaultwebserver = rand(1, count( $server['web_server'] ) );
+            
+        }
+        
+        if (count( $server['db_server'] ) == 1 ) {
+            
+            $defaultdbserver = $server['db_server'][0]['server_id'];
+            
+        } else {
+            
+            $defaultdbserver = rand(1, count( $server['db_server'] ) );
+            
+        }
+        
+        if (count( $server['dns_server'] ) == 1 ) {
+            
+            $defaultdnsserver = $server['dns_server'][0]['server_id'];
+            
+        } else {
+            
+            $defaultdnsserver = rand(1, count( $server['dns_server'] ) );
+            
+        }
+        
+        $ispcparams = array(
+                    'company_name' => $companyname,
+                    'contact_name' => $fullname,
+                    'customer_no' => $customerno,
+                    'username' => $username,
+                    'password' => $password,
+                    'language' => $defaultlanguage,
+                    'usertheme' => $designtheme,
+                    'street' => $address,
+                    'zip' => $zip,
+                    'city' => $city,
+                    'state' => $state,
+                    'country' => $country,
+                    'telephone' => $phonenumber,
+                    'mobile' => '',
+                    'fax' => '',
+                    'email' => $mail,
+                    'template_master' => $templateid,
+                    'web_php_options' => $globalphp,
+                    'ssh_chroot' => $chrootenable,
+                    'default_mailserver' => $defaultmailserver,
+                    'default_webserver' => $defaultwebserver,
+                    'default_dbserver' => $defaultdbserver,
+                    'default_dnsserver' => $defaultdnsserver,
+                    'locked' => '0',
+                    'created_at' => date('Y-m-d')
+                );
+        
+        $reseller_id = 0;
+
+        $client_id = $client->client_add( $session_id, $reseller_id, $ispcparams );
+
+        logModuleCall('ispconfig','CreateClient',$client_id,$ispcparams,'','');
+        
+        if ( $domaintool == 'on' ) {
+            
+            $ispcparams = array( 'domain' => $domain );
+            $domain_id = $client->domains_domain_add( $session_id, $client_id, $ispcparams );
+            
+            logModuleCall('ispconfig','CreateDomainAdd',$domain_id,$ispcparams,'','');
+            
+        }
+
+
+        if ( $webcreation == 'on' ) {
+            
+            $ispcparams = array(
+                    'server_id' => $defaultwebserver, 
+                    'ip_address' => '*',
+                    'pm_process_idle_timeout' => '10',
+                    'pm_max_requests' => '0',
+                    'type' => 'vhost',
+                    'vhost_type' => 'name',
+                    'domain' => $domain,
+                    'hd_quota' => $webquota,
+                    'traffic_quota' => $webtraffic,
+                    'cgi' => $enablecgi,
+                    'ssi' => $enablessi,
+                    'ruby' => $enableruby,
+                    'suexec' => $enablesuexec,
+                    'errordocs' => $enableerrdocs,
+                    'subdomain' => $subdomain,
+                    'ssl' => $enablessl,
+                    'php' => $phpmode,
+                    'active' => $webactive,
+                    'allow_override' => 'All',
+                    'php_open_basedir' => '/'
+                );
+
+            if ( $webwriteprotect == 'on' ) {
+                
+                $readonly = true;
+                
+            } else {
+                
+                $readonly = false;
+                
+            }
+
+            $website_id = $client->sites_web_domain_add( $session_id, $client_id, $ispcparams, $readonly );
+
+            logModuleCall('ispconfig','CreateWebDomain',$website_id,$ispcparams,'','');
+            
+            if ( $addftpuser == 'on' ) {
+                
+                $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
+                $ispcparams = array(
+                        'server_id' => $defaultwebserver,
+                        'parent_domain_id' => $website_id,
+                        'username' => $username . 'admin',
+                        'password' => $password,
+                        'quota_size' => 0 - 1,
+                        'active' => 'y',
+                        'uid' => $domain_arr['system_user'],
+                        'gid' => $domain_arr['system_group'],
+                        'dir' => $domain_arr['document_root'],
+                        'quota_files' => 0 - 1,
+                        'ul_ratio' => 0 - 1,
+                        'dl_ratio' => 0 - 1,
+                        'ul_bandwidth' => 0 - 1,
+                        'dl_bandwidth' => 0 - 1
+                    );
+                
+                $ftp_id = $client->sites_ftp_user_add( $session_id, $client_id, $ispcparams );
+                
+                logModuleCall('ispconfig','CreateFtpUser',$ftp_id,$ispcparams,'','');
+            }
+        }
+
+
+        if ( $dns == 'on' ) {
+            
+            $ispcparams = array (
+                'server_id'     => $defaultdnsserver,
+                'origin'        => $nameserver1,
+                'ns'            => $nameserver1,
+                'mbox'          => $soaemail,
+                'serial'        => date('Ymd').'00',
+                'refresh'       => '3600',
+                'retry'         => '300',
+                'expire'        => '604800',
+                'minimum'       => '86400',
+                'ttl'           => '3600',
+                'active'        => 'Y',
+                'xfer'          => '',
+                'also_notify'   => '',
+                'update_acl'    => ''
+            );
+
+            $dns_id = $client->dns_zone_add( $session_id, $client_id, $ispcparams );
+            logModuleCall('ispconfig','CreateDNSZone',$dns_id,$dns_id,'','');
+        }
+
+        if ( $addmaildomain == 'on' ) {
+            
+            $ispcparams = array( 
+                    'server_id' => $defaultmailserver, 
+                    'domain'    => $domain, 
+                    'active'    => 'y' 
+                );
+
+            $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
+            logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
+            
+        }
+
+        if ( $client->logout( $session_id ) ) {
+            
+        }
+        
+        $successful = 1;
         
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
         $successful = 0;
+        logModuleCall('ispconfig','Create Failed',$e->getMessage(), $params,'','');
+
         
     }
 
@@ -256,6 +493,7 @@ function ispcfg3_CreateAccount( $params ) {
         $result = "error";
         
     }
+
     return $result;
 }
 
@@ -465,7 +703,7 @@ function ispcfg3_SuspendAccount( $params ) {
         $resellerid['password'] = '';
         $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
         
-        logModuleCall('ispcfg3','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
+        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
 
         if ($client->logout( $session_id )) {
         }
@@ -548,7 +786,7 @@ function ispcfg3_UnsuspendAccount( $params ) {
         $resellerid['password'] = '';
         $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
                             
-        logModuleCall('ispcfg3','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
+        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
         
         if ($client->logout( $session_id )) {
         }
@@ -615,7 +853,7 @@ function ispcfg3_ChangePassword( $params ) {
 
         $returnresult = $client->client_change_password( $session_id, $client_id, $password );
 
-        logModuleCall('ispcfg3','ChangePassword', $clientsdetails, $returnresult,'','');
+        logModuleCall('ispconfig','ChangePassword', $clientsdetails, $returnresult,'','');
         
         if ($client->logout( $session_id )) {
 
@@ -689,3 +927,4 @@ function ispcfg3_ClientArea( $params ) {
     $code = '<a href=' . $soapsvrurl . ' target="_blank"><b>CONTROLPANEL LOGIN</b></a>';
     return $code;
 }
+?>
