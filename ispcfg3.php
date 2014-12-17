@@ -182,6 +182,8 @@ function ispcfg3_CreateAccount( $params ) {
     $websettings[5] == 'n' ? $enablessl = '' : $enablessl = 'y';
     $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
 
+    logModuleCall('ispconfig','CreateClient',$params['clientsdetails'],$params,'','');
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
@@ -243,6 +245,11 @@ function ispcfg3_CreateAccount( $params ) {
             $i++;
         }
         
+        $a = 0;
+        $b = 0;
+        $c = 0;
+        $d = 0;
+        $e = 0;
         $i = 0;
         $j = 1;
         $server = array();
@@ -255,31 +262,42 @@ function ispcfg3_CreateAccount( $params ) {
             $servicesresult = $client->server_get_functions( $session_id, $result[0]['server_id'] );
             
             /* Loop through the results to find the services on each server */
+
             
             if ($servicesresult[0]['mail_server'] == 1 ) {
-                $server['mail_server'][$i]['server_id'] = $result[0]['server_id'];
-                $server['mail_server'][$i]['hostname'] = $servernames[$i];
+                $server['mail_server'][$a]['server_id'] = $result[0]['server_id'];
+                $server['mail_server'][$a]['hostname'] = $servernames[$i];
+                $a++;
             }
             if ($servicesresult[0]['web_server'] == 1 ) {
-                $server['web_server'][$i]['server_id'] = $result[0]['server_id'];
-                $server['web_server'][$i]['hostname'] = $servernames[$i];
+                $server['web_server'][$b]['server_id'] = $result[0]['server_id'];
+                $server['web_server'][$b]['hostname'] = $servernames[$i];
+                $b++;
             }
             if ($servicesresult[0]['dns_server'] == 1 ) {
-                $server['dns_server'][$i]['server_id'] = $result[0]['server_id'];
-                $server['dns_server'][$i]['hostname'] = $servernames[$i];
+                $server['dns_server'][$c]['server_id'] = $result[0]['server_id'];
+                $server['dns_server'][$c]['hostname'] = $servernames[$i];
+                $c++;
             }
             if ($servicesresult[0]['file_server'] == 1 ) {
-                $server['file_server'][$i]['server_id'] = $result[0]['server_id'];
-                $server['file_server'][$i]['hostname'] = $servernames[$i];
+                $server['file_server'][$d]['server_id'] = $result[0]['server_id'];
+                $server['file_server'][$d]['hostname'] = $servernames[$i];
+                $d++;
             }
             if ($servicesresult[0]['db_server'] == 1 ) {
-                $server['db_server'][$i]['server_id'] = $result[0]['server_id'];
-                $server['db_server'][$i]['hostname'] = $servernames[$i];
+                $server['db_server'][$e]['server_id'] = $result[0]['server_id'];
+                $server['db_server'][$e]['hostname'] = $servernames[$i];
+                $e++;
             }
-        logModuleCall('ispconfig','CreateClient',$result[0]['server_id'],$server,'','');
             ++$i;
             ++$j;
         }
+        
+        unset($a);
+        unset($b);
+        unset($c);
+        unset($d);
+        unset($e);
         
         logModuleCall('ispconfig','CreateClient',$servicesresult,$server,'','');
 
@@ -289,7 +307,8 @@ function ispcfg3_CreateAccount( $params ) {
             
         } else {
             
-            $defaultmailserver = rand(1, count( $server['mail_server'] ) );
+            $rnd = rand(0, ( count( $server['mail_server'] ) - 1 ) );
+            $defaultmailserver = $server['mail_server'][$rnd]['server_id'];
             
         }
         
@@ -299,7 +318,8 @@ function ispcfg3_CreateAccount( $params ) {
             
         } else {
             
-            $defaultwebserver = rand(1, count( $server['web_server'] ) );
+            $rnd = rand(0, ( count( $server['web_server'] ) - 1 ) );
+            $defaultwebserver = $server['web_server'][$rnd]['server_id'];
             
         }
         
@@ -309,7 +329,8 @@ function ispcfg3_CreateAccount( $params ) {
             
         } else {
             
-            $defaultdbserver = rand(1, count( $server['db_server'] ) );
+            $rnd = rand(0, ( count( $server['db_server'] ) - 1 ) );
+            $defaultdbserver = $server['db_server'][$rnd]['server_id'];
             
         }
         
@@ -319,14 +340,28 @@ function ispcfg3_CreateAccount( $params ) {
             
         } else {
             
-            $defaultdnsserver = rand(1, count( $server['dns_server'] ) );
+            $rnd = rand(0, ( count( $server['dns_server'] ) - 1 ) );
+            $defaultdnsserver = $server['dns_server'][$rnd]['server_id'];
             
         }
         
-        $ispcparams = array(
+        if (count( $server['file_server'] ) == 1 ) {
+            
+            $defaultfileserver = $server['file_server'][0]['server_id'];
+            
+        } else {
+            
+            $rnd = rand(0, ( count( $server['file_server'] ) - 1 ) );
+            $defaultfileserver = $server['file_server'][$rnd]['server_id'];
+            
+        }
+        
+        logModuleCall('ispconfig','CreateClient',$server,$server,'','');
+            
+            $ispcparams = array(
                     'company_name' => $companyname,
                     'contact_name' => $fullname,
-                    'customer_no' => $customerno,
+                    'customer_no' => $productid,
                     'username' => $username,
                     'password' => $password,
                     'language' => $defaultlanguage,
@@ -349,13 +384,13 @@ function ispcfg3_CreateAccount( $params ) {
                     'default_dnsserver' => $defaultdnsserver,
                     'locked' => '0',
                     'created_at' => date('Y-m-d')
-                );
+                    );
         
-        $reseller_id = 0;
+            $reseller_id = 0;
 
-        $client_id = $client->client_add( $session_id, $reseller_id, $ispcparams );
+            $client_id = $client->client_add( $session_id, $reseller_id, $ispcparams );
 
-        logModuleCall('ispconfig','CreateClient',$client_id,$ispcparams,'','');
+            logModuleCall('ispconfig','CreateClient',$client_id,$ispcparams,'','');
         
         if ( $domaintool == 'on' ) {
             
@@ -437,7 +472,7 @@ function ispcfg3_CreateAccount( $params ) {
             
             $ispcparams = array (
                 'server_id'     => $defaultdnsserver,
-                'origin'        => $nameserver1,
+                'origin'        => $domain,
                 'ns'            => $nameserver1,
                 'mbox'          => $soaemail,
                 'serial'        => date('Ymd').'00',
@@ -490,7 +525,7 @@ function ispcfg3_CreateAccount( $params ) {
         
     } else {
         
-        $result = "error";
+        $result = $error;
         
     }
 
@@ -498,14 +533,15 @@ function ispcfg3_CreateAccount( $params ) {
 }
 
 function ispcfg3_TerminateAccount( $params ) {
-    
+
+    $username           = $params['username'];
+    $clientsdetails     = $params['clientsdetails'];
+    $domain             = $params['domain'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
-    $username           = $params['username'];
     $soapsvrurl         = $params['configoption3'];
-    $domaintool         = $params['configoption10'];
-    $domain             = $params['domain'];
     $soapsvrssl         = $params['configoption4'];
+    $domaintool         = $params['configoption10'];
     
     if ( $soapsvrssl == 'on' ) {
         
@@ -531,7 +567,7 @@ function ispcfg3_TerminateAccount( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-        
+              
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
         $group_id = $domain_id['default_group'];
@@ -580,10 +616,11 @@ function ispcfg3_TerminateAccount( $params ) {
 
 function ispcfg3_ChangePackage( $params ) {
 
+    $username           = $params['username'];
+    $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
-    $username           = $params['username'];
     $soapsvrssl         = $params['configoption4'];
     $templateid         = $params['configoption5'];
 
@@ -611,7 +648,7 @@ function ispcfg3_ChangePackage( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-
+        
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
         $client_id = $domain_id['client_id'];
@@ -650,10 +687,11 @@ function ispcfg3_ChangePackage( $params ) {
 
 function ispcfg3_SuspendAccount( $params ) {
 
+    $username           = $params['username'];    
+    $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
-    $username           = $params['username'];
     $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
@@ -680,8 +718,9 @@ function ispcfg3_SuspendAccount( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-
+        
         $result_id = $client->client_get_by_username( $session_id, $username );
+
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
         $resellerid = $client->client_get( $session_id, $sys_userid );
@@ -732,10 +771,11 @@ function ispcfg3_SuspendAccount( $params ) {
 
 function ispcfg3_UnsuspendAccount( $params ) {
 
+    $username           = $params['username'];    
+    $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
-    $username           = $params['username'];
     $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
@@ -762,8 +802,9 @@ function ispcfg3_UnsuspendAccount( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-
+        
         $result_id = $client->client_get_by_username( $session_id, $username );
+
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
         $resellerid = $client->client_get( $session_id, $sys_userid );
@@ -815,11 +856,12 @@ function ispcfg3_UnsuspendAccount( $params ) {
 
 function ispcfg3_ChangePassword( $params ) {
 
+    $username           = $params['username'];
+    $password           = $params['password'];
+    $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
-    $username           = $params['username'];
-    $password           = $params['password'];
     $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
@@ -846,7 +888,7 @@ function ispcfg3_ChangePassword( $params ) {
         
         /* Authenticate with the SOAP Server */
         $session_id = $client->login( $soapuser, $soappassword );
-
+        
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
         $client_id = $domain_id['client_id'];
