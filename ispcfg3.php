@@ -115,9 +115,9 @@ function ispcfg3_ConfigOptions() {
         'DNS Settings' => array(
                     'Type' => 'text',
                     'Size' => '20',
-                    'Description' => 'Syntax: NS1,NS2,Emailname,Templateid '
+                    'Description' => 'Syntax: NS1,NS2,Emailname,Templateid,Zone
                                     . 'eg: ns1.domain.tld,ns2.domain.tld,'
-                                    . 'webmaster,1'
+                                    . 'webmaster,1,123.123.123.123'
             ),
         'ISPConfig Language' => array(
                     'Type' => 'dropdown',
@@ -173,6 +173,7 @@ function ispcfg3_CreateAccount( $params ) {
     $nameserver2        = $dnssettings[1];
     $soaemail           = $dnssettings[2] . '.' . $domain.'.';
     $dnstemplate        = $dnssettings[3];
+    $zoneip             = $dnssettings[4];
 
     $websettings[0] == 'n' ? $enablecgi = '' : $enablecgi = 'y';
     $websettings[1] == 'n' ? $enablessi = '' : $enablessi = 'y';
@@ -487,7 +488,8 @@ function ispcfg3_CreateAccount( $params ) {
                 'update_acl'    => ''
             );
 
-            $dns_id = $client->dns_zone_add( $session_id, $client_id, $ispcparams );
+            //$dns_id = $client->dns_zone_add( $session_id, $client_id, $ispcparams );
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
             logModuleCall('ispconfig','CreateDNSZone',$dns_id,$dns_id,'','');
         }
 
