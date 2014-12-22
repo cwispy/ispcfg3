@@ -115,7 +115,7 @@ function ispcfg3_ConfigOptions() {
         'DNS Settings' => array(
                     'Type' => 'text',
                     'Size' => '20',
-                    'Description' => 'Syntax: NS1,NS2,Emailname,Templateid,Zone
+                    'Description' => 'Syntax: NS1,NS2,Emailname,Templateid,Zone IP Address'
                                     . 'eg: ns1.domain.tld,ns2.domain.tld,'
                                     . 'webmaster,1,123.123.123.123'
             ),
