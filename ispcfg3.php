@@ -142,6 +142,7 @@ function ispcfg3_ConfigOptions() {
 function ispcfg3_CreateAccount( $params ) {
 
     $productid          = $params['pid'];
+    $accountid          = $params['accountid'];
     $domain             = strtolower( $params['domain'] );
     $username           = $params['username'];
     $password           = $params['password'];
@@ -362,7 +363,7 @@ function ispcfg3_CreateAccount( $params ) {
             $ispcparams = array(
                     'company_name' => $companyname,
                     'contact_name' => $fullname,
-                    'customer_no' => $productid,
+                    'customer_no' => $accountid,
                     'username' => $username,
                     'password' => $password,
                     'language' => $defaultlanguage,
