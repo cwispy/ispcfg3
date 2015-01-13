@@ -575,22 +575,29 @@ function ispcfg3_TerminateAccount( $params ) {
 
         $group_id = $domain_id['default_group'];
         $client_id = $domain_id['client_id'];
-
+        
         if ( $domaintool == 'on' ) {
 
             $result = $client->domains_get_all_by_user( $session_id, $group_id );
             $key = '0';
             foreach ( $result as $key => $value ) {
+                
                 if ( $result[$key]['domain'] = $domain ) {
+                    
                     $primary_id = $result[$key]['domain_id'];
                     continue;
+                    
                 }
             }
+            
             $result = $client->domains_domain_delete( $session_id, $primary_id );
+            logModuleCall('ispconfig','Terminate Domain',$primary_id, $result,'','');
+
         }
 
-        $domain_id = $client->client_delete_everything( $session_id, $client_id );
-
+        $client_res = $client->client_delete_everything( $session_id, $client_id );
+        logModuleCall('ispconfig','Terminate Client',$client_id, $client_res,'','');
+        
         if ( $client->logout( $session_id ) ) {
             
         }
@@ -690,13 +697,18 @@ function ispcfg3_ChangePackage( $params ) {
 
 function ispcfg3_SuspendAccount( $params ) {
 
-    $username           = $params['username'];    
+    $username           = $params['username'];
+    $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
-
+    $webcreation        = $params['configoption9'];
+    $dns                = $params['configoption18'];
+    $addmaildomain      = $params['configoption21'];
+    $addftpuser         = $params['configoption22'];
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
@@ -711,11 +723,11 @@ function ispcfg3_SuspendAccount( $params ) {
 
     try {
         /* Connect to SOAP Server */
-        $client = new SoapClient( null, 
-                                array( 'location' => $soap_url, 
-                                        'uri' => $soap_uri, 
-                                        'exceptions' => 1, 
-                                        'trace' => false 
+        $client = new SoapClient( null,
+                                array( 'location' => $soap_url,
+                                        'uri' => $soap_uri,
+                                        'exceptions' => 1,
+                                        'trace' => false
                                     )
                                 );
         
@@ -723,30 +735,72 @@ function ispcfg3_SuspendAccount( $params ) {
         $session_id = $client->login( $soapuser, $soappassword );
         
         $result_id = $client->client_get_by_username( $session_id, $username );
-
+        
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
-        $resellerid = $client->client_get( $session_id, $sys_userid );
-        $parent_client_id = $resellerid['parent_client_id'];
+        $client_detail = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $client_detail['parent_client_id'];
         
-        $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
-
-        $z = 0;
-        foreach ($domain_id as $idx) {
+        $domain_id = $client->dns_zone_get_by_user( $session_id, $sys_userid,  $client_detail['default_dnsserver'] );
+        
+        if ( $webcreation == 'on' ) {
             
-            $idx[$z] = $domain_id[$z]['domain_id'];
-            $client_record = $client->sites_web_domain_get( $session_id, $idx[$z] );
-            $client_record['active'] = 'n';
+            $clientsites = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
+            
+            $i = 0;
+            $j = 1;
+            while ($j <= count($clientsites) ) {
 
-            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
+                $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'inactive' );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','Suspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
+                
+            }
+            
+        }
+        
+        if ( $addftpuser == 'on' ) {
+            
+           $username = $username . 'admin';
+           $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
+           
+           $ftpclient[0]['active'] = 'n';
+           $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
+           
+           logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
+           
+        }
+        
+        if ( $addmaildomain == 'on' ) {
+            
+            $emaildomain = $client->mail_domain_get_by_domain( $session_id, $domain );            
+            $mailid = $client->mail_domain_set_status($session_id, $emaildomain[0]['domain_id'], 'inactive');
+            logModuleCall('ispconfig','Suspend Email Domain',$emaildomain[0]['domain_id'], $mailid,'','');
+            
+        }
+        
+        if ( $dns == 'on' ) {           
+        
+            $i = 0;
+            $j = 1;
+            while ($j <= count($domain_id) ) {
+
+                $affected_rows = $client->dns_zone_set_status( $session_id, $domain_id[$i]['id'], 'inactive' );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','Suspend Domain',$domain_id[$i]['id'], $affected_rows,'','');
+                
+            }
+            
         }
 
-        $resellerid['locked'] = 'y';
-        $resellerid['password'] = '';
-        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
+        $client_detail['locked'] = 'y';
+        $client_detail['password'] = '';
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $client_detail );
         
-        logModuleCall('ispconfig','Suspend', $sys_userid.' '.$sys_groupid, $resellerid,'','');
-
+        logModuleCall('ispconfig','Suspend Client', $sys_userid.' '.$sys_groupid, $client_result,'','');
+        
         if ($client->logout( $session_id )) {
         }
 
@@ -774,13 +828,18 @@ function ispcfg3_SuspendAccount( $params ) {
 
 function ispcfg3_UnsuspendAccount( $params ) {
 
-    $username           = $params['username'];    
+    $username           = $params['username'];
+    $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
-
+    $webcreation        = $params['configoption9'];
+    $dns                = $params['configoption18'];
+    $addmaildomain      = $params['configoption21'];
+    $addftpuser         = $params['configoption22'];
+    
     if ( $soapsvrssl == 'on' ) {
         
         $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
@@ -807,36 +866,76 @@ function ispcfg3_UnsuspendAccount( $params ) {
         $session_id = $client->login( $soapuser, $soappassword );
         
         $result_id = $client->client_get_by_username( $session_id, $username );
-
+        
         $sys_userid = $result_id['client_id'];
         $sys_groupid = $result_id['groups'];
-        $resellerid = $client->client_get( $session_id, $sys_userid );
-        $parent_client_id = $resellerid['parent_client_id'];
-
-        $domain_id = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
+        $client_detail = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $client_detail['parent_client_id'];
         
-        $z = 0;
-        foreach ($domain_id as $idx) {
-                        
-            $idx[$z] = $domain_id[$z]['domain_id'];
+        $domain_id = $client->dns_zone_get_by_user( $session_id, $sys_userid,  $client_detail['default_dnsserver'] );
+        
+        if ( $webcreation == 'on' ) {
+            
+            $clientsites = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
+            
+            $i = 0;
+            $j = 1;
+            while ($j <= count($clientsites) ) {
 
-            $client_record = $client->sites_web_domain_get( $session_id, $idx[$z] );
-            $client_record['active'] = 'y';
-
-            $affected_rows = $client->sites_web_domain_update( $session_id, $sys_userid, $idx[$z], $client_record );
+                $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'active' );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
+                
+            }
+            
         }
         
-        $resellerid['locked'] = 'n';
-        $resellerid['password'] = '';
-        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $resellerid );
-                            
-        logModuleCall('ispconfig','Unsuspend', $sys_userid.' '.$sys_groupid, $client_result,'','');
+        if ( $addftpuser == 'on' ) {
+            
+           $username = $username . 'admin';
+           $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
+           
+           $ftpclient[0]['active'] = 'y';
+           $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
+           
+           logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
+           
+        }
+        
+        if ( $addmaildomain == 'on' ) {
+            
+            $emaildomain = $client->mail_domain_get_by_domain( $session_id, $domain );            
+            $mailid = $client->mail_domain_set_status($session_id, $emaildomain[0]['domain_id'], 'active');
+            logModuleCall('ispconfig','UnSuspend Email Domain',$emaildomain[0]['domain_id'], $mailid,'','');
+            
+        }
+        
+        if ( $dns == 'on' ) {           
+        
+            $i = 0;
+            $j = 1;
+            while ($j <= count($domain_id) ) {
+
+                $affected_rows = $client->dns_zone_set_status( $session_id, $domain_id[$i]['id'], 'active' );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','UnSuspend Domain',$domain_id[$i]['id'], $affected_rows,'','');
+            }
+            
+        }
+
+        $client_detail['locked'] = 'n';
+        $client_detail['password'] = '';
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $client_detail );
+        
+        logModuleCall('ispconfig','UnSuspend Client', $sys_userid.' '.$sys_groupid, $client_result,'','');
         
         if ($client->logout( $session_id )) {
         }
-        
+
         $successful = '1';
-        
+    
     } catch (SoapFault $e) {
         
         $error = 'SOAP Error: ' . $e->getMessage();
