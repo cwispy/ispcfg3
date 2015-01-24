@@ -451,16 +451,16 @@ function ispcfg3_CreateAccount( $params ) {
                         'parent_domain_id' => $website_id,
                         'username' => $username . 'admin',
                         'password' => $password,
-                        'quota_size' => 0 - 1,
+                        'quota_size' => $webquota,
                         'active' => 'y',
                         'uid' => $domain_arr['system_user'],
                         'gid' => $domain_arr['system_group'],
                         'dir' => $domain_arr['document_root'],
-                        'quota_files' => 0 - 1,
-                        'ul_ratio' => 0 - 1,
-                        'dl_ratio' => 0 - 1,
-                        'ul_bandwidth' => 0 - 1,
-                        'dl_bandwidth' => 0 - 1
+                        'quota_files' => -1,
+                        'ul_ratio' => -1,
+                        'dl_ratio' => -1,
+                        'ul_bandwidth' => -1,
+                        'dl_bandwidth' => -1
                     );
                 
                 $ftp_id = $client->sites_ftp_user_add( $session_id, $client_id, $ispcparams );
@@ -829,6 +829,7 @@ function ispcfg3_SuspendAccount( $params ) {
 function ispcfg3_UnsuspendAccount( $params ) {
 
     $username           = $params['username'];
+    $password           = $params['password'];
     $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
@@ -897,6 +898,7 @@ function ispcfg3_UnsuspendAccount( $params ) {
            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
            
            $ftpclient[0]['active'] = 'y';
+           $ftpclient[0]['password'] = $password;
            $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
            
            logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
