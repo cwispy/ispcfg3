@@ -766,6 +766,7 @@ function ispcfg3_SuspendAccount( $params ) {
            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
            
            $ftpclient[0]['active'] = 'n';
+           $ftpclient[0]['password'] = '';
            $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
            
            logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
@@ -898,7 +899,7 @@ function ispcfg3_UnsuspendAccount( $params ) {
            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
            
            $ftpclient[0]['active'] = 'y';
-           $ftpclient[0]['password'] = $password;
+           $ftpclient[0]['password'] = '';
            $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
            
            logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
