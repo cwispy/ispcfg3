@@ -172,7 +172,7 @@ function ispcfg3_CreateAccount( $params ) {
     
     $nameserver1        = $dnssettings[0];
     $nameserver2        = $dnssettings[1];
-    $soaemail           = $dnssettings[2] . '.' . $domain.'.';
+    $soaemail           = $dnssettings[2] . '.' . $domain;
     $dnstemplate        = $dnssettings[3];
     $zoneip             = $dnssettings[4];
 
