@@ -2,7 +2,7 @@
 /*
  * 
  *  ISPConfig v3.x module for WHMCS v5.x
- *  Copyright (C) 2014  Shane Chrisp
+ *  Copyright (C) 2014, 2015  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
