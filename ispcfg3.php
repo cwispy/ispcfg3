@@ -784,15 +784,20 @@ function ispcfg3_SuspendAccount( $params ) {
         
         if ( $addftpuser == 'on' ) {
             
-           $username = $username . 'admin';
-           $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
+            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username.'%' ) );
            
-           $ftpclient[0]['active'] = 'n';
-           $ftpclient[0]['password'] = '';
-           $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
-           
-           logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
-           
+            $i = 0;
+            $j = 1;
+            while ($j <= count($ftpclient) ) {
+            
+                $ftpclient[$i]['active'] = 'n';
+                $ftpclient[$i]['password'] = '';
+                $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
+            
+            }
         }
         
         if ( $addmaildomain == 'on' ) {
@@ -917,15 +922,20 @@ function ispcfg3_UnsuspendAccount( $params ) {
         
         if ( $addftpuser == 'on' ) {
             
-           $username = $username . 'admin';
-           $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username ) );
+            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username.'%' ) );
            
-           $ftpclient[0]['active'] = 'y';
-           $ftpclient[0]['password'] = '';
-           $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[0]['ftp_user_id'], $ftpclient[0] );
-           
-           logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[0]['ftp_user_id'], $ftpclient,'','');
-           
+            $i = 0;
+            $j = 1;
+            while ($j <= count($ftpclient) ) {
+            
+                $ftpclient[$i]['active'] = 'y';
+                $ftpclient[$i]['password'] = '';
+                $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                $i++;
+                $j++;
+                logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
+            
+            }
         }
         
         if ( $addmaildomain == 'on' ) {
