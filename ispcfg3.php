@@ -405,6 +405,14 @@ function ispcfg3_CreateAccount( $params ) {
             logModuleCall('ispconfig','CreateDomainAdd',$domain_id,$ispcparams,'','');
             
         }
+        
+        
+        if ( $dns == 'on' ) {
+
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
+            logModuleCall('ispconfig','CreateDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
+            
+        }
 
 
         if ( $webcreation == 'on' ) {
@@ -478,6 +486,7 @@ function ispcfg3_CreateAccount( $params ) {
 
             logModuleCall('ispconfig','CreateWebDomain',$website_id,$ispcparams,'','');
             
+            
             if ( $addftpuser == 'on' ) {
                 
                 $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
@@ -502,13 +511,61 @@ function ispcfg3_CreateAccount( $params ) {
                 
                 logModuleCall('ispconfig','CreateFtpUser',$ftp_id,$ispcparams,'','');
             }
-        }
-
-
-        if ( $dns == 'on' ) {
-
-            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
-            logModuleCall('ispconfig','CreateDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
+            
+            // Add A Record and CNAME Records for website to dns.
+            if ( $dns == 'on' ) {
+            
+                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $defaultdnsserver);
+                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
+                $a_svr = $client->server_get_all($session_id);
+                
+                // Loop through the array till we find the mail server name
+                while ($arec == '') {
+                    $poparr = array_pop($a_svr);
+                    if ( $poparr['server_id'] == $defaultwebserver )
+                            $arec = $poparr['server_name'];
+                }
+                
+                $sql = 'SELECT ipaddress FROM tblservers '
+                    . 'WHERE hostname  = "' . $arec . '"';
+                $db_result = mysql_query( $sql );
+                $a_ip = mysql_fetch_array( $db_result );
+                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$a_ip,'','');
+                
+                $params = array(
+                    'server_id' => $dns_svr['server_id'],
+                    'zone' => $zone_id[0]['id'],
+                    'name' => $domain.'.',
+                    'type' => 'A',
+                    'data' => $a_ip['ipaddress'],
+                    'aux' => '0',
+                    'ttl' => '3600',
+                    'active' => 'y',
+                    'stamp' => date('Y-m-d H:i:s'),
+                    'serial' => '',
+                );
+                
+                $zone_mx = $client->dns_a_add($session_id, $client_id, $params);
+                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$params,'','');
+                
+                // Add cname record
+                $params = array(
+                    'server_id' => $dns_svr['server_id'],
+                    'zone' => $zone_id[0]['id'],
+                    'name' => 'www',
+                    'type' => 'CNAME',
+                    'data' => $domain.'.',
+                    'aux' => '0',
+                    'ttl' => '3600',
+                    'active' => 'y',
+                    'stamp' => date('Y-m-d H:i:s'),
+                    'serial' => '',
+                );
+                
+                $zone_mx = $client->dns_cname_add($session_id, $client_id, $params);
+                logModuleCall('ispconfig','CreateDNSCNAME',$zone_mx,$params,'','');
+                
+            }
             
         }
 
@@ -522,7 +579,7 @@ function ispcfg3_CreateAccount( $params ) {
 
             $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
-                        
+            
             // Add MX Record to dns.
             if ( $dns == 'on' ) {
             
