@@ -176,13 +176,16 @@ function ispcfg3_CreateAccount( $params ) {
     $dnstemplate        = $dnssettings[3];
     $zoneip             = $dnssettings[4];
 
-    $websettings[0] == 'n' ? $enablecgi = '' : $enablecgi = 'y';
-    $websettings[1] == 'n' ? $enablessi = '' : $enablessi = 'y';
-    $websettings[2] == 'n' ? $enableruby = '' : $enableruby = 'y';
-    $websettings[3] == 'n' ? $enablesuexec = '' : $enablesuexec = 'y';
-    $websettings[4] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
-    $websettings[5] == 'n' ? $enablessl = '' : $enablessl = 'y';
-    $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
+    $websettings[0] == 'n'  ? $enablecgi = '' : $enablecgi = 'y';
+    $websettings[1] == 'n'  ? $enablessi = '' : $enablessi = 'y';
+    $websettings[2] == 'n'  ? $enableperl = '' : $enableperl = 'y';
+    $websettings[3] == 'n'  ? $enableruby = '' : $enableruby = 'y';
+    $websettings[4] == 'n'  ? $enablepython = '' : $enablepython = 'y';
+    $websettings[5] == 'n'  ? $enablesuexec = '' : $enablesuexec = 'y';
+    $websettings[6] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
+    $websettings[7] == 'n'  ? $wildcardsubdom = '' : $wildcardsubdom = '1';
+    $websettings[8] == 'n'  ? $enablessl = '' : $enablessl = 'y';
+    $webactive      == 'on' ? $webactive = 'y' : $webactive = 'n';
 
     logModuleCall('ispconfig','CreateClient',$params['clientsdetails'],$params,'','');
     
@@ -503,27 +506,10 @@ function ispcfg3_CreateAccount( $params ) {
 
 
         if ( $dns == 'on' ) {
-            
-            $ispcparams = array (
-                'server_id'     => $defaultdnsserver,
-                'origin'        => $domain,
-                'ns'            => $nameserver1,
-                'mbox'          => $soaemail,
-                'serial'        => date('Ymd').'00',
-                'refresh'       => '3600',
-                'retry'         => '300',
-                'expire'        => '604800',
-                'minimum'       => '86400',
-                'ttl'           => '3600',
-                'active'        => 'Y',
-                'xfer'          => '',
-                'also_notify'   => '',
-                'update_acl'    => ''
-            );
 
-            //$dns_id = $client->dns_zone_add( $session_id, $client_id, $ispcparams );
             $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
-            logModuleCall('ispconfig','CreateDNSZone',$dns_id,$dns_id,'','');
+            logModuleCall('ispconfig','CreateDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
+            
         }
 
         if ( $addmaildomain == 'on' ) {
@@ -536,6 +522,36 @@ function ispcfg3_CreateAccount( $params ) {
 
             $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
+                        
+            // Add MX Record to dns.
+            if ( $dns == 'on' ) {
+            
+                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $defaultdnsserver);
+                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
+                $mx_svr = $client->server_get_all($session_id);
+                
+                // Loop through the array till we find the mail server name
+                while ($mx == '') {
+                    $poparr = array_pop($mx_svr);
+                    if ( $poparr['server_id'] == $defaultmailserver )
+                            $mx = $poparr['server_name'];
+                }
+                $params = array(
+                    'server_id' => $dns_svr['server_id'],
+                    'zone' => $zone_id[0]['id'],
+                    'name' => $domain.'.',
+                    'type' => 'mx',
+                    'data' => $mx.'.',
+                    'aux' => '0',
+                    'ttl' => '3600',
+                    'active' => 'y',
+                    'stamp' => date('Y-m-d H:i:s'),
+                    'serial' => '',
+                );
+                
+                $zone_mx = $client->dns_mx_add($session_id, $client_id, $params);
+                logModuleCall('ispconfig','CreateDNSMX',$zone_mx,$params,'','');
+            }
             
         }
 
@@ -784,16 +800,16 @@ function ispcfg3_SuspendAccount( $params ) {
             while ($j <= count($clientsites) ) {
 
                 $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'inactive' );
+                logModuleCall('ispconfig','Suspend Web Domain',$clientsites[$i]['domain_id'], $clientsites[$i],'','');
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','Suspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
                 
             }
             
         }
         
         if ( $addftpuser == 'on' ) {
-            
+           
             $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username.'%' ) );
            
             $i = 0;
@@ -803,9 +819,10 @@ function ispcfg3_SuspendAccount( $params ) {
                 $ftpclient[$i]['active'] = 'n';
                 $ftpclient[$i]['password'] = '';
                 $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
+
             
             }
         }
@@ -922,9 +939,10 @@ function ispcfg3_UnsuspendAccount( $params ) {
             while ($j <= count($clientsites) ) {
 
                 $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'active' );
+                logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
+
                 
             }
             
@@ -941,9 +959,10 @@ function ispcfg3_UnsuspendAccount( $params ) {
                 $ftpclient[$i]['active'] = 'y';
                 $ftpclient[$i]['password'] = '';
                 $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
+
             
             }
         }
