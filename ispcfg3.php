@@ -417,6 +417,9 @@ function ispcfg3_CreateAccount( $params ) {
                     'traffic_quota' => $webtraffic,
                     'cgi' => $enablecgi,
                     'ssi' => $enablessi,
+                    'perl' => $enableperl,
+                    'ruby' => $enableruby,
+                    'python' => $enablepython,
                     'suexec' => $enablesuexec,
                     'errordocs' => $enableerrdocs,
                     'is_subdomainwww' => 1,
@@ -440,15 +443,22 @@ function ispcfg3_CreateAccount( $params ) {
                     'stats_password' => $password,
                     'stats_type' => 'awstats',
                     'allow_override' => 'All',
-                    'apache_directives' => 'DirectoryIndex index.php index.html',
                     'php_open_basedir' => '/',
-                    'pm_max_requests' => '0',
+                    'php_fpm_use_socket' => 'y',
+                    'pm' => 'dynamic',
+                    'pm_max_children' => '10',
+                    'pm_start_servers' => '2',
+                    'pm_min_spare_servers' => '1',
+                    'pm_max_spare_servers' => '5',
                     'pm_process_idle_timeout' => '10',
+                    'pm_max_requests' => '0',
                     'custom_php_ini' => '',
                     'backup_interval' => '',
                     'backup_copies' => 1,
                     'active' => $webactive,
-                    'traffic_quota_lock' => 'n'
+                    'traffic_quota_lock' => 'n',
+                    'added_date' => date("Y-m-d"),
+                    'added_by' => $soapuser
                 );
 
             if ( $webwriteprotect == 'on' ) {
