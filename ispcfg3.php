@@ -20,7 +20,7 @@
  */
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
-ini_set("display_errors", 1);
+ini_set("display_errors", 1); // Set this option to Zero on a production machine.
 openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 
 function ispcfg3_ConfigOptions() {
