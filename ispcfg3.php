@@ -323,8 +323,35 @@ function ispcfg3_CreateAccount( $params ) {
             
         } else {
             
-            $rnd = rand(0, ( count( $server['web_server'] ) - 1 ) );
-            $defaultwebserver = $server['web_server'][$rnd]['server_id'];
+            $a = 1;
+            $b = 0;
+                    
+            while ( $a <= count($server['web_server']) ) {
+            
+                $result = array();
+                $result = $client->sites_web_domain_get( $session_id, 
+                    array( 'server_id' => $server['web_server'][$b]['server_id'],
+                            'type' => 'vhost') );
+                
+                if (!isset($webservercnt)) { 
+                    $webservercnt = count( array_keys($result) ); 
+                    
+                }
+                
+                if ( $webservercnt > count( array_keys($result) ) OR 
+                    ( !isset($defaultwebserver) ) ) {
+                        
+                    $webservercnt = count( array_keys($result) );
+                    $defaultwebserver = $server['web_server'][$b]['server_id'];
+                
+             }
+             $a++;
+             $b++;
+            
+            }
+            
+            unset($a);
+            unset($b);
             
         }
         
