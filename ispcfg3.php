@@ -1,7 +1,7 @@
 <?php
 /*
  * 
- *  ISPConfig v3.x module for WHMCS v5.x
+ *  ISPConfig v3.x module for WHMCS v5.x or Higher
  *  Copyright (C) 2014, 2015  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -201,6 +201,19 @@ function ispcfg3_CreateAccount( $params ) {
         
     }
 
+    /* 
+     * Make sure that a username and password have been set
+     * or exit with error.
+    */
+    
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -663,13 +676,21 @@ function ispcfg3_CreateAccount( $params ) {
         $result = $error;
         
     }
-
+    
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+            
     return $result;
 }
 
 function ispcfg3_TerminateAccount( $params ) {
 
     $username           = $params['username'];
+    $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
     $domain             = $params['domain'];
     $soapuser           = $params['configoption1'];
@@ -690,6 +711,14 @@ function ispcfg3_TerminateAccount( $params ) {
         
     }
 
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -753,12 +782,20 @@ function ispcfg3_TerminateAccount( $params ) {
         
     }
 
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+    
     return $result;
 }
 
 function ispcfg3_ChangePackage( $params ) {
 
     $username           = $params['username'];
+    $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
     $soappassword       = $params['configoption2'];
@@ -777,7 +814,15 @@ function ispcfg3_ChangePackage( $params ) {
         $soap_uri = 'http://' . $soapsvrurl . '/remote/';
         
     }
-
+    
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -823,13 +868,21 @@ function ispcfg3_ChangePackage( $params ) {
         $result = 'Error: ' . $error;
 
     }
-
+    
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+    
     return $result;
 }
 
 function ispcfg3_SuspendAccount( $params ) {
 
     $username           = $params['username'];
+    $password           = $params['password'];
     $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
     $soapuser           = $params['configoption1'];
@@ -852,7 +905,15 @@ function ispcfg3_SuspendAccount( $params ) {
         $soap_uri = 'http://' . $soapsvrurl . '/remote/';
         
     }
-
+    
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null,
@@ -961,7 +1022,14 @@ function ispcfg3_SuspendAccount( $params ) {
         $result = 'Error: ' . $error;
 
     }
-
+    
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+    
     return $result;
 }
 
@@ -991,7 +1059,15 @@ function ispcfg3_UnsuspendAccount( $params ) {
         $soap_uri = 'http://' . $soapsvrurl . '/remote/';
         
     }
-
+    
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null,
@@ -1026,7 +1102,6 @@ function ispcfg3_UnsuspendAccount( $params ) {
                 logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
                 $i++;
                 $j++;
-
                 
             }
             
@@ -1100,7 +1175,14 @@ function ispcfg3_UnsuspendAccount( $params ) {
         $result = 'Error: ' . $error;
 
     }
-
+    
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+    
     return $result;
 }
 
@@ -1125,7 +1207,15 @@ function ispcfg3_ChangePassword( $params ) {
         $soap_uri = 'http://' . $soapsvrurl . '/remote/';
         
     }
-
+    
+    if (
+            ((isset($username)) &&
+            ($username != '')) &&
+            ((isset($password)) &&
+            ($password != ''))
+            ) 
+        {
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -1179,7 +1269,14 @@ function ispcfg3_ChangePassword( $params ) {
         $result = 'Error: ' . $error;
         
     }
-
+    
+    } else {
+        /*
+         * No username or password set.
+         */
+        $result = 'Username or Password is Blank or Not Set';
+    }
+    
     return $result;
 }
 
