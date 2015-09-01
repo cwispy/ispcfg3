@@ -740,20 +740,22 @@ function ispcfg3_TerminateAccount( $params ) {
         if ( $domaintool == 'on' ) {
 
             $result = $client->domains_get_all_by_user( $session_id, $group_id );
-            $key = '0';
-            foreach ( $result as $key => $value ) {
+            logModuleCall('ispconfig','Terminate Get Domains','Get Domains',$result,'','');
+            if (!empty($result)) {
+                $key = '0';
+                foreach ( $result as $key => $value ) {
                 
-                if ( $result[$key]['domain'] = $domain ) {
+                    if ( $result[$key]['domain'] = $domain ) {
                     
-                    $primary_id = $result[$key]['domain_id'];
-                    continue;
+                        $primary_id = $result[$key]['domain_id'];
+                        continue;
                     
+                    }
                 }
-            }
             
-            $result = $client->domains_domain_delete( $session_id, $primary_id );
-            logModuleCall('ispconfig','Terminate Domain',$primary_id, $result,'','');
-
+                $result = $client->domains_domain_delete( $session_id, $primary_id );
+                logModuleCall('ispconfig','Terminate Domain',$primary_id, $result,'','');
+            }
         }
 
         $client_res = $client->client_delete_everything( $session_id, $client_id );
