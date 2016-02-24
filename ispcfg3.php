@@ -1283,7 +1283,6 @@ function ispcfg3_ChangePassword( $params ) {
 }
 
 function ispcfg3_LoginLink( $params ) {
-
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
 
@@ -1297,11 +1296,25 @@ function ispcfg3_LoginLink( $params ) {
         
     }
 
-    echo '<a href="' . $soapsvrurl . '" target="_blank" style="color:#cc0000">Login to Controlpanel</a>';
+    return '
+    <button type="button" class="btn btn-xs btn-success" onclick="$(\'#frmIspconfigLogin\').submit()">Login to Controlpanel</button>
+    <script type="text/javascript">
+    var ispconfigForm = "<form id=\"frmIspconfigLogin\" action=\"'.$soapsvrurl.'/index.php\" method=\"GET\" target=\"_blank\"></form>";
+    $(document).ready(function(){
+        $("body").append(ispconfigForm);
+        $("#frmIspconfigLogin").submit(function(){
+            $.ajax({ 
+                type: "POST", 
+                url: "'.$soapsvrurl.'/content.php",
+                data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
+                xhrFields: {withCredentials: true} 
+            });
+        });
+    });
+    </script>';
 }
 
 function ispcfg3_ClientArea( $params ) {
-
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
 
@@ -1315,7 +1328,22 @@ function ispcfg3_ClientArea( $params ) {
         
     }
 
-    $code = '<a href=' . $soapsvrurl . ' target="_blank"><b>CONTROLPANEL LOGIN</b></a>';
+    $code = '
+    <form id="frmIspconfigLogin" action="'.$soapsvrurl.'/index.php" method="GET" target="_blank">
+    <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
+    </form>
+
+    <script type="text/javascript">
+    $("#frmIspconfigLogin").submit(function(){
+        $.ajax({ 
+            type: "POST", 
+            url: "'.$soapsvrurl.'/content.php",
+            data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
+            xhrFields: {withCredentials: true} 
+        });
+    });
+    </script>';
+
     return $code;
 }
 ?>
