@@ -134,6 +134,11 @@ function ispcfg3_ConfigOptions() {
                     'Type' => 'yesno',
                     'Description' => 'Tick to create the FTP Accounts '
                                     . 'automatically during setup'
+            ),
+        'ISPConfig Version' => array(
+                    'Type' => 'dropdown',
+                    'Options' => '3.0,3.1',
+                    'Default' => '3.1'
             )
         );
     return $configarray;
@@ -169,6 +174,7 @@ function ispcfg3_CreateAccount( $params ) {
     $defaultlanguage    = $params['configoption20'];
     $addmaildomain      = $params['configoption21'];
     $addftpuser         = $params['configoption22'];
+    $ispconfigver       = $params['configoption23'];
     
     $nameserver1        = $dnssettings[0];
     $nameserver2        = $dnssettings[1];
@@ -511,6 +517,11 @@ function ispcfg3_CreateAccount( $params ) {
                     'added_date' => date("Y-m-d"),
                     'added_by' => $soapuser
                 );
+                
+                if ($ispconfigver == "3.1") {
+                    $ispcparams['http_port'] = '80';
+                    $ispcparams['https_port'] = '443';
+                };
 
             if ( $webwriteprotect == 'on' ) {
                 
