@@ -22,23 +22,24 @@
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
 ini_set("display_errors", 0); // Set this option to Zero on a production machine.
 openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
+include_once(__DIR__.'/functions/base.php');
 
 function ispcfg3_ConfigOptions() {
     $configarray = array(
         'ISPConfig Remote Username' => array(
                     'Type' => 'text',
                     'Size' => '16',
-                    'Description' => 'Remote Username configured in ISPConfig.'
+                    'Description' => '<br />Remote Username configured in ISPConfig.'
             ),
         'ISPConfig Remote Password' => array(
                     'Type' => 'password',
                     'Size' => '16',
-                    'Description' => 'Remote Password configured in ISPConfig.'
+                    'Description' => '<br />Remote Password configured in ISPConfig.'
             ),
         'ISPConfig URL' => array(
                     'Type' => 'text',
-                    'Size' => '32',
-                    'Description' => 'E.g. ispconfig.example.tld:8080'
+                    'Size' => '50',
+                    'Description' => '<br />E.g. ispconfig.example.tld:8080'
             ),
         'ISPConfig SSL' => array(
                     'Type' => 'yesno',
@@ -53,13 +54,13 @@ function ispcfg3_ConfigOptions() {
         'ISPConfig Usertheme' => array( 
                     'Type' => 'text',
                     'Size' => '20',
-                    'Description' => 'The ISPConfig theme to use, typically '
+                    'Description' => '<br />The ISPConfig theme to use, typically '
                                     . 'this will be \'default\''
             ),
         'Global Client PHP Options' => array(
                     'Type' => 'text',
                     'Size' => '32',
-                    'Description' => 'E.g. no,fast-cgi,cgi,mod,suphp,php-fpm'
+                    'Description' => '<br />E.g. no,fast-cgi,cgi,mod,suphp,php-fpm'
             ),
         'Global Client Chroot Options' => array(
                     'Type' => 'dropdown',
@@ -73,11 +74,12 @@ function ispcfg3_ConfigOptions() {
                     'Type' => 'yesno',
                     'Description' => ''
             ),
-        'Website Readonly' => array(
-                    'Type' => 'yesno',
-                    'Description' => 'Enabled to prevent client from changing'
-                                    . ' website settings' 
-            ),
+        'ISPConfig Version' => array(
+                    'Type' => 'dropdown',
+					'Options' => '3.0,3.1',
+					'Default' => '3.1',
+                    'Description' => '<br />Select your Ispconfig Version'
+             ),
         'Website Quota' => array(
                     'Type' => 'text',
                     'Size' => '6',
@@ -91,8 +93,8 @@ function ispcfg3_ConfigOptions() {
         'Website Settings' => array(
                     'Type' => 'text',
                     'Size' => '20',
-                    'Description' => 'Syntax: CGI,SSI,Ruby,SuEXEC,ErrorDocuments'
-                                    . ',SSL E.g.: y,y,y,n,y,n'
+                    'Description' => '<br />Syntax: CGI,SSI,Ruby,SuEXEC,ErrorDocuments'
+                                    . ',SSL,Letsencrypt <br />E.g.: y,y,y,n,y,y,y'
             ),
         'Auto Subdomain' => array(
                     'Type' => 'dropdown',
@@ -114,9 +116,9 @@ function ispcfg3_ConfigOptions() {
             ),
         'DNS Settings' => array(
                     'Type' => 'text',
-                    'Size' => '20',
-                    'Description' => 'Syntax: NS1,NS2,Emailname,Templateid,Zone IP Address'
-                                    . 'eg: ns1.domain.tld,ns2.domain.tld,'
+                    'Size' => '60',
+                    'Description' => '<br />Syntax:ns1,ns2,Emailname,Templateid,Zone IP Address'
+                                    . '<br />eg: ns1.domain.tld,ns2.domain.tld,'
                                     . 'webmaster,1,123.123.123.123'
             ),
         'ISPConfig Language' => array(
@@ -135,10 +137,15 @@ function ispcfg3_ConfigOptions() {
                     'Description' => 'Tick to create the FTP Accounts '
                                     . 'automatically during setup'
             ),
-        'ISPConfig Version' => array(
-                    'Type' => 'dropdown',
-                    'Options' => '3.0,3.1',
-                    'Default' => '3.1'
+		'Site Pro api username' => array(
+                    'Type' => 'text',
+                    'Size' => '16',
+                    'Description' => ' <br />Site.pro website builder. Get one here <a href="http://site.pro/" title="https://site.pro"><strong>https://site.pro</strong></a> '
+            ),
+        'Site.Pro api Password' => array(
+                    'Type' => 'password',
+                    'Size' => '50',
+                    'Description' => ' <br />Site.pro api password. '
             )
         );
     return $configarray;
@@ -162,7 +169,9 @@ function ispcfg3_CreateAccount( $params ) {
     $chrootenable       = $params['configoption8'];
     $webcreation        = $params['configoption9'];
     $domaintool         = $params['configoption10'];
-    $webwriteprotect    = $params['configoption11'];
+	$ispconfigver 		= $params['configoption11'];
+	//$submodsettings        = explode( ',',$params['configoption11'] );
+    //$webwriteprotect    = $params['configoption11'];
     $webquota           = $params['configoption12'];
     $webtraffic         = $params['configoption13'];
     $websettings        = explode( ',',$params['configoption14'] );
@@ -174,7 +183,12 @@ function ispcfg3_CreateAccount( $params ) {
     $defaultlanguage    = $params['configoption20'];
     $addmaildomain      = $params['configoption21'];
     $addftpuser         = $params['configoption22'];
-    $ispconfigver       = $params['configoption23'];
+	
+	$siteprousername    = $params['configoption23'];
+	$sitepropass        = $params['configoption24'];
+	
+	//$statpackage        = 'webalizer';
+	
     
     $nameserver1        = $dnssettings[0];
     $nameserver2        = $dnssettings[1];
@@ -191,6 +205,7 @@ function ispcfg3_CreateAccount( $params ) {
     $websettings[6] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
     $websettings[7] == 'n'  ? $wildcardsubdom = '' : $wildcardsubdom = '1';
     $websettings[8] == 'n'  ? $enablessl = '' : $enablessl = 'y';
+	$websettings[9] == 'n'  ? $enablessletsencrypt = '' : $enablessletsencrypt = 'y';
     $webactive      == 'on' ? $webactive = 'y' : $webactive = 'n';
 
     logModuleCall('ispconfig','CreateClient',$params['clientsdetails'],$params,'','');
@@ -486,6 +501,7 @@ function ispcfg3_CreateAccount( $params ) {
                     'redirect_type' => '',
                     'redirect_path' => '',
                     'ssl' => $enablessl,
+					'ssl_letsencrypt' =>$enablessletsencrypt,
                     'ssl_state' => '',
                     'ssl_locality' => '',
                     'ssl_organisation' => '',
@@ -498,7 +514,7 @@ function ispcfg3_CreateAccount( $params ) {
                     'ssl_bundle' => '',
                     'ssl_action' => '',
                     'stats_password' => $password,
-                    'stats_type' => 'awstats',
+                    'stats_type' => 'webalizer',
                     'allow_override' => 'All',
                     'php_open_basedir' => '/',
                     'php_fpm_use_socket' => 'y',
@@ -517,11 +533,13 @@ function ispcfg3_CreateAccount( $params ) {
                     'added_date' => date("Y-m-d"),
                     'added_by' => $soapuser
                 );
+            
+                $ispconfigver = $client->ispconfig_version_get();
                 
-                if ($ispconfigver == "3.1") {
-                    $ispcparams['http_port'] = '80';
-                    $ispcparams['https_port'] = '443';
-                };
+				if (preg_match("/3.1/", $ispconfigver)) {
+					$ispcparams['http_port'] = '80';
+					$ispcparams['https_port'] = '443';
+					};
 
             if ( $webwriteprotect == 'on' ) {
                 
@@ -1013,7 +1031,7 @@ function ispcfg3_SuspendAccount( $params ) {
         $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $client_detail );
         
         logModuleCall('ispconfig','Suspend Client', $sys_userid.' '.$sys_groupid, $client_result,'','');
-        
+                
         if ($client->logout( $session_id )) {
         }
 
@@ -1294,6 +1312,7 @@ function ispcfg3_ChangePassword( $params ) {
 }
 
 function ispcfg3_LoginLink( $params ) {
+
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
 
@@ -1326,35 +1345,57 @@ function ispcfg3_LoginLink( $params ) {
 }
 
 function ispcfg3_ClientArea( $params ) {
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
+    global $server_url;
+    global $domain_url;
+    $server_url = ($params['configoption4'] == 'on') ? 'https://' : 'http://';
+    $server_url .= $params['configoption3'];
+    $domain_url = ($params['configoption4'] == 'on' ? 'https://' : 'http://').$params['domain'];
 
-    if ( $soapsvrssl == 'on' ) {
-        
-        $soapsvrurl = 'https://' . $soapsvrurl . '';
-        
-    } else {
-        
-        $soapsvrurl = 'http://' . $soapsvrurl . '';
-        
+    $requestedView = isset($_REQUEST['view']) ? $_REQUEST['view'] : '';
+    if ($requestedView && $requestedView != 'overview') {
+        $viewResponse = cwispy_handle_view($requestedView, $params);
+        $templateFile = 'templates/'.$requestedView.'.tpl';
+        if (isset($viewResponse['status']) && $viewResponse['status'] == 'success') {
+            if (file_exists(__DIR__.'/'.$templateFile)) {
+                return array(
+                    'tabOverviewReplacementTemplate' => $templateFile,
+                    'templateVariables' => array(
+                        'variables' => $viewResponse['response'],
+                        'params' => $params,
+                        'action_urls' => @$viewResponse['action_urls'],
+                        'request' => $_REQUEST,
+                    ),
+                );
+            }
+        }
+        else {
+            return array(
+                'tabOverviewReplacementTemplate' => 'error.tpl',
+                'templateVariables' => array(
+                    'usefulErrorHelper' => $viewResponse['response'],
+                ),
+            );
+        }
     }
+    else {
 
-    $code = '
-    <form id="frmIspconfigLogin" action="'.$soapsvrurl.'/index.php" method="GET" target="_blank">
-    <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
-    </form>
+        $code = '
+        <form id="frmIspconfigLogin" action="'.$server_url.'/index.php" method="GET" target="_blank">
+        <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
+        </form>
 
-    <script type="text/javascript">
-    $("#frmIspconfigLogin").submit(function(){
-        $.ajax({ 
-            type: "POST", 
-            url: "'.$soapsvrurl.'/content.php",
-            data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
-            xhrFields: {withCredentials: true} 
+        <script type="text/javascript">
+        $("#frmIspconfigLogin").submit(function(){
+            $.ajax({ 
+                type: "POST", 
+                url: "'.$server_url.'/content.php",
+                data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
+                xhrFields: {withCredentials: true} 
+            });
         });
-    });
-    </script>';
+        </script>';
 
-    return $code;
+        return $code;
+    }
 }
 ?>
