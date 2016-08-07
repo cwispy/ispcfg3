@@ -223,10 +223,15 @@ function ispcfg3_CreateAccount( $params ) {
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
-                                array( 'location' => $soap_url, 
-                                        'uri' => $soap_uri, 
-                                        'exceptions' => 1, 
-                                        'trace' => false 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
                                     )
                                 );
         
