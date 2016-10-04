@@ -531,6 +531,7 @@ function ispcfg3_CreateAccount( $params ) {
                     'pm_process_idle_timeout' => '10',
                     'pm_max_requests' => '0',
                     'custom_php_ini' => '',
+		    'nginx_directives' => '',
                     'backup_interval' => '',
                     'backup_copies' => 1,
                     'active' => $webactive,
