@@ -1341,8 +1341,8 @@ function ispcfg3_LoginLink( $params ) {
         $("#frmIspconfigLogin").submit(function(){
             $.ajax({ 
                 type: "POST", 
-                url: "'.$soapsvrurl.'/content.php",
-                data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
+                url: "'.$soapsvrurl.'/login/index.php",
+                data: "s_mod=login&s_pg=index&username='.$params['username'].'&password='.$params['password'].'", 
                 xhrFields: {withCredentials: true} 
             });
         });
@@ -1385,21 +1385,21 @@ function ispcfg3_ClientArea( $params ) {
     }
     else {
 
-        $code = '
-        <form id="frmIspconfigLogin" action="'.$server_url.'/index.php" method="GET" target="_blank">
-        <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
-        </form>
+    $code = '
+    <form id="frmIspconfigLogin" action="'.$soapsvrurl.'/index.php" method="GET" target="_blank">
+    <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
+    </form>
 
-        <script type="text/javascript">
-        $("#frmIspconfigLogin").submit(function(){
-            $.ajax({ 
-                type: "POST", 
-                url: "'.$server_url.'/content.php",
-                data: "s_mod=login&s_pg=index&username='.$params['username'].'&passwort='.$params['password'].'", 
-                xhrFields: {withCredentials: true} 
-            });
+    <script type="text/javascript">
+    $("#frmIspconfigLogin").submit(function(){
+        $.ajax({ 
+            type: "POST", 
+            url: "'.$soapsvrurl.'/login/index.php",
+            data: "s_mod=login&s_pg=index&username='.$params['username'].'&password='.$params['password'].'", 
+            xhrFields: {withCredentials: true} 
         });
-        </script>';
+    });
+    </script>';
 
         return $code;
     }
