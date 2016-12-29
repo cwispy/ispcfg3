@@ -1353,8 +1353,8 @@ function ispcfg3_LoginLink( $params ) {
 function ispcfg3_ClientArea( $params ) {
     global $server_url;
     global $domain_url;
-    $server_url = ($params['configoption4'] == 'on') ? 'https://' : 'http://';
-    $server_url .= $params['configoption3'];
+    $soapsvrurl = ($params['configoption4'] == 'on') ? 'https://' : 'http://';
+    $soapsvrurl .= $params['configoption3'];
     $domain_url = ($params['configoption4'] == 'on' ? 'https://' : 'http://').$params['domain'];
 
     $requestedView = isset($_REQUEST['view']) ? $_REQUEST['view'] : '';
