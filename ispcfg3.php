@@ -1351,7 +1351,7 @@ function ispcfg3_LoginLink( $params ) {
 }
 
 function ispcfg3_ClientArea( $params ) {
-    global $server_url;
+    global $soapsvrurl;
     global $domain_url;
     $soapsvrurl = ($params['configoption4'] == 'on') ? 'https://' : 'http://';
     $soapsvrurl .= $params['configoption3'];
