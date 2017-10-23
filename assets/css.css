@@ -1,0 +1,61 @@
+.icon-ftp{
+    background-image: url("img/ftp.png");
+}
+.icon-email{
+    background-image: url("img/email.png");
+}
+.icon-email-forward{
+    background-image: url("img/emailf.png");
+}
+.icon-database{
+    background-image: url("img/database.png");
+}
+.icon-subdomain{
+    background-image: url("img/subdomain.png");
+}
+.icon-filemanager{
+    background-image: url("img/filemanager.png");
+}
+.icon-dns{
+    background-image: url("img/dns.png");
+}
+.icon-sitebuilder{
+    background-image: url("img/sitebuilder.png");
+}
+.icon-cron{
+    background-image: url("img/cron.png");
+}
+.icon-header{
+    background-repeat: no-repeat;
+	width:64px;
+	height:64px;
+	display:block;
+}
+.container3 {
+				width: 80%;
+				margin: 10px auto 0px auto;
+				font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+				color: #333;
+				font-size: 14px;
+				line-height: 16px;
+			}
+		/*	.error-alert {
+				padding: 15px;
+				background-color: #F2DEDE;
+				border: 1px solid #EBCCD1;
+				border-radius: 4px;
+				color: #A94442;
+				margin: 10px 0;
+			}*/
+			.tbl-websites {
+				border: none;
+				border-collapse: collapse;
+				width: 100%;
+			}
+			.tbl-websites th,
+			.tbl-websites td {
+				border: 1px solid #DDD;
+				border-collapse: collapse;
+				padding: 8px;
+				text-align: left;
+			}
