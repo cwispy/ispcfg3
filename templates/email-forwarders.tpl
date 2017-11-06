@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,9 +16,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet"><span class="icon-header icon-email-forward"></span><h3>Manage Email Forwarders</h3><p>Forwarders allow you to send a copy of all mail from one email address to another. For example, if you have two different email accounts, info@mydomain.com and david@mydomain.com, you could forward info@mydomain.com to david@mydomain.com so that you do not need to check both accounts.</p>
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email-forward"></span><h3>Manage Email Forwarders</h3><p>Forwarders allow you to send a copy of all mail from one email address to another. For example, if you have two different email accounts, info@mydomain.com and david@mydomain.com, you could forward info@mydomain.com to david@mydomain.com so that you do not need to check both accounts.</p>
 <hr>
-<div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Forwarder</button></div>
+<div class="text-right">
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}        
+    >Add Forwarder</button>
+</div>
+
 {if is_array($variables.forwarders) && count($variables.forwarders) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>Source</th><th>Destination</th><th>&nbsp;</th></tr></thead>
@@ -28,8 +35,12 @@
                 <td>{$forwarder.source}</td>
                 <td>{$forwarder.destination}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="forwarder_id={$forwarder.forwarding_id}&source={$forwarder.source}&destination={$forwarder.destination}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="forwarder_id={$forwarder.forwarding_id}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}
@@ -37,6 +48,7 @@
     </table>
 {else}
     <p>No email forwarders found</p>
+    <!-- {$variables|print_r} -->
 {/if}
 
 <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-hidden="true">

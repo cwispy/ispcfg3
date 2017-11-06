@@ -103,9 +103,10 @@ if (isset($_GET['view_action'])) {
 }
 else {
     $domains = cwispy_soap_request($params, 'sites_web_domain_get');
+    $client  = cwispy_soap_request($params, 'client_get');
     $subdomains = cwispy_soap_request($params, 'sites_web_subdomain_get');
 
-    $return = array_merge_recursive($domains, $subdomains);
+    $return = array_merge_recursive($domains, $subdomains, $client);
 
     if ($domains) {
         foreach($domains['response']['domains'] as $domain) {

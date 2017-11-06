@@ -163,7 +163,8 @@ else {
     $dbs      = cwispy_soap_request($params, 'sites_database_get');
     $db_users = cwispy_soap_request($params, 'sites_database_user_get');
 	$clientP  = cwispy_soap_request($params, 'client_get_by_username');
-    $return   = array_merge_recursive($dbs, $db_users, $clientP);
+    $client  = cwispy_soap_request($params, 'client_get');
+    $return   = array_merge_recursive($dbs, $db_users, $clientP, $client);
 
     if (isset($db_users['response']['db_users']) && $db_users['response']['db_users']) {
         foreach($db_users['response']['db_users'] as $db_user) {

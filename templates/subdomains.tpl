@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,11 +16,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet"><span class="icon-header icon-subdomain"></span><h3>Manage Subdomains</h3>
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-subdomain"></span><h3>Manage Subdomains</h3>
 <p>Subdomains are extensions of your domain name that you can forward to URLs or point to IP addresses and directories within your hosting account. It can be a second website, with its own unique content. The document root you select when creating it, is the name folder to which to upload your files to. <br /><br />e.g If you create a subdomain shop.mydomain.com with the document root as 'shop', you will see the shop folder in the file manager. This is the folder to put the content for your subdomain.<p>
 <hr>
 <div class="text-right">
-    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Subdomain</button>
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}
+    >Add Subdomain</button>
 </div>
 {assign "server_id" "{$variables.domains[0].server_id}"}
 {assign "dir_prefix" "{$variables.domains[0].document_root}/web"}
@@ -40,8 +44,12 @@
                 <td>{$document_root}{$subdomain.redirect_path}</td>
                 <td>{$subdomain.redirect_type}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="subdomain_id={$subdomain.domain_id}&subdomain={$subdomain_name}&domain_id={$subdomain.parent_domain_id}&domain={$parent_domain}&subdomain_suffix={$subdomain_suffix}&directory={$subdomain.redirect_path}&directory_prefix={$document_root}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="subdomain_id={$subdomain.domain_id}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}

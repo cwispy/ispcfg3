@@ -1,7 +1,7 @@
 <?php
 /*
  *  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -80,10 +80,11 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
+    $client  = cwispy_soap_request($params, 'client_get');
     $domains = cwispy_soap_request($params, 'mail_domain_get');
     $forwarders = cwispy_soap_request($params, 'mail_forward_get');
 
-    $return = array_merge_recursive($domains, $forwarders);
+    $return = array_merge_recursive($domains, $forwarders, $client);
 
     if (is_array($return['status'])) {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';

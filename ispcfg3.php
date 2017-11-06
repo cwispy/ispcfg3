@@ -2,7 +2,7 @@
 /*
  * 
  *  ISPConfig v3.x module for WHMCS v5.x or Higher
- *  Copyright (C) 2014, 2015  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -383,6 +383,7 @@ function ispcfg3_CreateAccount( $params ) {
                     $webservercnt = count( array_keys($result) );
                     $defaultwebserver = $server['web_server'][$b]['server_id'];
                 
+                
              }
              $a++;
              $b++;
@@ -466,9 +467,10 @@ function ispcfg3_CreateAccount( $params ) {
         if ( $domaintool == 'on' ) {
             
             $ispcparams = array( 'domain' => $domain );
+            logModuleCall('ispconfig','CreatePreDomainAdd',$domain_id,$ispcparams,'','');
             $domain_id = $client->domains_domain_add( $session_id, $client_id, $ispcparams );
             
-            logModuleCall('ispconfig','CreateDomainAdd',$domain_id,$ispcparams,'','');
+            logModuleCall('ispconfig','CreatePostDomainAdd',$domain_id,$ispcparams,'','');
             
         }
         
@@ -476,12 +478,14 @@ function ispcfg3_CreateAccount( $params ) {
         if ( $dns == 'on' ) {
 
             $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
-            logModuleCall('ispconfig','CreateDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
+            logModuleCall('ispconfig','CreatePostDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
             
         }
 
 
         if ( $webcreation == 'on' ) {
+            
+            logModuleCall('ispconfig','PreCreateWebDomain',$website_id,$defaultwebserver,'','');
             
             $ispcparams = array(
                     'server_id' => $defaultwebserver, 
@@ -559,7 +563,7 @@ function ispcfg3_CreateAccount( $params ) {
 
             $website_id = $client->sites_web_domain_add( $session_id, $client_id, $ispcparams, $readonly );
 
-            logModuleCall('ispconfig','CreateWebDomain',$website_id,$ispcparams,'','');
+            logModuleCall('ispconfig','PostCreateWebDomain',$website_id,$ispcparams,'','');
             
             
             if ( $addftpuser == 'on' ) {
@@ -1375,11 +1379,20 @@ function ispcfg3_LoginLink( $params ) {
     </script>';
 }
 
-function ispcfg3_ClientArea( $params ) {
-    global $soapsvrurl;
-    global $domain_url;
-    $soapsvrurl = ($params['configoption4'] == 'on') ? 'https://' : 'http://';
-    $soapsvrurl .= $params['configoption3'];
+function ispcfg3a_ClientArea( $params ) {
+    
+    $soapsvrurl         = $params['configoption3'];
+    $soapsvrssl         = $params['configoption4'];
+
+    if ( $soapsvrssl == 'on' ) {
+        
+        $soapsvrurl = 'https://' . $soapsvrurl . '';
+        
+    } else {
+        
+        $soapsvrurl = 'http://' . $soapsvrurl . '';
+        
+    }
     $domain_url = ($params['configoption4'] == 'on' ? 'https://' : 'http://').$params['domain'];
 
     $requestedView = isset($_REQUEST['view']) ? $_REQUEST['view'] : '';
@@ -1411,7 +1424,7 @@ function ispcfg3_ClientArea( $params ) {
     else {
 
     $code = '
-    <form id="frmIspconfigLogin" action="'.$soapsvrurl.'/index.php" method="GET" target="_blank">
+    <form id="frmIspconfigLogin" action="'.$soapsvrurl.'/login/index.php" method="GET" target="_blank">
     <button type="submit" class="btn btn-xs btn-success">CONTROLPANEL LOGIN</button>
     </form>
 

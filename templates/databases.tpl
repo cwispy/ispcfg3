@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet"><span class="icon-header icon-database"></span><h3>Manage Databases</h3><p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-database"></span><h3>Manage Databases</h3><p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
 <hr>
 <h5>Current Databases</h5>
-<div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDB">Add Database</button></div>
+<div class="text-right">
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDB"
+    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}
+    >Add Database</button>
+</div>
 {if is_array($variables.dbs) && count($variables.dbs) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>Database</th><th>User</th><th>&nbsp;</th></tr></thead>
@@ -29,12 +35,16 @@
                 <td>{$db.database_name}</td>
                 <td>{$variables.db_users_o[$db.database_user_id].database_user}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEditDB" data-target-values="database_id={$db.database_id}&database_name={$db.database_name}&database_user_id={$db.database_user_id}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDeleteDB" data-target-values="database_id={$db.database_id}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}
-    <!--    {$variables|print_r} -->
+   <!-- {$variables|print_r} -->
         </tbody>
     </table>
 {else}
@@ -42,7 +52,13 @@
 {/if}
 
 <h5>Current Database Users</h5><p>A Mysql user requires privileges to access a database in order to read from or write to that database. Assign or create a user for each database. You can login to PhpMyadmin using the database user to administer your database.</p>
-<div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDBUser">Add Database User</button></div>
+<div class="text-right">
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDBUser"
+    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}
+    >Add Database User</button>
+</div>
 {if is_array($variables.db_users) && count($variables.db_users) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>User</th><th>&nbsp;</th></tr></thead>
@@ -51,8 +67,12 @@
             <tr>
                 <td>{$db_user.database_user}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEditDBUser" data-target-values="database_user_id={$db_user.database_user_id}&username={$db_user.database_user}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDeleteDBUser" data-target-values="database_user_id={$db_user.database_user_id}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}

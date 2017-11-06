@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,12 +16,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet">
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-ftp"></span>
 <h3>Manage FTP Accounts ({$params.domain})</h3>
 <p>FTP accounts allow you to access your website's files through a protocol called FTP. You will need a third-party FTP program  like <a href="https://filezilla-project.org/download.php" target="_blank">Filezilla</a> to access your files. You can connect to the server via FTP by using  previously created account details.</p>
 <hr>
-<div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add FTP Account</button></div>
+<div class="text-right">
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}
+    >Add FTP Account</button>
+</div>
 {if is_array($variables.accounts) && count($variables.accounts) > 0}
     {assign "server_id" "{$variables.accounts[0].server_id}"}
     {assign "dir_prefix" "{$variables.accounts[0].dir}"}
@@ -37,8 +43,12 @@
                 <td>{$account.username}</td>
                 <td>{$account.dir}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="ftp_user_id={$account.ftp_user_id}&quota_size={$account.quota_size}&username={$account.username|replace:$username_prefix:''}&directory={$account.dir|replace:$dir_prefix:''|ltrim:'/'}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="ftp_user_id={$account.ftp_user_id}&username={$account.username}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}

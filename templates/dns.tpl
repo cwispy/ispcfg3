@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,14 +16,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet">
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-dns"></span>
 <div data-view="dns">
     <h3>Manage DNS Records</h3>
 	<p>DNS holds records such as the address of the server that handles e-mail, the web server, mail server among others. The default DNS settings are already configured for you. </p>
     <hr>
     <div class="text-right">
-        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add DNS Record</button>
+        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >Add DNS Record</button>
     </div>
     {assign "server_id" "{$variables.zones[0].server_id}"}
     {if is_array($variables.records) && count($variables.records) > 0}
@@ -41,11 +45,16 @@
                     <td style="-ms-word-break: break-all;word-break: break-all;word-break: break-word; " >{$record.data}</td>
                     <td>{$record.ttl}</td>
                     <td class="text-right">
+                    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                        <i class="fa fa-ban"></i>
+                    {else}
                         <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="record_id={$record.id}&zone={$record.zone}&type={$record.type|lower}&host={$host_short}&destination={$record.data}&ttl={$record.ttl}"><i class="fa fa-pencil"></i></a>
                         <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="record_id={$record.id}"><i class="fa fa-times"></i></a>
+                    {/If}
                     </td>
                 </tr>
             {/foreach}
+            {$variables.zones|print_r}
             </tbody>
         </table>
     {else}

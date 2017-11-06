@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet"><span class="icon-header icon-cron"></span><h3>Manage Cron Jobs</h3><p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p><p>If you are unsure of how to create one contact support to set it up for you.</p>
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-cron"></span><h3>Manage Cron Jobs</h3><p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p><p>If you are unsure of how to create one contact support to set it up for you.</p>
 <hr>
 <div class="text-right">
-    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Cron Job</button>
+    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+    {/If}
+    >Add Cron Job</button>
 </div>
 {assign "server_id" "{$variables.servers[0].server_id}"}
 {if is_array($variables.crons) && count($variables.crons) > 0}
@@ -35,8 +39,12 @@
                 <td>{$cron.run_month}</td>
                 <td>{$cron.run_wday}</td>
                 <td class="text-right">
+                {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+                    <i class="fa fa-ban"></i>
+                {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="cron_id={$cron.id}&minute_val={$cron.run_min}&hour_val={$cron.run_hour}&day_val={$cron.run_mday}&month_val={$cron.run_month}&weekday_val={$cron.run_wday}&command={$cron.command}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="cron_id={$cron.id}"><i class="fa fa-times"></i></a>
+                {/If}
                 </td>
             </tr>
         {/foreach}

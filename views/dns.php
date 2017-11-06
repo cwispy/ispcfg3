@@ -103,9 +103,10 @@ if (isset($_GET['view_action'])) {
 }
 else {
     $records = cwispy_soap_request($params, 'dns_a_get');
+    $client  = cwispy_soap_request($params, 'client_get');
     $zones = cwispy_soap_request($params, 'dns_zone_get');
 
-    $return = array_merge_recursive($records, $zones);
+    $return = array_merge_recursive($records, $zones, $client);
 
     if ($zones) {
         foreach($zones['response']['zones'] as $zone) {

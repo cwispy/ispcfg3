@@ -1,6 +1,6 @@
 {*
  /*  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/css.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
+<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
 <h3>Usage ({$params.domain})</h3>
 <p>In this area you can see the data and bandwidth usage of your hosting. </p>
 <hr><div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Email</button></div>

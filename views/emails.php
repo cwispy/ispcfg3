@@ -1,7 +1,7 @@
 <?php
 /*
  *  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ if (isset($_GET['view_action'])) {
             'email' => $_REQUEST['email'].'@'.$_REQUEST['domain'],
             'login' => $_REQUEST['email'].'@'.$_REQUEST['domain'],
             'password' => $_REQUEST['password'],
-            'quota' => intval($_REQUEST['quota']),
+            'quota' => intval($_REQUEST['quota']) * 1048576,
             'server_id' => intval($_REQUEST['svrid']),
             'uid' => 5000,
             'gid' => 5000,
@@ -61,7 +61,7 @@ if (isset($_GET['view_action'])) {
         $domain_options = array(
             'email' => $_REQUEST['email'],
             'login' => $_REQUEST['email'],
-            'quota' => intval($_REQUEST['quota']),
+            'quota' => intval($_REQUEST['quota']) * 1048576,
             'id' => $_REQUEST['mail_id']
         );
         if ($_REQUEST['password']) $domain_options['password'] = $_REQUEST['password'];
@@ -92,10 +92,11 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
+    $client  = cwispy_soap_request($params, 'client_get');
     $domains = cwispy_soap_request($params, 'mail_domain_get');
     $mails = cwispy_soap_request($params, 'mail_user_get');
 	$limits = cwispy_soap_request($params, 'client_get_quota');
-    $return = array_merge_recursive($domains, $mails, $limits);
+    $return = array_merge_recursive($domains, $mails, $limits, $client);
 
     if (is_array($return['status'])) {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';

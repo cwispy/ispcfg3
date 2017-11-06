@@ -1,7 +1,7 @@
 <?php
 /*
  *  ISPConfig v3.1+ module for WHMCS v6.x or Higher
- *  Copyright (C) 2014 - 2016  Shane Chrisp
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
 		//$submodsettings[0]
 
         $accountMenu = $primarySidebar->addChild(
-            'iHost ISPConfig Account Nav',
+            'ispcfg3 ISPConfig Account Nav',
             array(
-                'label' => 'Your Account',
+                'label' => 'Product Tools',
                 'order' => 10,
-                'icon' => 'fa-cogs',
+                'icon' => 'fa-cog',
             )
         );
 
         $accountMenu->addChild('Overview')
             ->setUri(cwispy_create_url(array('view' => 'overview')))
-            ->setLabel('Overview')
+            ->setLabel('Product Details')
             ->setOrder(1)
-			->setIcon('fa-street-view')
+			->setIcon('fa-info-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'overview')));
 
 	
@@ -55,7 +55,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             ->setUri(cwispy_create_url(array('view' => 'file-manager')))
             ->setLabel('File Manager')
             ->setOrder(3)
-			->setIcon('fa-file-o')
+			->setIcon('fa-file')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'file-manager')));
 	
 		
@@ -63,7 +63,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             ->setUri(cwispy_create_url(array('view' => 'emails')))
             ->setLabel('Emails')
             ->setOrder(4)
-			->setIcon('fa-envelope-o')
+			->setIcon('fa-envelope')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'emails')));
 		
         
@@ -71,7 +71,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             ->setUri(cwispy_create_url(array('view' => 'email-forwarders')))
             ->setLabel('Email Forwarders')
             ->setOrder(5)
-			->setIcon('fa-share')
+			->setIcon('fa-forward')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'email-forwarders')));
 		
         
@@ -79,7 +79,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             ->setUri(cwispy_create_url(array('view' => 'ftp-accounts')))
             ->setLabel('FTP Accounts')
             ->setOrder(6)
-			->setIcon('fa-exchange')
+			->setIcon('fa-files-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'ftp-accounts')));
 		
         
@@ -90,11 +90,17 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
 			->setIcon('fa-database')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'databases')));
 			
+        $accountMenu->addChild('Websites')
+            ->setUri(cwispy_create_url(array('view' => 'websites')))
+            ->setLabel('Websites')
+            ->setOrder(8)
+			->setIcon('fa-desktop')
+            ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'websites')));
         
         $accountMenu->addChild('Alias Domains')
             ->setUri(cwispy_create_url(array('view' => 'aliasdomains')))
             ->setLabel('Alias Domains')
-            ->setOrder(8)
+            ->setOrder(9)
 			->setIcon('fa-plus-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'aliasdomains')));
 	
@@ -102,7 +108,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
         $accountMenu->addChild('Sub Domains')
             ->setUri(cwispy_create_url(array('view' => 'subdomains')))
             ->setLabel('Sub Domains')
-            ->setOrder(9)
+            ->setOrder(10)
 			->setIcon('fa-sitemap')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'subdomains')));
 		
@@ -110,23 +116,23 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
         $accountMenu->addChild('Cron Jobs')
             ->setUri(cwispy_create_url(array('view' => 'cron')))
             ->setLabel('Cron Jobs')
-            ->setOrder(10)
-			->setIcon('fa-calendar')
+            ->setOrder(11)
+			->setIcon('fa-clock-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'cron')));
 		
         
         $accountMenu->addChild('DNS Records')
             ->setUri(cwispy_create_url(array('view' => 'dns')))
             ->setLabel('DNS Records')
-            ->setOrder(11)
-			->setIcon('fa-compress')
+            ->setOrder(12)
+			->setIcon('fa-external-link')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'dns')));
 			
         
 		$accountMenu->addChild('Usage Statistics')
             ->setUri(cwispy_create_url(array('view' => 'usage')))
             ->setLabel('Usage Statistics')
-            ->setOrder(12)
+            ->setOrder(13)
 			->setIcon('fa-area-chart')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'usage')));
 	
@@ -135,7 +141,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             'iHost ISPConfig Login Nav',
             array(
                 'label' => 'Login To',
-                'order' => 11,
+                'order' => 14,
                 'icon' => 'fa-lock',
             )
         );
@@ -177,8 +183,8 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
 add_hook('ClientAreaFooterOutput', 1, function($vars) {
     if (function_exists('cwispy_handle_view')) {
         $script = '
-        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3/assets/js/ajax.js"></script>
-        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3/assets/js/script.js"></script>
+        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3a/assets/js/ajax.js"></script>
+        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3a/assets/js/script.js"></script>
         ';
         return $script;
     }

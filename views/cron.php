@@ -115,7 +115,13 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $return = cwispy_soap_request($params, 'sites_cron_get');
+    $client  = cwispy_soap_request($params, 'client_get');
+    $crons = cwispy_soap_request($params, 'sites_cron_get');
+    $return = array_merge_recursive($crons, $client);
+    
+    if (is_array($return['status'])) {
+        $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
+    }
 
     $return['action_urls']['add'] = cwispy_create_url(array('view' => 'cron', 'view_action' => 'add'));
     $return['action_urls']['edit'] = cwispy_create_url(array('view' => 'cron', 'view_action' => 'edit'));
