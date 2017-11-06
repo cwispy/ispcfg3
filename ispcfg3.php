@@ -1379,7 +1379,7 @@ function ispcfg3_LoginLink( $params ) {
     </script>';
 }
 
-function ispcfg3a_ClientArea( $params ) {
+function ispcfg3_ClientArea( $params ) {
     
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
