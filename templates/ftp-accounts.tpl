@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet">
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-ftp"></span>
 <h3>Manage FTP Accounts ({$params.domain})</h3>
 <p>FTP accounts allow you to access your website's files through a protocol called FTP. You will need a third-party FTP program  like <a href="https://filezilla-project.org/download.php" target="_blank">Filezilla</a> to access your files. You can connect to the server via FTP by using  previously created account details.</p>

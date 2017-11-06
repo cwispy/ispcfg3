@@ -183,8 +183,8 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
 add_hook('ClientAreaFooterOutput', 1, function($vars) {
     if (function_exists('cwispy_handle_view')) {
         $script = '
-        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3a/assets/js/ajax.js"></script>
-        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3a/assets/js/script.js"></script>
+        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3/assets/js/ajax.js"></script>
+        <script type="text/javascript" src="'.$vars['WEB_ROOT'].'/modules/servers/ispcfg3/assets/js/script.js"></script>
         ';
         return $script;
     }

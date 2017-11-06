@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-database"></span><h3>Manage Databases</h3><p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-database"></span><h3>Manage Databases</h3><p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
 <hr>
 <h5>Current Databases</h5>
 <div class="text-right">

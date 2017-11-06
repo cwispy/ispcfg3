@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-subdomain"></span><h3>Manage Aliasdomains</h3>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-subdomain"></span><h3>Manage Aliasdomains</h3>
 <p>Aliasdomains are other domain names that you can point to directories within an existing website. 
  The document root you select when creating it, is the name folder to which to upload your files to. 
 <br /><br />e.g If you create a aliasdomain www.someotherdomain.com with the document root as 'shop', you will see the shop folder in the file manager.

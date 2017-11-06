@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet">
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 
 <span class="icon-header icon-subdomain"></span><h3>Manage Websites</h3>
 <p>This page lets you manage your Websites and their settings.<p>
@@ -306,7 +306,7 @@
                     <input type="hidden" name="server_id" id="server_id">
                     
                     <div class="form-group">
-                        <label for="email" class="col-sm-4 control-label">Domain</label>
+                        <label for="domain" class="col-sm-4 control-label">Domain</label>
                         <div class="col-xs-4">
                             <div class="input-group-sm">
                                 <input type="text" class="form-control" name="domain" id="domain">

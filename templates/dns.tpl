@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet">
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-dns"></span>
 <div data-view="dns">
     <h3>Manage DNS Records</h3>

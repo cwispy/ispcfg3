@@ -46,7 +46,7 @@ $(document).ready(function(){
     $('.elfinderInit').each(function(){
         var ftpData = $(this).attr('data-custom-ftp-data');
         $(this).elfinder({
-            url : 'modules/servers/ispcfg3a/elfinder.connector.php',
+            url : 'modules/servers/ispcfg3/elfinder.connector.php',
             customData: {ftp: ftpData}
         });
     });

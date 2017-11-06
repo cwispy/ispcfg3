@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
 <h3>Manage Email Accounts ({$params.domain})</h3>
 <p>In this area you can manage the email accounts associated with your domain. You can create edit and set the email quota for every email account. 
     You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>

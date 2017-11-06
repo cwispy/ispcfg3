@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3a/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-cron"></span><h3>Manage Cron Jobs</h3><p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p><p>If you are unsure of how to create one contact support to set it up for you.</p>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-cron"></span><h3>Manage Cron Jobs</h3><p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p><p>If you are unsure of how to create one contact support to set it up for you.</p>
 <hr>
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
