@@ -32,6 +32,8 @@ if (isset($_GET['view_action'])) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match'));
         }
         
+        
+        
         $domain_options = array(
             'email' => $_REQUEST['email'].'@'.$_REQUEST['domain'],
             'login' => $_REQUEST['email'].'@'.$_REQUEST['domain'],
@@ -58,6 +60,14 @@ if (isset($_GET['view_action'])) {
         if (!isset($_REQUEST['password2']) || $_REQUEST['password2'] != $_REQUEST['password']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match'));
         }
+        
+        if ( ($_REQUEST['quota'] > $_REQUEST['old_quota'] ) && ($_REQUEST['totalquota'] != "-1")) {
+            $availablequota = ( ( $_REQUEST['totalquota'] - $_REQUEST['emailtotal'] ) + $_REQUEST['old_quota'] );
+            if ( $_REQUEST['quota'] > $availablequota ) {
+                cwispy_return_ajax_response(array("status" => "error", "message" => "Email Quota Error. Maximum available $availablequota MB"));
+            }
+        }
+        
         $domain_options = array(
             'email' => $_REQUEST['email'],
             'login' => $_REQUEST['email'],

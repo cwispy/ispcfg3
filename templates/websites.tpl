@@ -23,7 +23,9 @@
 <hr>
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
-    {If $variables.client.locked == "y" || $variables.client.canceled == "y" || $variables.client.limit_web_domain == count($variables.domains) }
+    {If $variables.client.locked == "y" || 
+            $variables.client.canceled == "y" || 
+            $variables.client.limit_web_domain == count($variables.domains) }
         disabled="disabled"
     {/If}
     >Add Websites</button>
@@ -33,7 +35,6 @@
 {assign "web_php_options" ","|explode:$variables.client.web_php_options}
 {assign "server_id" "{$variables.domains.0.server_id}"}
 {assign "domain_id" "{$variables.domains.0.domain_id}"}
-{assign "webtotal" "0"}
 
 {if is_array($variables.domains) && count($variables.domains) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">

@@ -16,15 +16,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email"></span>
 <h3>Manage Email Accounts ({$params.domain})</h3>
-<p>In this area you can manage the email accounts associated with your domain. You can create edit and set the email quota for every email account. 
+<p>In this area you can manage the email accounts associated with your domain. You can create, delete and edit all settings associated with your email accounts. 
     You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>
 
 <hr>
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd" 
-    {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+    {If $variables.client.locked == "y" || 
+        $variables.client.canceled == "y" ||
+        ( {$variables.mailboxes|@count} >= $variables.client.limit_mailbox &&
+        $variables.client.limit_mailbox != -1 )}
         disabled="disabled"
     {/If}
     >Add Email</button>
@@ -32,23 +35,23 @@
 
 {if is_array($variables.mailboxes) && count($variables.mailboxes) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Email</th><th class="text-right">Used Space</th><th class="text-right">Quota</th><th></th></tr></thead>
+        <thead><tr><th>Email</th><th class="text-right">Used Space</th><th class="text-right">Quota</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.quota as $mailbox}
             <tr>
                  <td>{$mailbox.email}</td>
                 <td class="text-right">
-                 {{$mailbox.used / 1048576}|number_format:2} MB
+                 {{$mailbox.used / 1048576}|number_format:2:".":""} MB
 				</td>
 				<td class="text-right">
-				{{$mailbox.quota / 1048576}|number_format:2} MB
+				{{$mailbox.quota / 1048576}|number_format:2:".":""} MB
 				</td>
                 <td class="text-right">
                     {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
                             <i class="fa fa-ban"></i>
                         {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" 
-                       data-target-values="quota={$mailbox.quota / 1048576}&activeEmail={$mailbox.email}&mail_id={$mailbox.mailuser_id}&email={$mailbox.email}">
+                       data-target-values="quota={$mailbox.quota / 1048576}&old_quota={$mailbox.quota / 1048576}&totalquota={$variables.client.limit_mailquota}&activeEmail={$mailbox.email}&mail_id={$mailbox.mailuser_id}&email={$mailbox.email}">
                         <i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" 
                        data-target-values="activeEmail={$mailbox.email}&mail_id={$mailbox.mailuser_id}&email={$mailbox.email}">
@@ -56,7 +59,13 @@
                         {/If}
                 </td>
             </tr>
+            {assign "emailtotal" {$emailtotal} + {$mailbox.quota / 1048576} }
         {/foreach}
+            <tr>
+                <td class="text-left" colspan="2">Email Accounts (Used / Assigned) {$variables.mailboxes|@count} / {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If}</td>
+                <td class="text-left" colspan="2">Quota (Allocated / Assigned) {$emailtotal} / {If $variables.client.limit_mailquota == -1}Unlimited{else}{$variables.client.limit_mailquota}{/If}</td>
+                <td>&nbsp;</td>
+            </tr>
         </tbody>
     </table>
 
@@ -84,6 +93,9 @@
                         <div class="col-sm-6">
                             <div class="input-group">
                                 <input type="hidden" class="form-control" name="svrid" value="{$variables.domains.0.server_id}" id="svrid">
+                                <input type="hidden" class="form-control" name="totalquota" id="totalquota">
+                                <input type="hidden" class="form-control" name="old_quota" id="old_quota">
+                                <input type="hidden" class="form-control" name="emailtotal" id="emailtotal" value="{$emailtotal}">
                                 <input type="text" class="form-control" name="email" id="email" >
                                 <span class="input-group-addon">@</span>
                                 <select class="form-control" name="domain" readonly="readonly">
@@ -202,10 +214,18 @@
                         <label for="quota" class="col-sm-4 control-label">Quota</label>
                         <div class="col-sm-4">
                             <div class="input-group">
-                                <input type="number" class="form-control" name="quota" value="0" id="quota">
+                                <input type="number" class="form-control" name="quota" 
+                                        {If $variables.client.limit_mailquota == -1} 
+                                            value="0"
+                                        {else} 
+                                            min="1" max="{$variables.client.limit_mailquota - $emailtotal}" 
+                                        {/If}
+                                        id="quota">
                                 <span class="input-group-addon">MB</span>
                             </div>
-                            <p class="helper-block">enter 0 for unlimited</p>
+                            {If $variables.client.limit_mailquota == -1} 
+                                <p class="helper-block">enter 0 for unlimited</p>
+                            {/If}
                         </div>
                     </div>
                 </form>
@@ -232,6 +252,9 @@
                     <div id="ajax-messages"></div>
                     <input name="mail_id" type="hidden" id="mail_id">
                     <input name="email" type="hidden" id="email" >
+                    <input type="hidden" class="form-control" name="totalquota" id="totalquota">
+                    <input type="hidden" class="form-control" name="old_quota" id="old_quota">
+                    <input type="hidden" class="form-control" name="emailtotal" id="emailtotal" value="{$emailtotal}">
 
                     <div id="newPassword33" class="form-group has-feedback">
                         <label for="inputNewPassword33" class="col-sm-5 control-label">{$LANG.newpassword}</label>
@@ -340,10 +363,18 @@
                         <label for="quota" class="col-sm-4 control-label">Quota</label>
                         <div class="col-sm-4">
                             <div class="input-group">
-                                <input type="number" class="form-control" name="quota" value="0" id="quota">
+                                <input type="number" class="form-control" name="quota" 
+                                        {If $variables.client.limit_mailquota == -1} 
+                                            value="0"
+                                        {else} 
+                                            min="1" max="{$variables.client.limit_mailquota}" 
+                                        {/If}
+                                        id="quota">
                                 <span class="input-group-addon">MB</span>
                             </div>
-                            <p class="helper-block">enter 0 for unlimited</p>
+                            {If $variables.client.limit_mailquota == -1} 
+                                <p class="helper-block">enter 0 for unlimited</p>
+                            {/If}
                         </div>
                     </div>
                 </form>
