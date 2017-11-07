@@ -3,14 +3,14 @@ ispcfg3
 Requires ISPConfig 3.1+
 WHMCS 6+
 
-************************ WARNING ************************
-07/Nov/2017
+WARNING 07/Nov/2017
+
 This module now requires that you have ISPConfig 3.1 or higher
 It will no longer work with older versions of ISPConfig
 
 This module is currently undergoing changes and is not 
 recommended to be run in production in its current status.
-************************ WARNING ************************
+
 
 
 ISPConfig module for WHMCS
