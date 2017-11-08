@@ -16,7 +16,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-database"></span><h3>Manage Databases</h3><p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
+<span class="icon-header icon-database"></span>
+<h3>Manage Databases</h3>
+<p>MySQL databases are required by many web applications . To use a database, you'll need to create it. </p>
 <hr>
 <h5>Current Databases</h5>
 <div class="text-right">
@@ -26,6 +29,9 @@
     {/If}
     >Add Database</button>
 </div>
+
+{*$variables|print_r*}
+{assign "userid" "{$variables.client.customer_no_template}"}
 {if is_array($variables.dbs) && count($variables.dbs) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>Database</th><th>User</th><th>&nbsp;</th></tr></thead>
@@ -99,7 +105,9 @@
                         <div class="col-sm-6"> 
 						<div class="input-group">
 						<input type="hidden" class="form-control" name="domain" id="domain" value="c{$params.domain}">
-                             <input type="hidden" class="form-control" name="prefix" id="prefix" value="c{$variables.userid}"><span class="input-group-addon">c{$variables.userid}</span><input type="text" class="form-control" name="database_name" id="database_name">
+                             <input type="hidden" class="form-control" name="prefix" id="prefix" value="{$variables.client.customer_no}">
+                                <span class="input-group-addon">{$variables.client.customer_no}</span>
+                                <input type="text" class="form-control" name="database_name" id="database_name">
 							 </div>
                         </div>
                     </div>
@@ -238,10 +246,14 @@
                     <div id="ajax-messages"></div>
 
                     <div class="form-group">
-                        <label for="username" class="col-sm-4 control-label">Username</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="username" id="username">
-                        </div>
+                     <label for="username" class="col-sm-4 control-label">Username</label>
+                      <div class="col-sm-6">
+                       <div class="input-group">
+                        <input type="hidden" class="form-control" name="prefix" id="prefix" value="{$variables.client.customer_no}">   
+                        <span class="input-group-addon">{$variables.client.customer_no}</span>
+                        <input type="text" class="form-control" name="username" id="username">
+                       </div>
+                      </div>
                     </div>
 
                     <div class="form-group">
@@ -291,7 +303,8 @@
                     <div class="form-group">
                         <label for="password" class="col-sm-4 control-label">Password</label>
                         <div class="col-sm-6">
-                           <input type="password" class="field" name="password" id="inputNewPassword1" placeholder="Password" autocomplete="off">							<div>{include file="$template/includes/pwstrength.tpl"}</div>
+                           <input type="password" class="field" name="password" id="inputNewPassword1" placeholder="Password" autocomplete="off">							
+                           <div>{include file="$template/includes/pwstrength.tpl"}</div>
                         </div>
                     </div>
 

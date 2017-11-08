@@ -163,7 +163,14 @@ else {
     $dbs      = cwispy_soap_request($params, 'sites_database_get');
     $db_users = cwispy_soap_request($params, 'sites_database_user_get');
 	$clientP  = cwispy_soap_request($params, 'client_get_by_username');
-    $client  = cwispy_soap_request($params, 'client_get');
+    $client   = cwispy_soap_request($params, 'client_get');
+    
+    // Create the Customer number based on the ISPConfig settings. 
+    // eg: C[CUSTOMER_NO] would become C45
+    $cust = str_replace('[CUSTOMER_NO]',$client['response']['client']['client_id'],$client['response']['client']['customer_no_template']);
+    // Strip the square bracket
+    $client['response']['client']['customer_no'] = substr(strstr($cust, "]"), 1);
+    
     $return   = array_merge_recursive($dbs, $db_users, $clientP, $client);
 
     if (isset($db_users['response']['db_users']) && $db_users['response']['db_users']) {

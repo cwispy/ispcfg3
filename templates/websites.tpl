@@ -30,11 +30,9 @@
     {/If}
     >Add Websites</button>
 </div>
-{*$variables.ipv4|print_r*}
-{*$variables.ipv6|print_r*}
+{*$variables.client|print_r*}
 {assign "web_php_options" ","|explode:$variables.client.web_php_options}
-{assign "server_id" "{$variables.domains.0.server_id}"}
-{assign "domain_id" "{$variables.domains.0.domain_id}"}
+{assign "server_id" "{$variables.client.web_servers}"}
 
 {if is_array($variables.domains) && count($variables.domains) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">

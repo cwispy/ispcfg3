@@ -54,7 +54,6 @@
                     </td>
                 </tr>
             {/foreach}
-            {$variables.zones|print_r}
             </tbody>
         </table>
     {else}

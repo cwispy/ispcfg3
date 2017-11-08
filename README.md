@@ -1,7 +1,7 @@
 ispcfg3
 ======
 Requires ISPConfig 3.1+
-WHMCS 6+
+WHMCS 7+
 
 WARNING 07/Nov/2017
 
