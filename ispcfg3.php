@@ -27,6 +27,19 @@ ini_set("display_errors", 1); // Set this option to Zero on a production machine
 openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 include_once(__DIR__.'/functions/base.php');
 
+use WHMCS\Database\Capsule;
+
+function ispcfg3_MetaData() {
+    return array(
+        'DisplayName' => 'ISPConfig Integration Module',
+        'APIVersion' => '1.1',
+        'RequiresServer' => true,
+        'DefaultNonSSLPort' => '8080',
+        'DefaultSSLPort' => '8080',
+    );
+}
+
+
 function ispcfg3_ConfigOptions() {
     $configarray = array(
         'ISPConfig Remote Username' => array(
@@ -155,7 +168,7 @@ function ispcfg3_ConfigOptions() {
 }
 
 function ispcfg3_CreateAccount( $params ) {
-
+    
     $productid          = $params['pid'];
     $accountid          = $params['accountid'];
     $domain             = strtolower( $params['domain'] );
@@ -206,17 +219,28 @@ function ispcfg3_CreateAccount( $params ) {
 	$websettings[9] == 'n'  ? $enablessletsencrypt = '' : $enablessletsencrypt = 'y';
     $webactive      == 'on' ? $webactive = 'y' : $webactive = 'n';
 
+    try {
+        $pdo = Capsule::connection()->getPdo();
+        $statement = $pdo->prepare("SELECT * FROM tblservers WHERE name = :name");
+        $statement->execute([ ':name' => $params['serverhostname'],]);
+        $allservers =  $statement->fetchAll();
+        $nameserver1 = $allservers[0]['nameserver1'];
+        $nameserver2 = $allservers[0]['nameserver2'];
+    } catch (\Exception $e) {
+        echo "error: {$e->getMessage()}";
+    }
+
     logModuleCall('ispconfig','CreateClient',$params['clientsdetails'],$params,'','');
     
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
 
@@ -249,8 +273,9 @@ function ispcfg3_CreateAccount( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );      
-
+        //$session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+        
         $fullname = htmlspecialchars_decode( $clientsdetails['firstname'] );
         $fullname .= ' ' . htmlspecialchars_decode( $clientsdetails['lastname'] );
         
@@ -355,7 +380,7 @@ function ispcfg3_CreateAccount( $params ) {
             'limit_web_aliasdomain'         => $tmpl['limit_web_aliasdomain'],
             'limit_ftp_user'                => $tmpl['limit_ftp_user'],
             'limit_shell_user'              => $tmpl['limit_shell_user'],
-            'ssh_chroot'                    => $tmpl ['ssh_chroot'],
+            'ssh_chroot'                    => $tmpl['ssh_chroot'],
             'limit_webdav_user'             => $tmpl['limit_webdav_user'],
             'limit_backup'                  => $tmpl['limit_backup'],
             'limit_directive_snippets'      => $tmpl['limit_directive_snippets'],
@@ -405,10 +430,9 @@ function ispcfg3_CreateAccount( $params ) {
         if ( $dns == 'on' ) {
             
             $zoneip = $client->server_ip_get($session_id, $tmpl['web_servers']);
-            $nameserver1 = $nameserver1 = $client->server_get($session_id, $tmpl['dns_servers'], 'server');
 
-            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip['ip_address']." ".$nameserver1['hostname']." ".$nameserver2." ".$soaemail,'','');
-            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip['ip_address'], $nameserver1['hostname'], $nameserver2, $soaemail );
+            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip['ip_address']." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip['ip_address'], $nameserver1, $nameserver2, $soaemail );
             logModuleCall('ispconfig','CreatePostDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
             
         }
@@ -424,7 +448,7 @@ function ispcfg3_CreateAccount( $params ) {
                 'type'                      => 'vhost',
                 'parent_domain_id'          => '0',
                 'vhost_type'                => 'name',
-                'hd_quota'                  => $tmpl['limit_web_domain'],
+                'hd_quota'                  => $tmpl['limit_web_quota'],
                 'traffic_quota'             => $tmpl['limit_traffic_quota'],
                 'cgi'                       => $tmpl['limit_cgi'],
                 'ssi'                       => $tmpl['limit_ssi'],
