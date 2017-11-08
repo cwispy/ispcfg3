@@ -54,18 +54,18 @@ function ispcfg3_ConfigOptions() {
                     'Size' => '3',
                     'Description' => 'The ID of the Client Template in ISPConfig'
             ),
-        'ISPConfig Usertheme' => array( 
+        'ISPConfig Usertheme' => array(  // delete me
                     'Type' => 'text',
                     'Size' => '20',
                     'Description' => '<br />The ISPConfig theme to use, typically '
                                     . 'this will be \'default\''
             ),
-        'Global Client PHP Options' => array(
+        'Global Client PHP Options' => array( // delete me
                     'Type' => 'text',
                     'Size' => '32',
                     'Description' => '<br />E.g. no,fast-cgi,cgi,mod,suphp,php-fpm'
             ),
-        'Global Client Chroot Options' => array(
+        'Global Client Chroot Options' => array( // delete me
                     'Type' => 'dropdown',
                     'Options' => 'no,jailkit'
             ),
@@ -77,23 +77,23 @@ function ispcfg3_ConfigOptions() {
                     'Type' => 'yesno',
                     'Description' => ''
             ),
-        'ISPConfig Version' => array(
+        'ISPConfig Version' => array( // delete me 
                     'Type' => 'dropdown',
 					'Options' => '3.0,3.1',
 					'Default' => '3.1',
                     'Description' => '<br />Select your Ispconfig Version'
              ),
-        'Website Quota' => array(
+        'Website Quota' => array( // delete me
                     'Type' => 'text',
                     'Size' => '6',
                     'Description' => 'MB'
             ),
-        'Traffic Quota' => array(
+        'Traffic Quota' => array( // delete me
                     'Type' => 'text',
                     'Size' => '6',
                     'Description' => 'MB'
             ),
-        'Website Settings' => array(
+        'Website Settings' => array( // delete me
                     'Type' => 'text',
                     'Size' => '20',
                     'Description' => '<br />Syntax: CGI,SSI,Ruby,SuEXEC,ErrorDocuments'
@@ -104,7 +104,7 @@ function ispcfg3_ConfigOptions() {
                     'Options' => 'none,www,*',
                     'Description' => 'Select to create subdomain during setup'
             ),
-        'PHP Mode' => array(
+        'PHP Mode' => array( // delete me
                     'Type' => 'dropdown',
                     'Options' => 'no,fast-cgi,cgi,mod,suphp,php-fpm'
             ),
@@ -167,19 +167,17 @@ function ispcfg3_CreateAccount( $params ) {
     $soapsvrurl         = $params['configoption3'];
     $soapsvrssl         = $params['configoption4'];
     $templateid         = $params['configoption5'];
-    $designtheme        = $params['configoption6'];
-    $globalphp          = $params['configoption7'];
-    $chrootenable       = $params['configoption8'];
+    $designtheme        = $params['configoption6']; // delete me
+    $globalphp          = $params['configoption7']; // delete me
+    $chrootenable       = $params['configoption8']; // delete me
     $webcreation        = $params['configoption9'];
     $domaintool         = $params['configoption10'];
-	$ispconfigver 		= $params['configoption11'];
-	//$submodsettings        = explode( ',',$params['configoption11'] );
-    //$webwriteprotect    = $params['configoption11'];
-    $webquota           = $params['configoption12'];
-    $webtraffic         = $params['configoption13'];
-    $websettings        = explode( ',',$params['configoption14'] );
+	$ispconfigver 		= $params['configoption11']; // delete me
+    $webquota           = $params['configoption12']; // delete me
+    $webtraffic         = $params['configoption13']; // delete me
+    $websettings        = explode( ',',$params['configoption14'] ); // delete me
     $subdomain          = $params['configoption15'];
-    $phpmode            = $params['configoption16'];
+    $phpmode            = $params['configoption16']; // delete me
     $webactive          = $params['configoption17'];
     $dns                = $params['configoption18'];
     $dnssettings        = explode( ',', $params['configoption19'] );
@@ -188,16 +186,13 @@ function ispcfg3_CreateAccount( $params ) {
     $addftpuser         = $params['configoption22'];
 	
 	$siteprousername    = $params['configoption23'];
-	$sitepropass        = $params['configoption24'];
-	
-	//$statpackage        = 'webalizer';
-	
+	$sitepropass        = $params['configoption24'];	
     
-    $nameserver1        = $dnssettings[0];
+    //$nameserver1        = $dnssettings[0];
     $nameserver2        = $dnssettings[1];
     $soaemail           = $dnssettings[2] . '.' . $domain;
     $dnstemplate        = $dnssettings[3];
-    $zoneip             = $dnssettings[4];
+    //$zoneip             = $dnssettings[4];
 
     $websettings[0] == 'n'  ? $enablecgi = '' : $enablecgi = 'y';
     $websettings[1] == 'n'  ? $enablessi = '' : $enablessi = 'y';
@@ -296,101 +291,101 @@ function ispcfg3_CreateAccount( $params ) {
         unset($templates);
         
         logModuleCall('ispconfig','CreateClient',$server,$server,'','');
-            
-            $ispcparams = array(
-                'company_name' => $companyname,
-                'contact_name' => $fullname,
-                'customer_no' => $accountid,
-                'username' => $username,
-                'password' => $password,
-                'language' => $defaultlanguage,
-                'usertheme' => 'default',
-                'street' => $address,
-                'zip' => $zip,
-                'city' => $city,
-                'state' => $state,
-                'country' => $country,
-                'telephone' => $phonenumber,
-                'mobile' => '',
-                'fax' => '',
-                'email' => $mail,
-                'template_master' => $templateid,
-                'default_mailserver' => $tmpl['mail_servers'],
-                'limit_maildomain' => $tmpl['limit_maildomain'],
-                'limit_mailbox' => $tmpl['limit_mailbox'],
-                'limit_mailalias' => $tmpl['limit_mailalias'],
-                'limit_mailaliasdomain' => $tmpl['limit_mailaliasdomain'],
-                'limit_mailforward' => $tmpl['limit_mailforward'],
-                'limit_mailcatchall' => $tmpl['limit_mailcatchall'],
-                'limit_mailrouting' => $tmpl['limit_mailrouting'],
-                'limit_mailfilter' => $tmpl['limit_mailfilter'],
-                'limit_fetchmail' => $tmpl['limit_fetchmail'],
-                'limit_mailquota' => $tmpl['limit_mailquota'],
-                'limit_spamfilter_wblist' => $tmpl['limit_spamfilter_wblist'],
-                'limit_spamfilter_user' => $tmpl['limit_spamfilter_user'],
-                'limit_spamfilter_policy' => $tmpl['limit_spamfilter_policy'],
-                'default_xmppserver' => $tmpl['default_xmppserver'],
-                'xmpp_servers' => $tmpl['xmpp_servers'],
-                'limit_xmpp_domain' => $tmpl['limit_xmpp_domain'],
-                'limit_xmpp_user' => $tmpl['limit_xmpp_user'],
-                'limit_xmpp_muc' => $tmpl['limit_xmpp_muc'],
-                'limit_xmpp_anon' => $tmpl['limit_xmpp_anon'],
-                'limit_xmpp_auth_options' => $tmpl['limit_xmpp_auth_options'],
-                'limit_xmpp_vjud' => $tmpl['limit_xmpp_vjud'],
-                'limit_xmpp_proxy' => $tmpl['limit_xmpp_proxy'],
-                'limit_xmpp_status' => $tmpl['limit_xmpp_status'],
-                'limit_xmpp_pastebin' => $tmpl['limit_xmpp_pastebin'],
-                'limit_xmpp_httparchive' => $tmpl['limit_xmpp_httparchive'],
-                'default_webserver' => $tmpl['web_servers'],
-                'limit_web_ip' => $tmpl['limit_web_ip'],
-                'limit_web_domain' => $tmpl['limit_web_domain'],
-                'limit_web_quota' => $tmpl['limit_web_quota'],
-                'web_php_options' => $tmpl['web_php_options'],
-                'limit_cgi' => $tmpl['limit_cgi'],
-                'limit_ssi' => $tmpl['limit_ssi'],
-                'limit_perl' => $tmpl['limit_perl'],
-                'limit_ruby' => $tmpl['limit_ruby'],
-                'limit_python' => $tmpl['limit_python'],
-                'force_suexec' => $tmpl['force_suexec'],
-                'limit_hterror' => $tmpl['limit_hterror'],
-                'limit_wildcard' => $tmpl['limit_wildcard'],
-                'limit_ssl' => $tmpl['limit_ssl'],
-                'limit_ssl_letsencrypt' => $tmpl['limit_ssl_letsencrypt'],
-                'limit_web_subdomain' => $tmpl['limit_web_subdomain'],
-                'limit_web_aliasdomain' => $tmpl['limit_web_aliasdomain'],
-                'limit_ftp_user' => $tmpl['limit_ftp_user'],
-                'limit_shell_user' => $tmpl['limit_shell_user'],
-                'ssh_chroot' => $tmpl ['ssh_chroot'],
-                'limit_webdav_user' => $tmpl['limit_webdav_user'],
-                'limit_backup' => $tmpl['limit_backup'],
-                'limit_directive_snippets' => $tmpl['limit_directive_snippets'],
-                'limit_aps' => $tmpl['limit_aps'],
-                'default_dnsserver' => $tmpl['dns_servers'],
-                'db_servers' => $tmpl['db_servers'],
-                'limit_dns_zone' => $tmpl['limit_dns_zone'],
-                'default_slave_dnsserver' => $tmpl['default_slave_dnsserver'],
-                'limit_dns_slave_zone' => $tmpl['limit_dns_slave_zone'],
-                'limit_dns_record' => $tmpl['limit_dns_record'],
-                'default_dbserver' => $tmpl['db_servers'],
-                'dns_servers' => $tmpl['dns_servers'],
-                'limit_database' => $tmpl['limit_database'],
-                'limit_database_user' => $tmpl['limit_database_user'],
-                'limit_database_quota' => $tmpl['limit_database_quota'],
-                'limit_cron' => $tmpl['limit_cron'],
-                'limit_cron_type' => $tmpl['limit_cron_type'],
-                'limit_cron_frequency' => $tmpl['limit_cron_frequency'],
-                'limit_traffic_quota' => $tmpl['limit_traffic_quota'],
-                'limit_domainmodule' => $tmpl['limit_domainmodule'],
-                'limit_mailmailinglist' => $tmpl['limit_mailmailinglist'],
-                'limit_openvz_vm' => $tmpl['limit_openvz_vm'],
-                'limit_openvz_vm_template_id' => $tmpl['limit_openvz_vm_template_id'],
-                'limit_client' => 0, // If this value is > 0, then the client is a reseller
-                'parent_client_id' => 0,
-                'locked' => '0',
-                'added_date' => date("Y-m-d"),
-                'added_by' => $soapuser,
-                'created_at' => date('Y-m-d')
-                );
+        
+        $ispcparams = array(
+            'company_name'                  => $companyname,
+            'contact_name'                  => $fullname,
+            'customer_no'                   => $accountid,
+            'username'                      => $username,
+            'password'                      => $password,
+            'language'                      => $defaultlanguage,
+            'usertheme'                     => 'default',
+            'street'                        => $address,
+            'zip'                           => $zip,
+            'city'                          => $city,
+            'state'                         => $state,
+            'country'                       => $country,
+            'telephone'                     => $phonenumber,
+            'mobile'                        => '',
+            'fax'                           => '',
+            'email'                         => $mail,
+            'template_master'               => $templateid,
+            'default_mailserver'            => $tmpl['mail_servers'],
+            'limit_maildomain'              => $tmpl['limit_maildomain'],
+            'limit_mailbox'                 => $tmpl['limit_mailbox'],
+            'limit_mailalias'               => $tmpl['limit_mailalias'],
+            'limit_mailaliasdomain'         => $tmpl['limit_mailaliasdomain'],
+            'limit_mailforward'             => $tmpl['limit_mailforward'],
+            'limit_mailcatchall'            => $tmpl['limit_mailcatchall'],
+            'limit_mailrouting'             => $tmpl['limit_mailrouting'],
+            'limit_mailfilter'              => $tmpl['limit_mailfilter'],
+            'limit_fetchmail'               => $tmpl['limit_fetchmail'],
+            'limit_mailquota'               => $tmpl['limit_mailquota'],
+            'limit_spamfilter_wblist'       => $tmpl['limit_spamfilter_wblist'],
+            'limit_spamfilter_user'         => $tmpl['limit_spamfilter_user'],
+            'limit_spamfilter_policy'       => $tmpl['limit_spamfilter_policy'],
+            'default_xmppserver'            => $tmpl['default_xmppserver'],
+            'xmpp_servers'                  => $tmpl['xmpp_servers'],
+            'limit_xmpp_domain'             => $tmpl['limit_xmpp_domain'],
+            'limit_xmpp_user'               => $tmpl['limit_xmpp_user'],
+            'limit_xmpp_muc'                => $tmpl['limit_xmpp_muc'],
+            'limit_xmpp_anon'               => $tmpl['limit_xmpp_anon'],
+            'limit_xmpp_auth_options'       => $tmpl['limit_xmpp_auth_options'],
+            'limit_xmpp_vjud'               => $tmpl['limit_xmpp_vjud'],
+            'limit_xmpp_proxy'              => $tmpl['limit_xmpp_proxy'],
+            'limit_xmpp_status'             => $tmpl['limit_xmpp_status'],
+            'limit_xmpp_pastebin'           => $tmpl['limit_xmpp_pastebin'],
+            'limit_xmpp_httparchive'        => $tmpl['limit_xmpp_httparchive'],
+            'default_webserver'             => $tmpl['web_servers'],
+            'limit_web_ip'                  => $tmpl['limit_web_ip'],
+            'limit_web_domain'              => $tmpl['limit_web_domain'],
+            'limit_web_quota'               => $tmpl['limit_web_quota'],
+            'web_php_options'               => $tmpl['web_php_options'],
+            'limit_cgi'                     => $tmpl['limit_cgi'],
+            'limit_ssi'                     => $tmpl['limit_ssi'],
+            'limit_perl'                    => $tmpl['limit_perl'],
+            'limit_ruby'                    => $tmpl['limit_ruby'],
+            'limit_python'                  => $tmpl['limit_python'],
+            'force_suexec'                  => $tmpl['force_suexec'],
+            'limit_hterror'                 => $tmpl['limit_hterror'],
+            'limit_wildcard'                => $tmpl['limit_wildcard'],
+            'limit_ssl'                     => $tmpl['limit_ssl'],
+            'limit_ssl_letsencrypt'         => $tmpl['limit_ssl_letsencrypt'],
+            'limit_web_subdomain'           => $tmpl['limit_web_subdomain'],
+            'limit_web_aliasdomain'         => $tmpl['limit_web_aliasdomain'],
+            'limit_ftp_user'                => $tmpl['limit_ftp_user'],
+            'limit_shell_user'              => $tmpl['limit_shell_user'],
+            'ssh_chroot'                    => $tmpl ['ssh_chroot'],
+            'limit_webdav_user'             => $tmpl['limit_webdav_user'],
+            'limit_backup'                  => $tmpl['limit_backup'],
+            'limit_directive_snippets'      => $tmpl['limit_directive_snippets'],
+            'limit_aps'                     => $tmpl['limit_aps'],
+            'default_dnsserver'             => $tmpl['dns_servers'],
+            'db_servers'                    => $tmpl['db_servers'],
+            'limit_dns_zone'                => $tmpl['limit_dns_zone'],
+            'default_slave_dnsserver'       => $tmpl['default_slave_dnsserver'],
+            'limit_dns_slave_zone'          => $tmpl['limit_dns_slave_zone'],
+            'limit_dns_record'              => $tmpl['limit_dns_record'],
+            'default_dbserver'              => $tmpl['db_servers'],
+            'dns_servers'                   => $tmpl['dns_servers'],
+            'limit_database'                => $tmpl['limit_database'],
+            'limit_database_user'           => $tmpl['limit_database_user'],
+            'limit_database_quota'          => $tmpl['limit_database_quota'],
+            'limit_cron'                    => $tmpl['limit_cron'],
+            'limit_cron_type'               => $tmpl['limit_cron_type'],
+            'limit_cron_frequency'          => $tmpl['limit_cron_frequency'],
+            'limit_traffic_quota'           => $tmpl['limit_traffic_quota'],
+            'limit_domainmodule'            => $tmpl['limit_domainmodule'],
+            'limit_mailmailinglist'         => $tmpl['limit_mailmailinglist'],
+            'limit_openvz_vm'               => $tmpl['limit_openvz_vm'],
+            'limit_openvz_vm_template_id'   => $tmpl['limit_openvz_vm_template_id'],
+            'limit_client'                  => 0, // If this value is > 0, then the client is a reseller
+            'parent_client_id'              => 0,
+            'locked'                        => '0',
+            'added_date'                    => date("Y-m-d"),
+            'added_by'                      => $soapuser,
+            'created_at'                    => date('Y-m-d')
+            );
         
             $reseller_id = 0;
 
@@ -403,80 +398,80 @@ function ispcfg3_CreateAccount( $params ) {
             $ispcparams = array( 'domain' => $domain );
             logModuleCall('ispconfig','CreatePreDomainAdd',$domain_id,$ispcparams,'','');
             $domain_id = $client->domains_domain_add( $session_id, $client_id, $ispcparams );
-            
             logModuleCall('ispconfig','CreatePostDomainAdd',$domain_id,$ispcparams,'','');
             
         }
         
-        
         if ( $dns == 'on' ) {
+            
+            $zoneip = $client->server_ip_get($session_id, $tmpl['web_servers']);
+            $nameserver1 = $nameserver1 = $client->server_get($session_id, $tmpl['dns_servers'], 'server');
 
-            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
-            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip, $nameserver1, $nameserver2, $soaemail );
+            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip['ip_address']." ".$nameserver1['hostname']." ".$nameserver2." ".$soaemail,'','');
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip['ip_address'], $nameserver1['hostname'], $nameserver2, $soaemail );
             logModuleCall('ispconfig','CreatePostDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
             
         }
-
 
         if ( $webcreation == 'on' ) {
             
             logModuleCall('ispconfig','PreCreateWebDomain',$website_id,$defaultwebserver,'','');
             
             $ispcparams = array(
-                    'server_id' => $tmpl['web_servers'],
-                    'ip_address' => '*',
-                    'domain' => $domain,
-                    'type' => 'vhost',
-                    'parent_domain_id' => '0',
-                    'vhost_type' => 'name',
-                    'hd_quota' => $tmpl['limit_web_domain'],
-                    'traffic_quota' => $tmpl['limit_traffic_quota'],
-                    'cgi' => $tmpl['limit_cgi'],
-                    'ssi' => $tmpl['limit_ssi'],
-                    'perl' => $tmpl['limit_perl'],
-                    'ruby' => $tmpl['limit_ruby'],
-                    'python' => $tmpl['limit_python'],
-                    'suexec' => $tmpl['force_suexec'],
-                    'errordocs' => $tmpl['limit_hterror'],
-                    'is_subdomainwww' => 1,
-                    'subdomain' => $subdomain,
-                    'redirect_type' => '',
-                    'redirect_path' => '',
-                    'ssl' => $tmpl['limit_ssl'],
-					'ssl_letsencrypt' => $tmpl['limit_ssl_letsencrypt'],
-                    'ssl_state' => '',
-                    'ssl_locality' => '',
-                    'ssl_organisation' => '',
-                    'ssl_organisation_unit' => '',
-                    'ssl_country' => '',
-                    'ssl_domain' => '',
-                    'ssl_request' => '',
-                    'ssl_key' => '',
-                    'ssl_cert' => '',
-                    'ssl_bundle' => '',
-                    'ssl_action' => '',
-                    'stats_password' => $password,
-                    'stats_type' => 'webalizer',
-                    'allow_override' => 'All',
-                    'php_open_basedir' => '/',
-                    'php_fpm_use_socket' => 'y',
-                    'pm' => 'dynamic',
-                    'pm_max_children' => '10',
-                    'pm_start_servers' => '2',
-                    'pm_min_spare_servers' => '1',
-                    'pm_max_spare_servers' => '5',
-                    'pm_process_idle_timeout' => '10',
-                    'pm_max_requests' => '0',
-                    'custom_php_ini' => '',
-                    'nginx_directives' => '',
-                    'backup_interval' => '',
-                    'backup_copies' => 1,
-                    'active' => $webactive,
-                    'http_port' => '80',
-					'https_port' => '443',
-                    'traffic_quota_lock' => 'n',
-                    'added_date' => date("Y-m-d"),
-                    'added_by' => $soapuser
+                'server_id'                 => $tmpl['web_servers'],
+                'ip_address'                => '*',
+                'domain'                    => $domain,
+                'type'                      => 'vhost',
+                'parent_domain_id'          => '0',
+                'vhost_type'                => 'name',
+                'hd_quota'                  => $tmpl['limit_web_domain'],
+                'traffic_quota'             => $tmpl['limit_traffic_quota'],
+                'cgi'                       => $tmpl['limit_cgi'],
+                'ssi'                       => $tmpl['limit_ssi'],
+                'perl'                      => $tmpl['limit_perl'],
+                'ruby'                      => $tmpl['limit_ruby'],
+                'python'                    => $tmpl['limit_python'],
+                'suexec'                    => $tmpl['force_suexec'],
+                'errordocs'                 => $tmpl['limit_hterror'],
+                'is_subdomainwww'           => 1,
+                'subdomain'                 => $subdomain,
+                'redirect_type'             => '',
+                'redirect_path'             => '',
+                'ssl'                       => $tmpl['limit_ssl'],
+                'ssl_letsencrypt'           => $tmpl['limit_ssl_letsencrypt'],
+                'ssl_state'                 => '',
+                'ssl_locality'              => '',
+                'ssl_organisation'          => '',
+                'ssl_organisation_unit'     => '',
+                'ssl_country'               => '',
+                'ssl_domain'                => '',
+                'ssl_request'               => '',
+                'ssl_key'                   => '',
+                'ssl_cert'                  => '',
+                'ssl_bundle'                => '',
+                'ssl_action'                => '',
+                'stats_password'            => $password,
+                'stats_type'                => 'webalizer',
+                'allow_override'            => 'All',
+                'php_open_basedir'          => '/',
+                'php_fpm_use_socket'        => 'y',
+                'pm'                        => 'dynamic',
+                'pm_max_children'           => '10',
+                'pm_start_servers'          => '2',
+                'pm_min_spare_servers'      => '1',
+                'pm_max_spare_servers'      => '5',
+                'pm_process_idle_timeout'   => '10',
+                'pm_max_requests'           => '0',
+                'custom_php_ini'            => '',
+                'nginx_directives'          => '',
+                'backup_interval'           => '',
+                'backup_copies'             => 1,
+                'active'                    => $webactive,
+                'http_port'                 => '80',
+                'https_port'                => '443',
+                'traffic_quota_lock'        => 'n',
+                'added_date'                => date("Y-m-d"),
+                'added_by'                  => $soapuser
                 );
 
             if ( $webwriteprotect == 'on' ) {
@@ -498,20 +493,20 @@ function ispcfg3_CreateAccount( $params ) {
                 
                 $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
                 $ispcparams = array(
-                        'server_id' => $tmpl['web_servers'],
-                        'parent_domain_id' => $website_id,
-                        'username' => $username . 'admin',
-                        'password' => $password,
-                        'quota_size' => $tmpl['limit_web_domain'],
-                        'active' => 'y',
-                        'uid' => $domain_arr['system_user'],
-                        'gid' => $domain_arr['system_group'],
-                        'dir' => $domain_arr['document_root'],
-                        'quota_files' => -1,
-                        'ul_ratio' => -1,
-                        'dl_ratio' => -1,
-                        'ul_bandwidth' => -1,
-                        'dl_bandwidth' => -1
+                    'server_id'         => $tmpl['web_servers'],
+                    'parent_domain_id'  => $website_id,
+                    'username'          => $username . 'admin',
+                    'password'          => $password,
+                    'quota_size'        => $tmpl['limit_web_domain'],
+                    'active'            => 'y',
+                    'uid'               => $domain_arr['system_user'],
+                    'gid'               => $domain_arr['system_group'],
+                    'dir'               => $domain_arr['document_root'],
+                    'quota_files'       => -1,
+                    'ul_ratio'          => -1,
+                    'dl_ratio'          => -1,
+                    'ul_bandwidth'      => -1,
+                    'dl_bandwidth'      => -1
                     );
                 
                 $ftp_id = $client->sites_ftp_user_add( $session_id, $client_id, $ispcparams );
@@ -520,102 +515,102 @@ function ispcfg3_CreateAccount( $params ) {
             }
             
             // Add A Record and CNAME Records for website to dns.
-            if ( $dns == 'on' ) {
-            
-                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['dns_servers']);
-                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
-                $a_svr = $client->server_get_all($session_id);
-                
-                // Loop through the array till we find the mail server name
-                while ($arec == '') {
-                    $poparr = array_pop($a_svr);
-                    if ( $poparr['server_id'] == $tmpl['web_servers'] )
-                            $arec = $poparr['server_name'];
-                }
-                
-                $sql = 'SELECT ipaddress FROM tblservers '
-                    . 'WHERE hostname  = "' . $arec . '"';
-                $db_result = mysql_query( $sql );
-                $a_ip = mysql_fetch_array( $db_result );
-                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$a_ip,'','');
-                
-                $params = array(
-                    'server_id' => $dns_svr['server_id'],
-                    'zone' => $zone_id[0]['id'],
-                    'name' => $domain.'.',
-                    'type' => 'A',
-                    'data' => $a_ip['ipaddress'],
-                    'aux' => '0',
-                    'ttl' => '3600',
-                    'active' => 'y',
-                    'stamp' => date('Y-m-d H:i:s'),
-                    'serial' => '',
-                );
-                
-                $zone_mx = $client->dns_a_add($session_id, $client_id, $params);
-                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$params,'','');
-                
-                // Add cname record
-                $params = array(
-                    'server_id' => $dns_svr['server_id'],
-                    'zone' => $zone_id[0]['id'],
-                    'name' => 'www',
-                    'type' => 'CNAME',
-                    'data' => $domain.'.',
-                    'aux' => '0',
-                    'ttl' => '3600',
-                    'active' => 'y',
-                    'stamp' => date('Y-m-d H:i:s'),
-                    'serial' => '',
-                );
-                
-                $zone_mx = $client->dns_cname_add($session_id, $client_id, $params);
-                logModuleCall('ispconfig','CreateDNSCNAME',$zone_mx,$params,'','');
-                
-            }
+//            if ( $dns == 'on' ) {
+//            
+//                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['dns_servers']);
+//                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
+//                $a_svr = $client->server_get_all($session_id);
+//                
+//                // Loop through the array till we find the mail server name
+//                while ($arec == '') {
+//                    $poparr = array_pop($a_svr);
+//                    if ( $poparr['server_id'] == $tmpl['web_servers'] )
+//                            $arec = $poparr['server_name'];
+//                }
+//                
+//                $sql = 'SELECT ipaddress FROM tblservers '
+//                    . 'WHERE hostname  = "' . $arec . '"';
+//                $db_result = mysql_query( $sql );
+//                $a_ip = mysql_fetch_array( $db_result );
+//                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$a_ip,'','');
+//                
+//                $params = array(
+//                    'server_id'     => $dns_svr['server_id'],
+//                    'zone'          => $zone_id[0]['id'],
+//                    'name'          => $domain.'.',
+//                    'type'          => 'A',
+//                    'data'          => $a_ip['ipaddress'],
+//                    'aux'           => '0',
+//                    'ttl'           => '3600',
+//                    'active'        => 'y',
+//                    'stamp'         => date('Y-m-d H:i:s'),
+//                    'serial'        => '',
+//                );
+//                
+//                $zone_mx = $client->dns_a_add($session_id, $client_id, $params);
+//                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$params,'','');
+//                
+//                // Add cname record
+//                $params = array(
+//                    'server_id'     => $dns_svr['server_id'],
+//                    'zone'          => $zone_id[0]['id'],
+//                    'name'          => 'www',
+//                    'type'          => 'CNAME',
+//                    'data'          => $domain.'.',
+//                    'aux'           => '0',
+//                    'ttl'           => '3600',
+//                    'active'        => 'y',
+//                    'stamp'         => date('Y-m-d H:i:s'),
+//                    'serial'        => '',
+//                );
+//                
+//                $zone_mx = $client->dns_cname_add($session_id, $client_id, $params);
+//                logModuleCall('ispconfig','CreateDNSCNAME',$zone_mx,$params,'','');
+//                
+//            }
             
         }
 
         if ( $addmaildomain == 'on' ) {
             
             $ispcparams = array( 
-                    'server_id' => $tmpl['mail_servers'],
-                    'domain'    => $domain, 
-                    'active'    => 'y' 
+                    'server_id'     => $tmpl['mail_servers'],
+                    'domain'        => $domain, 
+                    'active'        => 'y' 
                 );
 
             $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
             
             // Add MX Record to dns.
-            if ( $dns == 'on' ) {
-            
-                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['mail_servers']);
-                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
-                $mx_svr = $client->server_get_all($session_id);
-                
-                // Loop through the array till we find the mail server name
-                while ($mx == '') {
-                    $poparr = array_pop($mx_svr);
-                    if ( $poparr['server_id'] == $tmpl['mail_servers'] )
-                            $mx = $poparr['server_name'];
-                }
-                $params = array(
-                    'server_id' => $dns_svr['server_id'],
-                    'zone' => $zone_id[0]['id'],
-                    'name' => $domain.'.',
-                    'type' => 'mx',
-                    'data' => $mx.'.',
-                    'aux' => '0',
-                    'ttl' => '3600',
-                    'active' => 'y',
-                    'stamp' => date('Y-m-d H:i:s'),
-                    'serial' => '',
-                );
-                
-                $zone_mx = $client->dns_mx_add($session_id, $client_id, $params);
-                logModuleCall('ispconfig','CreateDNSMX',$zone_mx,$params,'','');
-            }
+//            if ( $dns == 'on' ) {
+//            
+//                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['mail_servers']);
+//                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
+//                $mx_svr = $client->server_get_all($session_id);
+//                
+//                // Loop through the array till we find the mail server name
+//                while ($mx == '') {
+//                    $poparr = array_pop($mx_svr);
+//                    if ( $poparr['server_id'] == $tmpl['mail_servers'] )
+//                            $mx = $poparr['server_name'];
+//                }
+//                $params = array(
+//                    'server_id'     => $dns_svr['server_id'],
+//                    'zone'          => $zone_id[0]['id'],
+//                    'name'          => $domain.'.',
+//                    'type'          => 'mx',
+//                    'data'          => $mx.'.',
+//                    'aux'           => '0',
+//                    'ttl'           => '3600',
+//                    'active'        => 'y',
+//                    'stamp'         => date('Y-m-d H:i:s'),
+//                    'serial'        => '',
+//                );
+//                
+//                $zone_mx = $client->dns_mx_add($session_id, $client_id, $params);
+//                logModuleCall('ispconfig','CreateDNSMX',$zone_mx,$params,'','');
+//            }
             
         }
 
