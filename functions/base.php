@@ -288,22 +288,6 @@ function cwispy_soap_request($params, $function, $options=array()) {
         if ($function == 'sites_web_subdomain_delete') {
             $response = $client->sites_web_subdomain_delete($session_id, $options['id']);
         }
-        
-//        if ($function == 'sites_web_domain_get') {
-//            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid'], 'type' => 'vhost');
-//            $response['domains'] = $client->sites_web_domain_get($session_id, $_options);
-//        }
-//        if ($function == 'sites_web_domain_add') {
-//            $response = $client->sites_web_domain_add($session_id, $user['client_id'], $options);
-//            // create_ftp_dir($params, $options, $user);
-//            //create_dns_a_record($params, $options, $user);
-//        }
-//        if ($function == 'sites_web_domain_update') {
-//            $response = $client->sites_web_domain_update($session_id, $user['client_id'], $options['id'], $options);
-//        }
-//        if ($function == 'sites_web_domain_delete') {
-//            $response = $client->sites_web_domain_delete($session_id, $options);
-//        }
 
         if ($function == 'dns_zone_get') {
             $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
