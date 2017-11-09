@@ -19,7 +19,10 @@
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-sitebuilder"></span>
 <h3>Create or Edit your website - {$params.domain}</h3>
-<p>SiteBuilder is a web publishing tool. It enables you to put information on your own websites quickly and easily. You can maintain your website through a web browser using SiteBuilder's editing tools. You don't need any specialist software or web programming skills.</p>
+<p>SiteBuilder is a web publishing tool. It enables you to put information on 
+    your own websites quickly and easily. You can maintain your website through 
+    a web browser using SiteBuilder's editing tools. You don't need any 
+    specialist software or web programming skills.</p>
 
 <hr>
 
@@ -27,7 +30,7 @@
 		<div class="container3">
 			<h1>My Website</h1>
 			
-			<table class="tbl-websites">
+			<table class="table table-striped">
 				<thead>
 					<tr>
 						<th>Website</th>

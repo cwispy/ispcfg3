@@ -21,7 +21,7 @@ $elfinder_dir = ELFINDER_DIR;
 if (file_exists($elfinder_dir)) {
     $elfinder_options['host'] = $params['domain'];
     //$elfinder_options['host'] = str_replace(':8080', '', $params['configoption3']);
-    $elfinder_options['user'] = $params['username'].'admin';
+    $elfinder_options['user'] = $params['username'].$params['configoption12'];
     $elfinder_options['pass'] = $params['password'];
     
     change_ftp_password($params, $elfinder_options['user'], $elfinder_options['pass']);

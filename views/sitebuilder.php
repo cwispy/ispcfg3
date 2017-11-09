@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-if ($params['configoption11'][0] == 'n')
+if ( ( empty($params['configoption15']) ) && ( empty($params['configoption16']) ) )
  die("This module is not enabled");
 
 global $variables;
 if (isset($_GET['view_action'])) {
-    
+
 }
 else {
     $domains = cwispy_soap_request($params, 'sites_web_domain_get');
@@ -31,8 +31,8 @@ else {
     $return = array_merge_recursive($domains, $subdomains, $ftpuser);
 	$theftpuser = $return["response"]["accounts"][0]["username"];
     $theftppass = $params['password'];
-    $siteprouser = $params['configoption23'];
-	$sitepropass = $params['configoption24'];
+    $siteprouser = $params['configoption15'];
+	$sitepropass = $params['configoption16'];
 
     if ($domains) {
         foreach($domains['response']['domains'] as $domain) {
@@ -48,8 +48,8 @@ $username = $params['username'];
 $password = $params['password'];
 $domain = $params["domain"];
 $serverip = $params["serverip"];
-$siteprouser = $params['configoption23'];
-$sitepropass = $params['configoption24'];
+$siteprouser = $params['configoption15'];
+$sitepropass = $params['configoption16'];
 
 
 include __DIR__.'/SiteProApiClient.php';

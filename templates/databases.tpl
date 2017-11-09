@@ -21,11 +21,12 @@
 <h3>Manage Databases</h3>
 <p>MySQL databases are required by many web applications . To use a database, you will need to create one first. </p>
 <hr>
-<h5>Current Databases ({$variables.dbs|@count} of {$variables.client.limit_database} )</h5>
+<h5>Current Databases ( {$variables.dbs|@count} of {If $variables.client.limit_database == -1}Unlimited{else}{$variables.client.limit_database}{/If} )</h5>
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDB"
     {If $variables.client.locked == "y" || $variables.client.canceled == "y"
-    || {$variables.dbs|@count} >= {$variables.client.limit_database} }
+    || ({$variables.dbs|@count} >= {$variables.client.limit_database} 
+        && {$variables.client.limit_database != -1}) }
         disabled="disabled"
     {/If}
     >Add Database</button>
@@ -61,7 +62,7 @@
     <p>No databases found</p>
 {/if}
 
-<h5>Current Database Users</h5><p>A Mysql user requires privileges to access a database in order to read from or write to that database. Assign or create a user for each database. You can login to PhpMyadmin using the database user to administer your database.</p>
+<h5>Current Database Users ( {$variables.db_users|@count} of {If $variables.client.limit_database_user == -1}Unlimited{else}{$variables.client.limit_database_user}{/If} )</h5><p>A Mysql user requires privileges to access a database in order to read from or write to that database. Assign or create a user for each database. You can login to PhpMyadmin using the database user to administer your database.</p>
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAddDBUser"
     {If $variables.client.locked == "y" || $variables.client.canceled == "y"
