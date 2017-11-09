@@ -25,30 +25,16 @@ if (isset($_GET['view_action'])) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database name is required'));
         }
 
-        if (!isset($_REQUEST['database_user']) || !$_REQUEST['database_user']) {
-            if (!isset($_REQUEST['username']) || !$_REQUEST['username']) {
-                cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Username is required'));
-            }
-            if (!isset($_REQUEST['password']) || !$_REQUEST['password']) {
-                cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Password is required'));
-            }
-            if ($_REQUEST['password'] != $_REQUEST['password2']) {
-                cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match'));
-            }
-            $create_user_options['database_user'] = $_REQUEST['username'];
-            $create_user_options['database_password'] = $_REQUEST['pasword'];
-            $create_user = cwispy_soap_request($params, 'sites_database_user_add', $create_user_options);
-            if ($create_user && $create_user['response']) {
-                $_REQUEST['database_user'] = $create_user['response'];
-            }
+        if (!isset($_REQUEST['database_user_id']) || !$_REQUEST['database_user_id']) {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database Read / Write User is required'));
         }
-	
 	
 		$dbname = $_REQUEST['prefix'];
 		$dbname .= $_REQUEST['database_name'];
         $create_options = array(
             'database_name' => $dbname,
-            'database_user_id' => $_REQUEST['database_user'],
+            'database_user_id' => $_REQUEST['database_user_id'],
+            'database_ro_user_id' => $_REQUEST['database_ro_user_id'],
             'type' => 'mysql',
             'active' => 'y'
         );

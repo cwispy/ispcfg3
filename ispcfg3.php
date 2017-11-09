@@ -530,10 +530,12 @@ function ispcfg3_CreateAccount( $params ) {
                 $rwuser = $dbuser_id;
                 
                 $dbun = $clientnumber."dbuRO";
+                $chars = "abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789@#$%^&*()_-=+;:,.?";
+                $ropass = substr( str_shuffle( $chars ), 0, 8 );
                 $ispcparams = array(
                     'server_id' => 1,
                     'database_user' => $dbun,
-                    'database_password' => $password
+                    'database_password' => $ropass
                 );
                 logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
                 $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
@@ -560,7 +562,7 @@ function ispcfg3_CreateAccount( $params ) {
                 
                 logModuleCall('ispconfig','PreCreateDB',$clientnumber,$ispcparams,'','');
                 $database_id = $client->sites_database_add( $session_id, $client_id, $ispcparams );
-                logModuleCall('ispconfig','CreateMailDomain',$clientnumber,$database_id,'','');
+                logModuleCall('ispconfig','PostCreateDB',$clientnumber,$database_id,'','');
             
         }
         
@@ -583,8 +585,8 @@ function ispcfg3_CreateAccount( $params ) {
 
     if ( $successful == 1 ) {
         
-        $result = "success";
-        
+         $result = "success";
+         
     } else {
         
         $result = $error;
