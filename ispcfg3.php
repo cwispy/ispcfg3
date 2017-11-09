@@ -1,7 +1,7 @@
 <?php
 /*
  * 
- *  ISPConfig v3.1+ module for WHMCS v6.x or Higher
+ *  ISPConfig v3.1+ module for WHMCS v7.x or Higher
  *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -42,126 +42,78 @@ function ispcfg3_MetaData() {
 
 function ispcfg3_ConfigOptions() {
     $configarray = array(
-        'ISPConfig Remote Username' => array(
-                    'Type' => 'text',
-                    'Size' => '16',
-                    'Description' => '<br />Remote Username configured in ISPConfig.'
-            ),
-        'ISPConfig Remote Password' => array(
-                    'Type' => 'password',
-                    'Size' => '16',
-                    'Description' => '<br />Remote Password configured in ISPConfig.'
-            ),
-        'ISPConfig URL' => array(
-                    'Type' => 'text',
-                    'Size' => '50',
-                    'Description' => '<br />E.g. ispconfig.example.tld:8080'
-            ),
-        'ISPConfig SSL' => array(
-                    'Type' => 'yesno',
-                    'Description' => 'Tick if you enabled SSL on your ISPConfig'
-                                    . ' Controlpanel Web Interface.'
-            ),
         'ISPConfig Template ID' => array(
                     'Type' => 'text',
                     'Size' => '3',
-                    'Description' => 'The ID of the Client Template in ISPConfig'
-            ),
-        'ISPConfig Usertheme' => array(  // delete me
-                    'Type' => 'text',
-                    'Size' => '20',
-                    'Description' => '<br />The ISPConfig theme to use, typically '
-                                    . 'this will be \'default\''
-            ),
-        'Global Client PHP Options' => array( // delete me
-                    'Type' => 'text',
-                    'Size' => '32',
-                    'Description' => '<br />E.g. no,fast-cgi,cgi,mod,suphp,php-fpm'
-            ),
-        'Global Client Chroot Options' => array( // delete me
-                    'Type' => 'dropdown',
-                    'Options' => 'no,jailkit'
+                    'Description' => '<br/>The ID of the Client Template in ISPConfig'
             ),
         'Website Creation' => array(
                     'Type' => 'yesno',
-                    'Description' => 'Tick to create the website automatically' 
+                    'Description' => '<br/>Tick to create the website automatically' 
             ),
         'ISPConfig Domain Tool' => array(
                     'Type' => 'yesno',
-                    'Description' => ''
-            ),
-        'ISPConfig Version' => array( // delete me 
-                    'Type' => 'dropdown',
-					'Options' => '3.0,3.1',
-					'Default' => '3.1',
-                    'Description' => '<br />Select your Ispconfig Version'
-             ),
-        'Website Quota' => array( // delete me
-                    'Type' => 'text',
-                    'Size' => '6',
-                    'Description' => 'MB'
-            ),
-        'Traffic Quota' => array( // delete me
-                    'Type' => 'text',
-                    'Size' => '6',
-                    'Description' => 'MB'
-            ),
-        'Website Settings' => array( // delete me
-                    'Type' => 'text',
-                    'Size' => '20',
-                    'Description' => '<br />Syntax: CGI,SSI,Ruby,SuEXEC,ErrorDocuments'
-                                    . ',SSL,Letsencrypt <br />E.g.: y,y,y,n,y,y,y'
+                    'Description' => '<br/>Enable the ISPConfig Domain Tool'
             ),
         'Auto Subdomain' => array(
                     'Type' => 'dropdown',
                     'Options' => 'none,www,*',
-                    'Description' => 'Select to create subdomain during setup'
-            ),
-        'PHP Mode' => array( // delete me
-                    'Type' => 'dropdown',
-                    'Options' => 'no,fast-cgi,cgi,mod,suphp,php-fpm'
+                    'Description' => '<br/>Select to create subdomain during setup'
             ),
         'Active' => array(
                     'Type' => 'yesno',
-                    'Description' => 'Enable the account once created?'
+                    'Description' => '<br/>Enable the account once created?'
             ),
         'Create DNS' => array( 
                     'Type' => 'yesno',
-                    'Description' => 'Setup DNS records? You must have a DNS '
+                    'Description' => '<br/>Setup DNS records? You must have a DNS '
                                     . 'template configured in ISPConfig'
             ),
-        'DNS Settings' => array(
+        'DNS Template ID' => array(
                     'Type' => 'text',
-                    'Size' => '60',
-                    'Description' => '<br />Syntax:ns1,ns2,Emailname,Templateid,Zone IP Address'
-                                    . '<br />eg: ns1.domain.tld,ns2.domain.tld,'
-                                    . 'webmaster,1,123.123.123.123'
+                    'Size' => '3',
+                    'Description' => '<br />DNS Template ID from ISPConfig'
+            ),
+        'DNS SOA Email Name' => array(
+                    'Type' => 'text',
+                    'Size' => '40',
+                    'Description' => '<br />Username portion of the SOA email. '
+                                    . 'eg: hostmaster for hostmaster@domain.tld'
             ),
         'ISPConfig Language' => array(
                     'Type' => 'dropdown',
                     'Options' => 'ar,bg,br,cz,de,el,en,es,fi,fr,hu,hr,id,it,ja,'
                                 . 'nl,pl,pt,ro,ru,se,sk,tr',
+                    'Description' => '<br/>Choose your default Language',
                     'Default' => 'en'
             ),
         'Create Maildomain' => array( 
                     'Type' => 'yesno',
-                    'Description' => 'Tick to create the Email Domain '
+                    'Description' => '<br/>Tick to create the Email Domain '
                                     . 'automatically during setup'
             ),
         'Create FTP-Account' => array(
                     'Type' => 'yesno',
-                    'Description' => 'Tick to create the FTP Accounts '
-                                    . 'automatically during setup'
+                    'Description' => '<br/>Create FTP Account during setup'
+            ),
+        'FTP-Account Suffix' => array(
+                    'Type' => 'text',
+                    'Size' => '30',
+                    'Description' => '<br/>Suffix to append to username for the'
+                                    . ' FTP User. eg: ftp for Usernameftp'
             ),
 		'Site Pro api username' => array(
                     'Type' => 'text',
-                    'Size' => '16',
-                    'Description' => ' <br />Site.pro website builder. Get one here <a href="http://site.pro/" title="https://site.pro"><strong>https://site.pro</strong></a> '
+                    'Size' => '30',
+                    'Description' => ' <br />Site.pro website builder. '
+                    . 'Get one here <a href="http://site.pro/" '
+                    . 'title="https://site.pro"><strong>https://site.pro'
+                    . '</strong></a> '
             ),
         'Site.Pro api Password' => array(
                     'Type' => 'password',
-                    'Size' => '50',
-                    'Description' => ' <br />Site.pro api password. '
+                    'Size' => '60',
+                    'Description' => ' <br />Site.pro api password.'
             )
         );
     return $configarray;
@@ -175,49 +127,23 @@ function ispcfg3_CreateAccount( $params ) {
     $username           = $params['username'];
     $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-    $templateid         = $params['configoption5'];
-    $designtheme        = $params['configoption6']; // delete me
-    $globalphp          = $params['configoption7']; // delete me
-    $chrootenable       = $params['configoption8']; // delete me
-    $webcreation        = $params['configoption9'];
-    $domaintool         = $params['configoption10'];
-	$ispconfigver 		= $params['configoption11']; // delete me
-    $webquota           = $params['configoption12']; // delete me
-    $webtraffic         = $params['configoption13']; // delete me
-    $websettings        = explode( ',',$params['configoption14'] ); // delete me
-    $subdomain          = $params['configoption15'];
-    $phpmode            = $params['configoption16']; // delete me
-    $webactive          = $params['configoption17'];
-    $dns                = $params['configoption18'];
-    $dnssettings        = explode( ',', $params['configoption19'] );
-    $defaultlanguage    = $params['configoption20'];
-    $addmaildomain      = $params['configoption21'];
-    $addftpuser         = $params['configoption22'];
-	
-	$siteprousername    = $params['configoption23'];
-	$sitepropass        = $params['configoption24'];	
-    
-    //$nameserver1        = $dnssettings[0];
-    $nameserver2        = $dnssettings[1];
-    $soaemail           = $dnssettings[2] . '.' . $domain;
-    $dnstemplate        = $dnssettings[3];
-    //$zoneip             = $dnssettings[4];
+    $templateid         = $params['configoption1'];
+    $webcreation        = $params['configoption2'];
+    $domaintool         = $params['configoption3'];
+    $subdomain          = $params['configoption4'];
+    $webactive          = $params['configoption5'];
+    $dns                = $params['configoption6'];
+    $dnstemplate        = $params['configoption7'];
+    $dnssoaname         = $params['configoption8'];
+    $defaultlanguage    = $params['configoption9'];
+    $addmaildomain      = $params['configoption10'];
+    $addftpuser         = $params['configoption11'];
+    $ftpsuffix          = $params['configoption12'];
+	$siteprousername    = $params['configoption13'];
+	$sitepropass        = $params['configoption14'];
+    $soaemail           = $dnssoaname . '.' . $domain;
 
-    $websettings[0] == 'n'  ? $enablecgi = '' : $enablecgi = 'y';
-    $websettings[1] == 'n'  ? $enablessi = '' : $enablessi = 'y';
-    $websettings[2] == 'n'  ? $enableperl = '' : $enableperl = 'y';
-    $websettings[3] == 'n'  ? $enableruby = '' : $enableruby = 'y';
-    $websettings[4] == 'n'  ? $enablepython = '' : $enablepython = 'y';
-    $websettings[5] == 'n'  ? $enablesuexec = '' : $enablesuexec = 'y';
-    $websettings[6] == 'n'  ? $enableerrdocs = '' : $enableerrdocs = '1';
-    $websettings[7] == 'n'  ? $wildcardsubdom = '' : $wildcardsubdom = '1';
-    $websettings[8] == 'n'  ? $enablessl = '' : $enablessl = 'y';
-	$websettings[9] == 'n'  ? $enablessletsencrypt = '' : $enablessletsencrypt = 'y';
-    $webactive      == 'on' ? $webactive = 'y' : $webactive = 'n';
+    $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
 
     try {
         $pdo = Capsule::connection()->getPdo();
@@ -519,7 +445,7 @@ function ispcfg3_CreateAccount( $params ) {
                 $ispcparams = array(
                     'server_id'         => $tmpl['web_servers'],
                     'parent_domain_id'  => $website_id,
-                    'username'          => $username . 'admin',
+                    'username'          => $username . $ftpsuffix,
                     'password'          => $password,
                     'quota_size'        => $tmpl['limit_web_domain'],
                     'active'            => 'y',
@@ -537,62 +463,7 @@ function ispcfg3_CreateAccount( $params ) {
                 
                 logModuleCall('ispconfig','CreateFtpUser',$ftp_id,$ispcparams,'','');
             }
-            
-            // Add A Record and CNAME Records for website to dns.
-//            if ( $dns == 'on' ) {
-//            
-//                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['dns_servers']);
-//                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
-//                $a_svr = $client->server_get_all($session_id);
-//                
-//                // Loop through the array till we find the mail server name
-//                while ($arec == '') {
-//                    $poparr = array_pop($a_svr);
-//                    if ( $poparr['server_id'] == $tmpl['web_servers'] )
-//                            $arec = $poparr['server_name'];
-//                }
-//                
-//                $sql = 'SELECT ipaddress FROM tblservers '
-//                    . 'WHERE hostname  = "' . $arec . '"';
-//                $db_result = mysql_query( $sql );
-//                $a_ip = mysql_fetch_array( $db_result );
-//                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$a_ip,'','');
-//                
-//                $params = array(
-//                    'server_id'     => $dns_svr['server_id'],
-//                    'zone'          => $zone_id[0]['id'],
-//                    'name'          => $domain.'.',
-//                    'type'          => 'A',
-//                    'data'          => $a_ip['ipaddress'],
-//                    'aux'           => '0',
-//                    'ttl'           => '3600',
-//                    'active'        => 'y',
-//                    'stamp'         => date('Y-m-d H:i:s'),
-//                    'serial'        => '',
-//                );
-//                
-//                $zone_mx = $client->dns_a_add($session_id, $client_id, $params);
-//                logModuleCall('ispconfig','CreateDNSA',$zone_mx,$params,'','');
-//                
-//                // Add cname record
-//                $params = array(
-//                    'server_id'     => $dns_svr['server_id'],
-//                    'zone'          => $zone_id[0]['id'],
-//                    'name'          => 'www',
-//                    'type'          => 'CNAME',
-//                    'data'          => $domain.'.',
-//                    'aux'           => '0',
-//                    'ttl'           => '3600',
-//                    'active'        => 'y',
-//                    'stamp'         => date('Y-m-d H:i:s'),
-//                    'serial'        => '',
-//                );
-//                
-//                $zone_mx = $client->dns_cname_add($session_id, $client_id, $params);
-//                logModuleCall('ispconfig','CreateDNSCNAME',$zone_mx,$params,'','');
-//                
-//            }
-            
+
         }
 
         if ( $addmaildomain == 'on' ) {
@@ -605,36 +476,6 @@ function ispcfg3_CreateAccount( $params ) {
 
             $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
-            
-            // Add MX Record to dns.
-//            if ( $dns == 'on' ) {
-//            
-//                $zone_id = $client->dns_zone_get_by_user($session_id, $client_id, $tmpl['mail_servers']);
-//                $dns_svr = $client->dns_zone_get($session_id, $zone_id[0]['id']);
-//                $mx_svr = $client->server_get_all($session_id);
-//                
-//                // Loop through the array till we find the mail server name
-//                while ($mx == '') {
-//                    $poparr = array_pop($mx_svr);
-//                    if ( $poparr['server_id'] == $tmpl['mail_servers'] )
-//                            $mx = $poparr['server_name'];
-//                }
-//                $params = array(
-//                    'server_id'     => $dns_svr['server_id'],
-//                    'zone'          => $zone_id[0]['id'],
-//                    'name'          => $domain.'.',
-//                    'type'          => 'mx',
-//                    'data'          => $mx.'.',
-//                    'aux'           => '0',
-//                    'ttl'           => '3600',
-//                    'active'        => 'y',
-//                    'stamp'         => date('Y-m-d H:i:s'),
-//                    'serial'        => '',
-//                );
-//                
-//                $zone_mx = $client->dns_mx_add($session_id, $client_id, $params);
-//                logModuleCall('ispconfig','CreateDNSMX',$zone_mx,$params,'','');
-//            }
             
         }
 
@@ -679,21 +520,17 @@ function ispcfg3_TerminateAccount( $params ) {
     $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
     $domain             = $params['domain'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-    $domaintool         = $params['configoption10'];
+    $domaintool         = $params['configoption3'];
     
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
 
@@ -721,7 +558,7 @@ function ispcfg3_TerminateAccount( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
               
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
@@ -790,21 +627,17 @@ function ispcfg3_ChangePackage( $params ) {
     $username           = $params['username'];
     $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-    $templateid         = $params['configoption5'];
+    $templateid         = $params['configoption1'];
 
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
     
@@ -832,7 +665,7 @@ function ispcfg3_ChangePackage( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
@@ -883,24 +716,20 @@ function ispcfg3_SuspendAccount( $params ) {
     $password           = $params['password'];
     $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-    $webcreation        = $params['configoption9'];
-    $dns                = $params['configoption18'];
-    $addmaildomain      = $params['configoption21'];
-    $addftpuser         = $params['configoption22'];
+    $webcreation        = $params['configoption5'];
+    $dns                = $params['configoption6'];
+    $addmaildomain      = $params['configoption10'];
+    $addftpuser         = $params['configoption11'];
     
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
     
@@ -928,7 +757,7 @@ function ispcfg3_SuspendAccount( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
         $result_id = $client->client_get_by_username( $session_id, $username );
         
@@ -1042,24 +871,20 @@ function ispcfg3_UnsuspendAccount( $params ) {
     $password           = $params['password'];
     $domain             = strtolower( $params['domain'] );
     $clientsdetails     = $params['clientsdetails'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-    $webcreation        = $params['configoption9'];
-    $dns                = $params['configoption18'];
-    $addmaildomain      = $params['configoption21'];
-    $addftpuser         = $params['configoption22'];
+    $webcreation        = $params['configoption2'];
+    $dns                = $params['configoption6'];
+    $addmaildomain      = $params['configoption10'];
+    $addftpuser         = $params['configoption11'];
     
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
     
@@ -1087,7 +912,7 @@ function ispcfg3_UnsuspendAccount( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
         $result_id = $client->client_get_by_username( $session_id, $username );
         
@@ -1199,20 +1024,16 @@ function ispcfg3_ChangePassword( $params ) {
     $username           = $params['username'];
     $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
-    $soapuser           = $params['configoption1'];
-    $soappassword       = $params['configoption2'];
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
 
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     } else {
         
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
         
     }
     
@@ -1240,7 +1061,7 @@ function ispcfg3_ChangePassword( $params ) {
                                 );
         
         /* Authenticate with the SOAP Server */
-        $session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
         $domain_id = $client->client_get_by_username( $session_id, $username );
 
@@ -1295,16 +1116,13 @@ function ispcfg3_ChangePassword( $params ) {
 
 function ispcfg3_LoginLink( $params ) {
 
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
-
-    if ( $soapsvrssl == 'on' ) {
+    if ( $params['serversecure'] == 'on' ) {
         
-        $soapsvrurl = 'https://' . $soapsvrurl . '';
+        $soapsvrurl = 'https://' . $params['serverhostname'] . '';
         
     } else {
         
-        $soapsvrurl = 'http://' . $soapsvrurl . '';
+        $soapsvrurl = 'http://' . $params['serverhostname'] . '';
         
     }
 
@@ -1327,20 +1145,17 @@ function ispcfg3_LoginLink( $params ) {
 }
 
 function ispcfg3_ClientArea( $params ) {
-    
-    $soapsvrurl         = $params['configoption3'];
-    $soapsvrssl         = $params['configoption4'];
 
     if ( $soapsvrssl == 'on' ) {
         
-        $soapsvrurl = 'https://' . $soapsvrurl . '';
+        $soapsvrurl = 'https://' . $params['serverhostname'] . '';
         
     } else {
         
-        $soapsvrurl = 'http://' . $soapsvrurl . '';
+        $soapsvrurl = 'http://' . $params['serverhostname'] . '';
         
     }
-    $domain_url = ($params['configoption4'] == 'on' ? 'https://' : 'http://').$params['domain'];
+    $domain_url = ($params['serversecure'] == 'on' ? 'https://' : 'http://').$params['domain'];
 
     $requestedView = isset($_REQUEST['view']) ? $_REQUEST['view'] : '';
     if ($requestedView && $requestedView != 'overview') {

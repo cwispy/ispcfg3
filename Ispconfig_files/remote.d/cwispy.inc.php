@@ -1,8 +1,8 @@
 <?php
 /*
  * 
- *  ISPConfig v3.x module for WHMCS v5.x or Higher
- *  Copyright (C) 2014, 2015  Shane Chrisp
+ *  ISPConfig v3.1+ module for WHMCS v7.x or Higher
+ *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

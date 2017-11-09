@@ -1,6 +1,6 @@
 <?php
 /*
- *  ISPConfig v3.1+ module for WHMCS v6.x or Higher
+ *  ISPConfig v3.1+ module for WHMCS v7.x or Higher
  *  Copyright (C) 2014 - 2017  Shane Chrisp
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -76,18 +76,14 @@ function cwispy_soap_request($params, $function, $options=array()) {
     $username = $params['username'];
     $password = $params['password'];
     $domain = $params['domain'];
-    $soapuser = $params['configoption1'];
-    $soappassword = $params['configoption2'];
-    $soapsvrurl = $params['configoption3'];
-    $soapsvrssl = $params['configoption4'];
 
-    if ($soapsvrssl == 'on') {
-        $soap_url = 'https://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'https://' . $soapsvrurl . '/remote/';
+    if ( $params['serversecure'] == 'on' ) {
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
     }
     else {
-        $soap_url = 'http://' . $soapsvrurl . '/remote/index.php';
-        $soap_uri = 'http://' . $soapsvrurl . '/remote/';
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
     }
     
     if (!$username || !$password) {
@@ -108,11 +104,10 @@ function cwispy_soap_request($params, $function, $options=array()) {
             'uri' => $soap_uri, 
             'exceptions' => 1, 
             'trace' => false ,
-            // 'cache_wsdl' =>  WSDL_CACHE_NONE,
             'stream_context' => $stream_context
         );
         $client = new SoapClient( null, $soap_options);
-        $session_id = $client->login($soapuser, $soappassword);
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         $user = $client->client_get_by_username($session_id, $username);
         $client_recordid = $client->client_get_id($session_id, $user['userid']);
         
