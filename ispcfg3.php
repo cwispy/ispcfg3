@@ -102,6 +102,18 @@ function ispcfg3_ConfigOptions() {
                     'Description' => '<br/>Suffix to append to username for the'
                                     . ' FTP User. eg: ftp for Usernameftp'
             ),
+        'Create Database' => array(
+                    'Type' => 'yesno',
+                    'Description' => '<br/>Create Database during setup'
+            ),
+        'Create Database Users' => array(
+                    'Type' => 'dropdown',
+                    'Options' => [
+                        '1' => 'Database User',
+                        '2' => 'Database User + Read-only db user'
+                    ],
+                    'Description' => '<br/>Database users to create'
+            ),
 		'Site Pro api username' => array(
                     'Type' => 'text',
                     'Size' => '30',
@@ -139,8 +151,10 @@ function ispcfg3_CreateAccount( $params ) {
     $addmaildomain      = $params['configoption10'];
     $addftpuser         = $params['configoption11'];
     $ftpsuffix          = $params['configoption12'];
-	$siteprousername    = $params['configoption13'];
-	$sitepropass        = $params['configoption14'];
+    $dbcreate           = $params['configoption13'];
+    $dbusers            = $params['configoption14'];
+	$siteprousername    = $params['configoption15'];
+	$sitepropass        = $params['configoption16'];
     $soaemail           = $dnssoaname . '.' . $domain;
 
     $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
@@ -478,6 +492,79 @@ function ispcfg3_CreateAccount( $params ) {
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
             
         }
+        
+        if ( $dbcreate == 'on' ) {
+            
+            // Create the Customer number based on the ISPConfig settings. 
+            // eg: C[CUSTOMER_NO] would become C45
+            $temp = $client->client_get($session_id, $client_id);
+            $cust = str_replace('[CUSTOMER_NO]',$client_id,$temp['customer_no_template']);
+            // Strip the square bracket
+            $clientnumber = substr(strstr($cust, "]"), 1);
+    
+            if ( $dbusers == 1 ) {
+                // Create only master db user.
+                $dbun = $clientnumber."dbuRW";
+                $ispcparams = array(
+                    'server_id' => 1,
+                    'database_user' => $dbun,
+                    'database_password' => $password
+                );
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$dbuser_id,'','');
+                $rwuser = $dbuser_id;
+                $rouser = 0;
+                
+            } else if ( $dbusers == 2 ) {
+                // Create master and read only users.
+                $dbun = $clientnumber."dbuRW";
+                $ispcparams = array(
+                    'server_id' => 1,
+                    'database_user' => $dbun,
+                    'database_password' => $password
+                );
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber,$dbuser_id,'','');
+                $rwuser = $dbuser_id;
+                
+                $dbun = $clientnumber."dbuRO";
+                $ispcparams = array(
+                    'server_id' => 1,
+                    'database_user' => $dbun,
+                    'database_password' => $password
+                );
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber,$dbuser_id,'','');
+                $rouser = $dbuser_id;
+            }
+            
+            
+            	$ispcparams = array(
+                    'server_id' => $tmpl['db_servers'],
+                    'type' => 'mysql',
+                    'website_id' => $website_id,
+                    'database_name' => $clientnumber."DB",
+                    'database_quota' => $tmpl['limit_database_quota'],
+                    'database_user_id' => $rwuser,
+                    'database_ro_user_id' => $rouser,
+                    'database_charset' => 'UTF8',
+                    'remote_access' => 'n',
+                    'remote_ips' => '',
+                    'backup_interval' => 'none',
+                    'backup_copies' => 1,
+                    'active' => 'y'
+                );
+                
+                logModuleCall('ispconfig','PreCreateDB',$clientnumber,$ispcparams,'','');
+                $database_id = $client->sites_database_add( $session_id, $client_id, $ispcparams );
+                logModuleCall('ispconfig','CreateMailDomain',$clientnumber,$database_id,'','');
+            
+        }
+        
+        
 
         if ( $client->logout( $session_id ) ) {
             
