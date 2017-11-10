@@ -27,7 +27,7 @@ For discussion and issues with this module, visit our [HowToForge discusion thre
 
 Please report issues in our HowtoForge thread above.
 
-This module now requires that you have ISPConfig 3.1 or higher
+This module now requires that you have ISPConfig 3.1 or higher.
 It will no longer work with older versions of ISPConfig
 
 This module is currently undergoing changes and is not 
