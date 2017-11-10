@@ -33,7 +33,7 @@ It will no longer work with older versions of ISPConfig
 This module is currently undergoing changes and is not 
 recommended to be run in production in its current status.
 
-*Usage*
+*Installation*
 
 - Create a directory called *ispcfg3* on your WHMCS server in the modules/servers directory eg: */var/www/whmcs/modules/server/ispcfg3*
 - Download the zip file and extract the contents to the directory you just created, or from the shell change into the directory you just and use ```git clone https://github.com/cwispy/ispcfg3.git .``` to download the repository.
