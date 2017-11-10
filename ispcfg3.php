@@ -162,7 +162,7 @@ function ispcfg3_CreateAccount( $params ) {
     try {
         $pdo = Capsule::connection()->getPdo();
         $statement = $pdo->prepare("SELECT * FROM tblservers WHERE name = :name");
-        $statement->execute([ ':name' => $params['serverhostname'],]);
+        $statement->execute( [ ':name' => $params['serverhostname'], ] );
         $allservers =  $statement->fetchAll();
         $nameserver1 = $allservers[0]['nameserver1'];
         $nameserver2 = $allservers[0]['nameserver2'];
@@ -504,10 +504,11 @@ function ispcfg3_CreateAccount( $params ) {
     
             if ( $dbusers == 1 ) {
                 // Create only master db user.
-                $dbun = $clientnumber."dbuRW";
+                $dbun = "dbuRW";
                 $ispcparams = array(
                     'server_id' => 1,
                     'database_user' => $dbun,
+                    'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
                 logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
@@ -518,10 +519,11 @@ function ispcfg3_CreateAccount( $params ) {
                 
             } else if ( $dbusers == 2 ) {
                 // Create master and read only users.
-                $dbun = $clientnumber."dbuRW";
+                $dbun = "dbuRW";
                 $ispcparams = array(
                     'server_id' => 1,
                     'database_user' => $dbun,
+                    'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
                 logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
@@ -529,12 +531,13 @@ function ispcfg3_CreateAccount( $params ) {
                 logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber,$dbuser_id,'','');
                 $rwuser = $dbuser_id;
                 
-                $dbun = $clientnumber."dbuRO";
+                $dbun = "dbuRO";
                 $chars = "abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789@#$%^&*()_-=+;:,.?";
                 $ropass = substr( str_shuffle( $chars ), 0, 8 );
                 $ispcparams = array(
                     'server_id' => 1,
                     'database_user' => $dbun,
+                    'database_user_prefix' => $clientnumber,
                     'database_password' => $ropass
                 );
                 logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
@@ -547,16 +550,15 @@ function ispcfg3_CreateAccount( $params ) {
             	$ispcparams = array(
                     'server_id' => $tmpl['db_servers'],
                     'type' => 'mysql',
-                    'website_id' => $website_id,
-                    'database_name' => $clientnumber."DB",
+                    'parent_domain_id' => $website_id,
+                    'database_name' => "DB",
+                    'database_name_prefix' => $clientnumber,
                     'database_quota' => $tmpl['limit_database_quota'],
                     'database_user_id' => $rwuser,
                     'database_ro_user_id' => $rouser,
-                    'database_charset' => 'UTF8',
+                    'database_charset' => '',
                     'remote_access' => 'n',
                     'remote_ips' => '',
-                    'backup_interval' => 'none',
-                    'backup_copies' => 1,
                     'active' => 'y'
                 );
                 

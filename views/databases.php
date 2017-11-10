@@ -29,12 +29,13 @@ if (isset($_GET['view_action'])) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database Read / Write User is required'));
         }
 	
-		$dbname = $_REQUEST['prefix'];
-		$dbname .= $_REQUEST['database_name'];
         $create_options = array(
-            'database_name' => $dbname,
+            'server_id' => $_REQUEST['server_id'],
+            'database_name' => $_REQUEST['database_name'],
+            'database_name_prefix' => $_REQUEST['prefix'],
             'database_user_id' => $_REQUEST['database_user_id'],
             'database_ro_user_id' => $_REQUEST['database_ro_user_id'],
+            'database_quota' => $_REQUEST['database_quota'],
             'type' => 'mysql',
             'active' => 'y'
         );
@@ -56,8 +57,11 @@ if (isset($_GET['view_action'])) {
         }
 
         $update_options = array(
-            'database_name' => $_REQUEST['database_name'],
+            'database_name' => $_REQUEST['database_name_prefix'].$_REQUEST['database_name'],
+            'database_name_prefix' => $_REQUEST['database_name_prefix'],
             'database_user_id' => $_REQUEST['database_user_id'],
+            'database_ro_user_id' => $_REQUEST['database_ro_user_id'],
+            'database_quota' => $_REQUEST['database_quota'],
             'id' => $_REQUEST['database_id'],
         );
 
