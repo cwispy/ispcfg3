@@ -507,7 +507,7 @@ function ispcfg3_CreateAccount( $params ) {
                 $dbun = "dbuRW";
                 $ispcparams = array(
                     'server_id' => 1,
-                    'database_user' => $dbun,
+                    'database_user' => $clientnumber.$dbun,
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
@@ -522,7 +522,7 @@ function ispcfg3_CreateAccount( $params ) {
                 $dbun = "dbuRW";
                 $ispcparams = array(
                     'server_id' => 1,
-                    'database_user' => $dbun,
+                    'database_user' => $clientnumber.$dbun,
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
@@ -536,7 +536,7 @@ function ispcfg3_CreateAccount( $params ) {
                 $ropass = substr( str_shuffle( $chars ), 0, 8 );
                 $ispcparams = array(
                     'server_id' => 1,
-                    'database_user' => $dbun,
+                    'database_user' => $clientnumber.$dbun,
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $ropass
                 );
@@ -551,7 +551,7 @@ function ispcfg3_CreateAccount( $params ) {
                     'server_id' => $tmpl['db_servers'],
                     'type' => 'mysql',
                     'parent_domain_id' => $website_id,
-                    'database_name' => "DB",
+                    'database_name' => $clientnumber."DB",
                     'database_name_prefix' => $clientnumber,
                     'database_quota' => $tmpl['limit_database_quota'],
                     'database_user_id' => $rwuser,

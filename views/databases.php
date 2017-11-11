@@ -24,9 +24,11 @@ if (isset($_GET['view_action'])) {
         if (!isset($_REQUEST['database_name']) || !$_REQUEST['database_name']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database name is required'));
         }
-
         if (!isset($_REQUEST['database_user_id']) || !$_REQUEST['database_user_id']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database Read / Write User is required'));
+        }
+        if ( !isset($_REQUEST['parent_domain_id']) || $_REQUEST['parent_domain_id'] == '' ) {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Site is required.'));
         }
         if ( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) {
             $used = ( $_REQUEST['limit_database_quota'] - $_REQUEST['hdtotalused'] );
@@ -37,6 +39,7 @@ if (isset($_GET['view_action'])) {
 	
         $create_options = array(
             'server_id' => $_REQUEST['server_id'],
+            'parent_domain_id' => $_REQUEST['parent_domain_id'],
             'database_name' => $_REQUEST['prefix'].$_REQUEST['database_name'],
             'database_name_prefix' => $_REQUEST['prefix'],
             'database_user_id' => $_REQUEST['database_user_id'],
@@ -110,7 +113,8 @@ if (isset($_GET['view_action'])) {
         }
 
         $create_options = array(
-            'database_user' => $_REQUEST['username'],
+            'database_user' => $_REQUEST['prefix'].$_REQUEST['username'],
+            'database_user_prefix' => $_REQUEST['prefix'],
             'database_password' => $_REQUEST['password'],
         );
 
@@ -131,7 +135,8 @@ if (isset($_GET['view_action'])) {
         }
 
         $update_options = array(
-            'database_user' => $_REQUEST['username'],
+            'database_user' => $_REQUEST['prefix'].$_REQUEST['username'],
+            'database_user_prefix' => $_REQUEST['prefix'],
             'id' => $_REQUEST['database_user_id'],
         );
         if ($_REQUEST['database_password']) $update_options['database_password'] = $_REQUEST['password'];
@@ -164,6 +169,7 @@ if (isset($_GET['view_action'])) {
 else {
     $dbs      = cwispy_soap_request($params, 'sites_database_get');
     $db_users = cwispy_soap_request($params, 'sites_database_user_get');
+    $domains = cwispy_soap_request($params, 'sites_web_domain_get');
 	$clientP  = cwispy_soap_request($params, 'client_get_by_username');
     $client   = cwispy_soap_request($params, 'client_get');
     
@@ -173,7 +179,7 @@ else {
     // Strip the square bracket
     $client['response']['client']['customer_no'] = substr(strstr($cust, "]"), 1);
     
-    $return   = array_merge_recursive($dbs, $db_users, $clientP, $client);
+    $return   = array_merge_recursive($dbs, $db_users, $clientP, $client, $domains);
 
     if (isset($db_users['response']['db_users']) && $db_users['response']['db_users']) {
         foreach($db_users['response']['db_users'] as $db_user) {
