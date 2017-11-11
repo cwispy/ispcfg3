@@ -21,6 +21,8 @@
 <h3>Manage FTP Accounts ({$params.domain})</h3>
 <p>FTP accounts allow you to access your website's files through a protocol called FTP. You will need a third-party FTP program  like <a href="https://filezilla-project.org/download.php" target="_blank">Filezilla</a> to access your files. You can connect to the server via FTP by using  previously created account details.</p>
 <hr>
+<h5>Current FTP Accounts ( {$variables.accounts|@count} of {If $variables.client.limit_ftp_user == -1}Unlimited{else}{$variables.client.limit_ftp_user}{/If} )</h5>
+
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}

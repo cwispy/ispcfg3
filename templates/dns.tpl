@@ -22,6 +22,8 @@
     <h3>Manage DNS Records</h3>
 	<p>DNS holds records such as the address of the server that handles e-mail, the web server, mail server among others. The default DNS settings are already configured for you. </p>
     <hr>
+    <h5>Current DNS Records ( {$variables.records|@count} of {If $variables.client.limit_dns_record == -1}Unlimited{else}{$variables.client.limit_dns_record}{/If} )</h5>
+
     <div class="text-right">
         <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}

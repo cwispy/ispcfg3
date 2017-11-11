@@ -22,6 +22,8 @@
 <br /><br />e.g If you create a aliasdomain www.someotherdomain.com with the document root as 'shop', you will see the shop folder in the file manager.
 This is the folder to put the content for your aliasdomain.<p>
 <hr>
+<h5>Current Aliasdomains ( {$variables.aliasdomains|@count} of {If $variables.client.limit_web_aliasdomain == -1}Unlimited{else}{$variables.client.limit_web_aliasdomain}{/If} )</h5>
+
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
     {If $variables.client.locked == "y" || $variables.client.canceled == "y"}

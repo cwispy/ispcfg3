@@ -22,6 +22,8 @@
     You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>
 
 <hr>
+<h5>Current Mailboxes ( {$variables.mailboxes|@count} of {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If} )</h5>
+
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd" 
     {If $variables.client.locked == "y" || 

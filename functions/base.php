@@ -187,7 +187,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_ftp_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
             $response['accounts'] = $client->sites_ftp_user_get($session_id, $_options);
             $response['user'] = $user;
         }
