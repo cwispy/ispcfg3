@@ -28,10 +28,16 @@ if (isset($_GET['view_action'])) {
         if (!isset($_REQUEST['database_user_id']) || !$_REQUEST['database_user_id']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database Read / Write User is required'));
         }
+        if ( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) {
+            $used = ( $_REQUEST['limit_database_quota'] - $_REQUEST['hdtotalused'] );
+            if ( $_REQUEST['database_quota'] > $used ) {
+                cwispy_return_ajax_response(array('status' => 'error', 'message' => "Database Quota Error. Maximum available $used MB"));
+            }
+        }
 	
         $create_options = array(
             'server_id' => $_REQUEST['server_id'],
-            'database_name' => $_REQUEST['database_name'],
+            'database_name' => $_REQUEST['prefix'].$_REQUEST['database_name'],
             'database_name_prefix' => $_REQUEST['prefix'],
             'database_user_id' => $_REQUEST['database_user_id'],
             'database_ro_user_id' => $_REQUEST['database_ro_user_id'],
@@ -55,7 +61,13 @@ if (isset($_GET['view_action'])) {
         if (!isset($_REQUEST['database_user_id']) || !$_REQUEST['database_user_id']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database user is required'));
         }
-
+        if ( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) {
+        $used = ( $_REQUEST['limit_database_quota'] - $_REQUEST['hdtotalused'] ) + $_REQUEST['old_database_quota'];
+            if ( $_REQUEST['database_quota'] > $used ) {
+                cwispy_return_ajax_response(array('status' => 'error', 'message' => "Database Quota Error. Maximum available $used MB"));
+            }
+        }
+        
         $update_options = array(
             'database_name' => $_REQUEST['database_name_prefix'].$_REQUEST['database_name'],
             'database_name_prefix' => $_REQUEST['database_name_prefix'],
