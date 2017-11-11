@@ -17,18 +17,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-if ( ( empty($params['configoption15']) ) && ( empty($params['configoption16']) ) )
- die("This module is not enabled");
 
 global $variables;
 if (isset($_GET['view_action'])) {
 
-}
-else {
+} else {
+    
     $domains = cwispy_soap_request($params, 'sites_web_domain_get');
     $subdomains = cwispy_soap_request($params, 'sites_web_aliasdomain_get');
 	$ftpuser = cwispy_soap_request($params, 'sites_ftp_user_get');
-    $return = array_merge_recursive($domains, $subdomains, $ftpuser);
+    if ( ( empty($params['configoption15']) ) && ( empty($params['configoption16']) ) ) {
+        $sitepro['response']['sitepro']['enabled'] = '0';
+    } else {
+        $sitepro['response']['sitepro']['enabled'] = '1';
+    }
+    $return = array_merge_recursive($domains, $subdomains, $ftpuser, $sitepro);
 	$theftpuser = $return["response"]["accounts"][0]["username"];
     $theftppass = $params['password'];
     $siteprouser = $params['configoption15'];
@@ -94,5 +97,5 @@ if (isset($_GET['editWebsite']) && $_GET['editWebsite']) {
 	} catch(ErrorException $ex) {
 		// handle errors
 		$builderError = 'Request error: '.$ex->getMessage();
-	}
+    }
 }

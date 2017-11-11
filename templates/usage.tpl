@@ -19,31 +19,31 @@
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"> <span class="icon-header icon-email"></span>
 <h3>Usage ({$params.domain})</h3>
 <p>In this area you can see the data and bandwidth usage of your hosting. </p>
-<hr><div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Email</button></div>
+<hr>
+<div class="text-right"><button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd">Add Email</button></div>
 
-
-	{$Total = 0 }  
-	{foreach $variables.quota as $mailboxr}
-    {$Total = $Total+$mailboxr.used}
-    {/foreach}
-      
-	
-	
-	
-		<table class="table table-condensed table-striped table-hover ihost-smart-table">
-	 <thead><tr><th>Site</th><th class="text-right">Space Usage</th><th class="text-right">Email Usage</th><th class="text-right">Traffic usage this month</th><th class="text-right">Traffic Quota</th></tr></thead>
-        <tbody>
-        {foreach $variables.used.site as $siteusage}
+    <h5>Website Harddisk Quota</h5>
+	<table class="table table-condensed table-striped table-hover ihost-smart-table">
+        <thead>
             <tr>
-                <td>{$siteusage.domain}</td>
+                <th class="text-left">Domain/Website</th>
+                <th class="text-right">Used space</th>
+                <th class="text-right">Soft Limit</th>
+                <th class="text-right">Hard Limit</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $variables.disk as $siteusage}
+            <tr>
+                <td class="text-left">{$siteusage.domain}</td>
                 <td class="text-right">
-                {{$siteusage.used /1024}|number_format:2} MB /{$siteusage.hd_quota /1048576} MB
+                {{$siteusage.used /1024}|number_format:2} MB
 				</td>
 				<td class="text-right">
-               {{$Total /1024}|number_format:3} MB
+               {{$siteusage.soft /1024}|number_format:2} MB
 				</td>
 				<td class="text-right">
-				{{$siteusage.traffic.this_month /1048576}|number_format:2} MB / {$siteusage.traffic_quota /1048576} MB
+				{{$siteusage.hard /1024}|number_format:2} MB
 				</td>
 				<td class="text-right">
 				
@@ -52,8 +52,64 @@
         {/foreach}
         </tbody>
     </table>
-	<br><br>
-	
-	<br><br>
+<br/>
 
-<!--{$variables|print_r}-->
+    <h5>Mailbox Quota</h5>
+	<table class="table table-condensed table-striped table-hover ihost-smart-table">
+        <thead>
+            <tr>
+                <th class="text-left">Email Address</th>
+                <th class="text-left">Name</th>
+                <th class="text-right">Used Space</th>
+                <th class="text-right">Quota</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $variables.maildisk as $mailusage}
+            <tr>
+                <td class="text-left">{$mailusage.email}</td>
+                <td class="text-left">
+                {$mailusage.name}
+				</td>
+				<td class="text-right">
+                {{$mailusage.used / 1048576}|number_format:2} MB
+				</td>
+				<td class="text-right">
+				{{$mailusage.quota_raw / 1048576}|number_format:2} MB
+				</td>
+				<td class="text-right">
+				
+				</td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+	<br/>
+    
+    <h5>Database Quota</h5>
+	<table class="table table-condensed table-striped table-hover ihost-smart-table">
+        <thead>
+            <tr>
+                <th class="text-left">Database Name</th>
+                <th class="text-right">Used Space</th>
+                <th class="text-right">Quota</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $variables.databasedisk as $databasedisk}
+            <tr>
+                <td class="text-left">{$databasedisk.database_name}</td>
+				<td class="text-right">
+                {$databasedisk.used} MB
+				</td>
+				<td class="text-right">
+				{$databasedisk.quota_raw} MB
+				</td>
+				<td class="text-right">
+				
+				</td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+	<br/>

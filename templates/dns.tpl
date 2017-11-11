@@ -19,7 +19,7 @@
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-dns"></span>
 <div data-view="dns">
-    <h3>Manage DNS Records</h3>
+    <h3>Manage DNS Records ({$params.domain})</h3>
 	<p>DNS holds records such as the address of the server that handles e-mail, the web server, mail server among others. The default DNS settings are already configured for you. </p>
     <hr>
     <h5>Current DNS Records ( {$variables.records|@count} of {If $variables.client.limit_dns_record == -1}Unlimited{else}{$variables.client.limit_dns_record}{/If} )</h5>

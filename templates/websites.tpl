@@ -18,9 +18,12 @@
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 
-<span class="icon-header icon-subdomain"></span><h3>Manage Websites</h3>
+<span class="icon-header icon-subdomain"></span>
+<h3>Manage Websites ({$params.domain})</h3>
 <p>This page lets you manage your Websites and their settings.<p>
 <hr>
+<h5>Current Websites ( {$variables.domains|@count} of {If $variables.client.limit_web_domain == -1}Unlimited{else}{$variables.client.limit_web_domain}{/If} )</h5>
+
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
     {If $variables.client.locked == "y" || 

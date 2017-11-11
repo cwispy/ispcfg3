@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  *}
-<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email-forward"></span><h3>Manage Email Forwarders</h3><p>Forwarders allow you to send a copy of all mail from one email address to another. For example, if you have two different email accounts, info@mydomain.com and david@mydomain.com, you could forward info@mydomain.com to david@mydomain.com so that you do not need to check both accounts.</p>
+<link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email-forward"></span>
+<h3>Manage Email Forwarders ({$params.domain})</h3>
+<p>Forwarders allow you to send a copy of all mail from one email address to another. For example, if you have two different email accounts, info@mydomain.com and david@mydomain.com, you could forward info@mydomain.com to david@mydomain.com so that you do not need to check both accounts.</p>
 <hr>
 <h5>Current Forwarders ( {$variables.forwarders|@count} of {If $variables.client.limit_mailforward == -1}Unlimited{else}{$variables.client.limit_mailforward}{/If} )</h5>
 

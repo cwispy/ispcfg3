@@ -116,15 +116,15 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['domains'] = $client->mail_domain_get($session_id, $_options);
         }
         
-        $response['quota'] = array();
-        if ($function == 'mail_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
-            $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
-            for ($a=0;$a<count($response['mailboxes']);$a++) {
-            $client_quota = $client->mailquota_get_by_userid($session_id, $response['mailboxes'][$a]['mailuser_id']);
-                    $response['quota'][$response['mailboxes'][$a]['email']] = $client_quota;
-            }
-        }
+//        $response['quota'] = array();
+//        if ($function == 'mail_user_get') {
+//            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
+//            $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
+//            for ($a=0;$a<count($response['mailboxes']);$a++) {
+//            $client_quota = $client->mailquota_get_by_userid($session_id, $response['mailboxes'][$a]['mailuser_id']);
+//                    $response['quota'][$response['mailboxes'][$a]['email']] = $client_quota;
+//            }
+//        }
         
 		if ($function == 'client_get') {
             $response['client'] = $client->client_get($session_id, $user['client_id']);
@@ -152,10 +152,22 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['ipv4'] = array_merge_recursive($response['ipv4']['all'], $response['ipv4']['client']);
             $response['ipv6'] = array_merge_recursive($response['ipv6']['all'], $response['ipv6']['client']);
         }
-        if ($function == 'client_get_quota') {
-            $response = $client->mailquota_get_by_user($session_id, $params['username']);
+        if ($function == 'quota_get_by_user') {
+            $response['disk'] = $client->quota_get_by_user( $session_id, $user['client_id'] );
         }
-		 if ($function == 'client_get_by_username') {
+        if ($function == 'trafficquota_get_by_user') {
+            $response['traffic'] = $client->trafficquota_get_by_user( $session_id, $user['client_id'] );
+        }
+        if ($function == 'ftptrafficquota_data') {
+            $response['ftptraffic'] = $client->ftptrafficquota_data( $session_id, $user['client_id'] );
+        }
+        if ($function == 'databasequota_get_by_user') {
+            $response['databasedisk'] = $client->databasequota_get_by_user( $session_id, $user['client_id'] );
+        }
+        if ($function == 'mailquota_get_by_user') {
+            $response['maildisk'] = $client->mailquota_get_by_user( $session_id, $user['client_id'] );
+        }
+		if ($function == 'client_get_by_username') {
             $response = $client->client_get_by_username($session_id, $params['username']);
         }
 		 if ($function == 'client_template_get_all') {

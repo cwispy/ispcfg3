@@ -21,11 +21,15 @@ if (isset($_GET['view_action'])) {
     
 }
 else {
-    $domains = cwispy_soap_request($params, 'mail_domain_get');
-    $mails = cwispy_soap_request($params, 'mail_user_get');
-	 $limits = cwispy_soap_request($params, 'client_get_quota');
 
-    $return = array_merge_recursive($domains, $mails, $limits);
+	$disk = cwispy_soap_request($params, 'quota_get_by_user');
+    $traffic = cwispy_soap_request($params, 'trafficquota_get_by_user');
+    $ftptraffic = cwispy_soap_request($params, 'ftptrafficquota_data');
+    $databasedisk = cwispy_soap_request($params, 'databasequota_get_by_user');
+    $maildisk = cwispy_soap_request($params, 'mailquota_get_by_user');
+    
+
+    $return = array_merge_recursive($disk, $traffic, $ftptraffic, $databasedisk, $maildisk);
 	
 
     if (is_array($return['status'])) {

@@ -37,16 +37,16 @@
 
 {if is_array($variables.mailboxes) && count($variables.mailboxes) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Email</th><th class="text-right">Used Space</th><th class="text-right">Quota</th><th>&nbsp;</th></tr></thead>
+        <thead><tr><th>Email</th><th class="text-right">Used Space (MB)</th><th class="text-right">Quota (MB)</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.quota as $mailbox}
             <tr>
                  <td>{$mailbox.email}</td>
                 <td class="text-right">
-                 {{$mailbox.used / 1048576}|number_format:2:".":""} MB
+                 {{$mailbox.used / 1048576}|number_format:2:".":""}
 				</td>
 				<td class="text-right">
-				{{$mailbox.quota / 1048576}|number_format:2:".":""} MB
+				{{$mailbox.quota / 1048576}|number_format:2:".":""}
 				</td>
                 <td class="text-right">
                     {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
@@ -64,8 +64,8 @@
             {assign "emailtotal" {$emailtotal} + {$mailbox.quota / 1048576} }
         {/foreach}
             <tr>
-                <td class="text-left" colspan="2">Email Accounts (Used / Assigned) {$variables.mailboxes|@count} / {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If}</td>
-                <td class="text-left" colspan="2">Quota (Allocated / Assigned) {$emailtotal} / {If $variables.client.limit_mailquota == -1}Unlimited{else}{$variables.client.limit_mailquota}{/If}</td>
+                <td class="text-left" colspan="2">Quota (Allocated / Assigned)</td>
+                <td class="text-right">{$emailtotal} / {If $variables.client.limit_mailquota == -1}Unlimited{else}{$variables.client.limit_mailquota}{/If}</td>
                 <td>&nbsp;</td>
             </tr>
         </tbody>

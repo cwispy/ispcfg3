@@ -18,7 +18,7 @@
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-database"></span>
-<h3>Manage Databases</h3>
+<h3>Manage Databases ({$params.domain})</h3>
 <p>MySQL databases are required by many web applications . To use a database, you will need to create one first. </p>
 <hr>
 <h5>Current Databases ( {$variables.dbs|@count} of {If $variables.client.limit_database == -1}Unlimited{else}{$variables.client.limit_database}{/If} )</h5>
