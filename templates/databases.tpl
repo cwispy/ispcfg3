@@ -121,6 +121,8 @@
                             <input type="hidden" class="form-control" name="server_id" id="domain" value="{$variables.client.db_servers}">
                             <input type="hidden" class="form-control" name="domain" id="domain" value="{$params.domain}">
                             <input type="hidden" class="form-control" name="prefix" id="prefix" value="{$variables.client.customer_no}">
+                            <input type="hidden" class="form-control" name="hdtotalused" id="prefix" value="{$hdtotal}">
+                            <input type="hidden" class="form-control" name="limit_database_quota" id="prefix" value="{$variables.client.limit_database_quota}">
                             <input type="text" class="form-control" name="database_name" id="database_name">
 							 </div>
                         </div>
@@ -202,6 +204,9 @@
                         <div class="input-group">
                             <span class="input-group-addon">{$db.database_name_prefix}</span>
                             <input type="hidden" class="form-control" name="database_name_prefix" id="prefix" value="{$db.database_name_prefix}">
+                            <input type="hidden" class="form-control" name="hdtotalused" id="hdtotalused" value="{$hdtotal}">
+                            <input type="hidden" class="form-control" name="hd_quota" id="hd_quota" value="{$hd_quota}">
+                            <input type="hidden" class="form-control" name="old_database_quota" id="database_quota">
                             <input type="text" class="form-control" name="database_name" id="database_name" readonly="readonly">
                         </div>
                         </div>
