@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * 
  *  ISPConfig v3.1+ module for WHMCS v7.x or Higher
  *  Copyright (C) 2014 - 2017  Shane Chrisp
@@ -17,7 +17,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * 
+ * @version 20171112
  */
+
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
@@ -131,7 +134,65 @@ function ispcfg3_ConfigOptions() {
     return $configarray;
 }
 
-function ispcfg3_CreateAccount( $params ) {
+function ispcfg3_TestConnection(array $params)
+{
+    
+    if (!extension_loaded( 'soap')) {
+        die('The PHP SOAP module is required to run this module.');
+    }
+
+    if ( $params['serversecure'] == 'on' ) {
+        
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
+        
+    }
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        //$session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+        $success = true;
+        $errorMsg = '';
+        
+    } catch (Exception $e) {
+        // Record the error in WHMCS's module log.
+        logModuleCall(
+            'provisioningmodule',
+            __FUNCTION__,
+            $params,
+            $e->getMessage(),
+            $e->getTraceAsString()
+        );
+        $success = false;
+        $errorMsg = $e->getMessage();
+    }
+    return array(
+        'success' => $success,
+        'error' => $errorMsg,
+    );
+}
+
+
+function ispcfg3_CreateAccount(array $params ) {
     
     $productid          = $params['pid'];
     $accountid          = $params['accountid'];
