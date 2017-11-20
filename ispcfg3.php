@@ -311,12 +311,33 @@ function ispcfg3_CreateAccount(array $params ) {
                 // If no template, throw an error and exit
                 return "No ISPConfig Limit-Template Match Found";
                 end;
-        } else if ( $match == 1 ) {
                 
-            $defaultwebserver  = return_server( $tmpl['web_servers'] );
-            $defaultdbserver   = return_server( $tmpl['db_servers'] );
-            $defaultmailserver = return_server( $tmpl['mail_servers'] );
-        
+        } else if ( $match == 1 ) {
+            
+            if ( $webcreation == 'on' ) {
+                if ( !empty( $tmpl['web_servers'] ) ) {
+                    $defaultwebserver  = return_server( $tmpl['web_servers'] );
+                } else {
+                    return "No Default Web Server Found in ISPConfig Template";
+                    end;
+                }
+            }
+            if ( $dbcreate == 'on' ) {
+                if ( !empty( $tmpl['db_servers'] ) ) {
+                    $defaultdbserver   = return_server( $tmpl['db_servers'] );
+                } else {
+                    return "No Default DB Server Found in ISPConfig Template";
+                    end;
+                }
+            }
+            if ( $addmaildomain == 'on' ) {
+                if ( !empty( $tmpl['mail_servers'] ) ) {
+                    $defaultmailserver = return_server( $tmpl['mail_servers'] );
+                } else {
+                    return "No Default Mail Server Found in ISPConfig Template";
+                    end;
+                }
+            }
         }
                 
         unset($match);
@@ -521,7 +542,7 @@ function ispcfg3_CreateAccount(array $params ) {
             logModuleCall('ispconfig','PostCreateWebDomain',$website_id,$ispcparams,'','');
             
             
-            if ( $addftpuser == 'on' ) {
+            if ( ( $addftpuser == 'on' ) && ( $webcreation == 'on' ) ) {
                 
                 $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
                 $ispcparams = array(

@@ -429,12 +429,12 @@ function ftp_mksubdirs($ftpcon, $ftpbasedir, $ftpath){
 
 function return_server( $list ) {
     
-                if ( stripos( $list, ',' ) === FALSE ) {
-                return $list;
-                    
-                } else {
-                    $wtmp = explode(',', $list );
-                    $rand = rand( 0, ( count( $wtmp ) -1 ) );
-                    return $wtmp[$rand];
-                }
+    if ( stripos( $list, ',' ) === FALSE ) {
+    return $list;
+
+    } else {
+        $wtmp = explode(',', $list );
+        $rand = rand( 0, ( count( $wtmp ) -1 ) );
+        return $wtmp[$rand];
+    }
 }
