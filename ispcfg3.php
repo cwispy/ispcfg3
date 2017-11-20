@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * 
- * @version 20171112
+ * @version 20171115
  */
 
 if (!defined("WHMCS")) {
@@ -311,12 +311,19 @@ function ispcfg3_CreateAccount(array $params ) {
                 // If no template, throw an error and exit
                 return "No ISPConfig Limit-Template Match Found";
                 end;
-            }
+        } else if ( $match == 1 ) {
+                
+            $defaultwebserver  = return_server( $tmpl['web_servers'] );
+            $defaultdbserver   = return_server( $tmpl['db_servers'] );
+            $defaultmailserver = return_server( $tmpl['mail_servers'] );
+        
+        }
+                
         unset($match);
         unset($a);
         unset($templates);
         
-        logModuleCall('ispconfig','CreateClient',$server,$server,'','');
+        logModuleCall('ispconfig','PreCreateClient',$server,$server,'','');
         
         $ispcparams = array(
             'company_name'                  => $companyname,
@@ -417,7 +424,7 @@ function ispcfg3_CreateAccount(array $params ) {
 
             $client_id = $client->client_add( $session_id, $reseller_id, $ispcparams );
 
-            logModuleCall('ispconfig','CreateClient',$client_id,$ispcparams,'','');
+            logModuleCall('ispconfig','PostCreateClient',$client_id,$ispcparams,'','');
         
         if ( $domaintool == 'on' ) {
             
@@ -430,7 +437,7 @@ function ispcfg3_CreateAccount(array $params ) {
         
         if ( $dns == 'on' ) {
             
-            $zoneip = $client->server_ip_get($session_id, $tmpl['web_servers']);
+            $zoneip = $client->server_ip_get( $session_id, $defaultwebserver );
 
             logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip['ip_address']." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
             $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip['ip_address'], $nameserver1, $nameserver2, $soaemail );
@@ -443,7 +450,7 @@ function ispcfg3_CreateAccount(array $params ) {
             logModuleCall('ispconfig','PreCreateWebDomain',$website_id,$defaultwebserver,'','');
             
             $ispcparams = array(
-                'server_id'                 => $tmpl['web_servers'],
+                'server_id'                 => $defaultwebserver,
                 'ip_address'                => '*',
                 'domain'                    => $domain,
                 'type'                      => 'vhost',
@@ -518,7 +525,7 @@ function ispcfg3_CreateAccount(array $params ) {
                 
                 $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
                 $ispcparams = array(
-                    'server_id'         => $tmpl['web_servers'],
+                    'server_id'         => $defaultwebserver,
                     'parent_domain_id'  => $website_id,
                     'username'          => $username . $ftpsuffix,
                     'password'          => $password,
@@ -544,7 +551,7 @@ function ispcfg3_CreateAccount(array $params ) {
         if ( $addmaildomain == 'on' ) {
             
             $ispcparams = array( 
-                    'server_id'     => $tmpl['mail_servers'],
+                    'server_id'     => $defaultmailserver,
                     'domain'        => $domain, 
                     'active'        => 'y' 
                 );
@@ -609,7 +616,7 @@ function ispcfg3_CreateAccount(array $params ) {
             
             
             	$ispcparams = array(
-                    'server_id' => $tmpl['db_servers'],
+                    'server_id' => $defaultdbserver,
                     'type' => 'mysql',
                     'parent_domain_id' => $website_id,
                     'database_name' => $clientnumber."DB",
@@ -1355,5 +1362,151 @@ function ispcfg3_ClientArea( $params ) {
 
         return $code;
     }
+}
+
+function ispcfg3_UsageUpdate($params) {
+    
+	$serverid = $params['serverid'];
+	$serverhostname = $params['serverhostname'];
+	$serverip = $params['serverip'];
+	$serverusername = $params['serverusername'];
+	$serverpassword = $params['serverpassword'];
+	$serveraccesshash = $params['serveraccesshash'];
+	$serversecure = $params['serversecure'];
+
+	# Run connection to retrieve usage for all domains/accounts on $serverid
+    if ( ( $serverusername = $params['serverusername'] != '') 
+            || ( $serverpassword = $params['serverpassword'] != '' ) ) {
+    try {
+        
+        $pdo = Capsule::connection()->getPdo();
+        $statement = $pdo->prepare("SELECT * FROM tblservers WHERE name = '".$params['serverhostname']."' AND type = 'ispcfg3'");
+        $statement->execute( );
+        $svr =  $statement->fetchAll();
+
+        while ( $svr ) {
+        $statement = $pdo->prepare("SELECT * FROM tblhosting WHERE server = '".$s['id']."' AND domainstatus = 'Active'");
+        $statement->execute();
+        $users = $statement->fetchAll();
+        $a = print_r($users);
+        syslog(LOG_INFO, $a);
+        }
+        
+    } catch (\Exception $e) {
+        echo "error: {$e->getMessage()}";
+    }
+    if ( $params['serversecure'] == 'on' ) {
+        
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
+        
+    } else {
+        
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
+        
+    }
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        //$session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+        
+    } catch (Exception $e) {
+        // Record the error in WHMCS's module log.
+        logModuleCall(
+            'provisioningmodule',
+            __FUNCTION__,
+            $params,
+            $e->getMessage(),
+            $e->getTraceAsString()
+        );
+        $success = false;
+        $errorMsg = $e->getMessage();
+    }
+    
+}
+	# Now loop through results and update DB
+
+	foreach ($results AS $domain=>$values) {
+        
+        if ( ( $domain['serverusername'] != '' ) &&
+                ( $domain['serverpassword'] != '' ) ) {
+            update_query("tblhosting",array(
+             "diskused"=>$values['diskusage'],
+             "disklimit"=>$values['disklimit'],
+             "bwusage"=>$values['bwusage'],
+             "bwlimit"=>$values['bwlimit'],
+             "lastupdate"=>"now()",
+            ),array("server"=>$serverid,"domain"=>$values['domain']));
+        }
+    }
+
+}
+
+function ispcfg3_AdminCustomButtonArray()
+{
+    return array(
+        "Update Server Settings" => "buttonOneFunction",
+    );
+}
+
+function ispcfg3_buttonOneFunction(array $params) {
+    
+    try {
+        $pdo = Capsule::connection()->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM tblproducts "
+                                . "WHERE servertype = 'ispcfg3' "
+                                . "AND retired = 0");
+        $stmt->execute();
+        
+        while ( $rows =  $stmt->fetch( PDO::FETCH_ASSOC ) ) {
+            if ( $rows['configoptions2'] != "on" ) {
+                $command = 'EncryptPassword';
+                $postData = array(
+                    'password2' => $row['configoption2'],
+                );
+                $results = localAPI( $command, $postData, '' );
+                logModuleCall('ispconfig','button', $results, $rows,'','');
+                
+                try {
+
+                    $pdos = Capsule::connection()->getPdo();
+                    $svrs = $pdos->prepare("SELECT serverid FROM tblservergroupsrel WHERE "
+                                        . "groupid = ".$row['servergroup']);
+                    $svrs->execute();
+
+                    $svrrow = $svrs->fetchAll();
+                        $aaa = "UPDATE tblservers SET username=".$rows['configoption1'];
+                        $aaa .= ", password=".$results['password']." WHERE id=".$svrrow['serverid'];
+                        logModuleCall('ispconfig','button2', $aaa, $svrrow,'','');        
+
+                } catch (Exception $e) {
+                    echo "error: {$e->getMessage()}";
+                }
+                  
+            }
+        }
+        
+    } catch (\Exception $e) {
+        echo "error: {$e->getMessage()}";
+    }
+    
+
+    
+    return 'success';
 }
 ?>
