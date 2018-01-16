@@ -141,17 +141,18 @@ function ispcfg3_TestConnection(array $params)
         die('The PHP SOAP module is required to run this module.');
     }
 
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -216,7 +217,7 @@ function ispcfg3_CreateAccount(array $params ) {
     $dbusers            = $params['configoption14'];
 	$siteprousername    = $params['configoption15'];
 	$sitepropass        = $params['configoption16'];
-    $soaemail           = $dnssoaname . '.' . $domain;
+    $soaemail           = $dnssoaname . '@' . $domain;
 
     $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
 
@@ -233,18 +234,18 @@ function ispcfg3_CreateAccount(array $params ) {
 
     logModuleCall('ispconfig','CreateClient',$params['clientsdetails'],$params,'','');
     
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    }
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
 
+        $soap_url = $soap_uri.'index.php';
+
+    }
+logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
     /* 
      * Make sure that a username and password have been set
      * or exit with error.
@@ -702,16 +703,16 @@ function ispcfg3_TerminateAccount( $params ) {
     $domain             = $params['domain'];
     $domaintool         = $params['configoption3'];
     
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
 
     if (
@@ -809,16 +810,16 @@ function ispcfg3_ChangePackage( $params ) {
     $clientsdetails     = $params['clientsdetails'];
     $templateid         = $params['configoption1'];
 
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
     
     if (
@@ -901,16 +902,16 @@ function ispcfg3_SuspendAccount( $params ) {
     $addmaildomain      = $params['configoption10'];
     $addftpuser         = $params['configoption11'];
     
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
     
     if (
@@ -1056,16 +1057,16 @@ function ispcfg3_UnsuspendAccount( $params ) {
     $addmaildomain      = $params['configoption10'];
     $addftpuser         = $params['configoption11'];
     
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
     
     if (
@@ -1205,16 +1206,16 @@ function ispcfg3_ChangePassword( $params ) {
     $password           = $params['password'];
     $clientsdetails     = $params['clientsdetails'];
 
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
     
     if (
@@ -1296,14 +1297,13 @@ function ispcfg3_ChangePassword( $params ) {
 
 function ispcfg3_LoginLink( $params ) {
 
-    if ( $params['serversecure'] == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soapsvrurl = 'https://' . $params['serverhostname'] . '';
-        
-    } else {
-        
-        $soapsvrurl = 'http://' . $params['serverhostname'] . '';
-        
+        $soapsvrurl = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soapsvrurl .= ':'.$params['serverport'];
+        }
+
     }
 
     return '
@@ -1326,14 +1326,13 @@ function ispcfg3_LoginLink( $params ) {
 
 function ispcfg3_ClientArea( $params ) {
 
-    if ( $soapsvrssl == 'on' ) {
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soapsvrurl = 'https://' . $params['serverhostname'] . '';
-        
-    } else {
-        
-        $soapsvrurl = 'http://' . $params['serverhostname'] . '';
-        
+        $soapsvrurl = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soapsvrurl .= ':'.$params['serverport'];
+        }
+
     }
     $domain_url = ($params['serversecure'] == 'on' ? 'https://' : 'http://').$params['domain'];
 
@@ -1416,17 +1415,19 @@ function ispcfg3_UsageUpdate($params) {
     } catch (\Exception $e) {
         echo "error: {$e->getMessage()}";
     }
-    if ( $params['serversecure'] == 'on' ) {
+    
+    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport']. '/remote/index.php';
-        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
-    } else {
-        
-        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
-        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
-        
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
+            $soap_uri .= ':'.$params['serverport'];
+        }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
+
     }
+    
     try {
         /* Connect to SOAP Server */
         $client = new SoapClient( null, 
@@ -1476,58 +1477,5 @@ function ispcfg3_UsageUpdate($params) {
         }
     }
 
-}
-
-function ispcfg3_AdminCustomButtonArray()
-{
-    return array(
-        "Update Server Settings" => "buttonOneFunction",
-    );
-}
-
-function ispcfg3_buttonOneFunction(array $params) {
-    
-    try {
-        $pdo = Capsule::connection()->getPdo();
-        $stmt = $pdo->prepare("SELECT * FROM tblproducts "
-                                . "WHERE servertype = 'ispcfg3' "
-                                . "AND retired = 0");
-        $stmt->execute();
-        
-        while ( $rows =  $stmt->fetch( PDO::FETCH_ASSOC ) ) {
-            if ( $rows['configoptions2'] != "on" ) {
-                $command = 'EncryptPassword';
-                $postData = array(
-                    'password2' => $row['configoption2'],
-                );
-                $results = localAPI( $command, $postData, '' );
-                logModuleCall('ispconfig','button', $results, $rows,'','');
-                
-                try {
-
-                    $pdos = Capsule::connection()->getPdo();
-                    $svrs = $pdos->prepare("SELECT serverid FROM tblservergroupsrel WHERE "
-                                        . "groupid = ".$row['servergroup']);
-                    $svrs->execute();
-
-                    $svrrow = $svrs->fetchAll();
-                        $aaa = "UPDATE tblservers SET username=".$rows['configoption1'];
-                        $aaa .= ", password=".$results['password']." WHERE id=".$svrrow['serverid'];
-                        logModuleCall('ispconfig','button2', $aaa, $svrrow,'','');        
-
-                } catch (Exception $e) {
-                    echo "error: {$e->getMessage()}";
-                }
-                  
-            }
-        }
-        
-    } catch (\Exception $e) {
-        echo "error: {$e->getMessage()}";
-    }
-    
-
-    
-    return 'success';
 }
 ?>
