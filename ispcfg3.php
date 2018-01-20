@@ -460,9 +460,10 @@ logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
         if ( $dns == 'on' ) {
             
             $zoneip = $client->server_get( $session_id, $tmpl['web_servers'] );
+            $tmpip = $zoneip['server']['ip_address'];
 
-            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$zoneip['server']['ip_address']." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
-            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain, $zoneip['ip_address'], $nameserver1, $nameserver2, $soaemail );
+            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$tmpip." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain,  $tmpip, $nameserver1, $nameserver2, $soaemail );
             logModuleCall('ispconfig','CreatePostDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
             
         }
