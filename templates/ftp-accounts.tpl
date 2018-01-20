@@ -22,12 +22,13 @@
 <p>FTP accounts allow you to access your website's files through a protocol called FTP. You will need a third-party FTP program  like <a href="https://filezilla-project.org/download.php" target="_blank">Filezilla</a> to access your files. You can connect to the server via FTP by using  previously created account details.</p>
 <hr>
 <h5>Current FTP Accounts ( {$variables.accounts|@count} of {If $variables.client.limit_ftp_user == -1}Unlimited{else}{$variables.client.limit_ftp_user}{/If} )</h5>
-
+{* $variables.domains|print_r *}
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
         disabled="disabled"
     {/If}
+    
     >Add FTP Account</button>
 </div>
 {if is_array($variables.accounts) && count($variables.accounts) > 0}
@@ -35,7 +36,7 @@
     {assign "dir_prefix" "{$variables.accounts[0].dir}"}
     {assign "username_prefix" "{$variables.user.username}"}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Username</th><th>Directory</th><th>&nbsp;</th></tr></thead>
+        <thead><tr><th>Username</th><th>Site</th><th>Directory</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.accounts as $account}
 		{if $account.first}
@@ -43,6 +44,7 @@
         {/if}
             <tr>
                 <td>{$account.username}</td>
+                <td>{$variables.domains_o[$account.parent_domain_id].domain}</td>
                 <td>{$account.dir}</td>
                 <td class="text-right">
                 {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
@@ -57,6 +59,9 @@
         </tbody>
     </table>
 {else}
+    {assign "server_id" "{$variables.accounts[0].server_id}"}
+    {assign "dir_prefix" "{$variables.accounts[0].dir}"}
+    {assign "username_prefix" "{$variables.user.username}"}
     <p>No FTP accounts found</p>
 {/if}
 
@@ -78,6 +83,20 @@
                     <input type="hidden" name="dir_prefix" value="{$dir_prefix}">
                     <input type="hidden" name="username_prefix" value="{$username_prefix}">
 
+                    <div class="form-group">
+                        <label for="parent_domain_id" class="col-sm-4 control-label">Site</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="parent_domain_id" id="parent_domain_id">
+                                <option value="">- select site -</option>
+                                {if is_array($variables.domains) && count($variables.domains) > 0}
+                                    {foreach $variables.domains as $domain}
+                                        <option value="{$domain.domain_id}:{$domain.system_user}:{$domain.system_group}:{$domain.document_root}:{$domain.server_id}">{$domain.domain}</option>
+                                    {/foreach}
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">Username</label>
                         <div class="col-sm-6">
@@ -142,6 +161,22 @@
                     <input type="hidden" name="dir_prefix" value="{$dir_prefix}">
                     <input type="hidden" name="username_prefix" value="{$username_prefix}">
 
+                    <div class="form-group">
+                        <label for="parent_domain_id" class="col-sm-4 control-label">Site</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="parent_domain_id" id="parent_domain_id" disabled>
+                                <option value="">- select site -</option>
+                                {if is_array($variables.domains) && count($variables.domains) > 0}
+                                    {foreach $variables.domains as $domain}
+                                        <option value="{$domain.domain_id}:{$domain.system_user}:{$domain.system_group}:{$domain.document_root}"
+                                                {if $variables.accounts[0].parent_domain_id == $domain.domain_id} selected=""{/if}
+                                                >{$domain.domain}</option>
+                                    {/foreach}
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">Username</label>
                         <div class="col-sm-6">
