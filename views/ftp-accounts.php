@@ -17,26 +17,36 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-if (isset($_GET['view_action'])) {
-    if ($_GET['view_action'] == 'add') {
-        if (!isset($_REQUEST['username']) || !$_REQUEST['username']) {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Username is required'));
+if ( isset( $_GET['view_action'] ) ) {
+    if ( $_GET['view_action'] == 'add' ) {
+        if ( !isset( $_REQUEST['parent_domain_id'] ) || empty( $_REQUEST['parent_domain_id'] ) ) {
+            cwispy_return_ajax_response( array( 'status' => 'error', 'message' => 'Site is required' ) );
+        } else {
+            $a = explode( ':', $_REQUEST['parent_domain_id'] );
+            $parent_domain_id   = $a[0];
+            $uid                = $a[1];
+            $gid                = $a[2];
+            $dir_prefix         = $a[3];
+            $server_id          = $a[4];
         }
-        if (!isset($_REQUEST['password']) || !$_REQUEST['password']) {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Password is required'));
+        if ( !isset( $_REQUEST['username'] ) || !$_REQUEST['username'] ) {
+            cwispy_return_ajax_response( array( 'status' => 'error', 'message' => 'Username is required' ) );
         }
-        if (!isset($_REQUEST['password2']) || $_REQUEST['password2'] != $_REQUEST['password']) {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match'));
+        if ( !isset($_REQUEST['password']) || !$_REQUEST['password']) {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Password is required' ) );
+        }
+        if ( !isset( $_REQUEST['password2'] ) || $_REQUEST['password2'] != $_REQUEST['password'] ) {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match' ) );
         }
         $options = array(
-            'server_id' => $_REQUEST['server_id'],
+            'server_id' => $server_id,
             'username' => $_REQUEST['username_prefix'].$_REQUEST['username'],
             'password' => $_REQUEST['password'],
             'quota_size' => isset($_REQUEST['quota_size']) ? intval($_REQUEST['quota_size']) : -1,
-            'dir' => $_REQUEST['dir_prefix'],
-            'uid' => $_REQUEST['uid'],
-            'gid' => $_REQUEST['gid'],
-            'parent_domain_id' => $_REQUEST['parent_domain_id'],
+            'dir' => $dir_prefix,
+            'uid' => $uid,
+            'gid' => $gid,
+            'parent_domain_id' => $parent_domain_id,
             'active' => 'y'
         );
         if ($_REQUEST['directory']) $options['dir'] .= '/'.$_REQUEST['directory'];
@@ -98,10 +108,17 @@ if (isset($_GET['view_action'])) {
 else {
     $client  = cwispy_soap_request($params, 'client_get');
     $ftpusers = cwispy_soap_request($params, 'sites_ftp_user_get');
-    $return = array_merge_recursive($ftpusers, $client);
+    $webdomain = cwispy_soap_request($params, 'sites_web_domain_get');
+    $return = array_merge_recursive($ftpusers, $client, $webdomain);
     
     if (is_array($return['status'])) {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
+    }
+    
+    if (isset($webdomain['response']['domains']) && $webdomain['response']['domains']) {
+        foreach($webdomain['response']['domains'] as $domain) {
+            $return['response']['domains_o'][$domain['domain_id']] = $domain;
+        }
     }
     
     $return['action_urls']['add'] = cwispy_create_url(array('view' => 'ftp-accounts', 'view_action' => 'add'));
