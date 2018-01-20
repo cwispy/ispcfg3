@@ -20,7 +20,7 @@
 <h3>Manage Email Accounts ({$params.domain})</h3>
 <p>In this area you can manage the email accounts associated with your domain. You can create, delete and edit all settings associated with your email accounts. 
     You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>
-
+{*$variables.quota|print_r*}
 <hr>
 <h5>Current Mailboxes ( {$variables.mailboxes|@count} of {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If} )</h5>
 
@@ -220,7 +220,7 @@
                                         {If $variables.client.limit_mailquota == -1} 
                                             value="0"
                                         {else} 
-                                            min="1" max="{$variables.client.limit_mailquota - $emailtotal}" 
+                                            min="1" max="{$variables.client.limit_mailquota - $emailtotal}"
                                         {/If}
                                         id="quota">
                                 <span class="input-group-addon">MB</span>
