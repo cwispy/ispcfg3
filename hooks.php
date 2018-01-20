@@ -144,14 +144,6 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             )
         );
 		
-        $loginMenu->addChild('CP Login')
-            ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'ispconfig')))
-            ->setLabel('Control Panel')
-            ->setOrder(1)
-			->setIcon('fa-lock')
-            ->setAttribute('target', '_blank');
-	
-		
 		$loginMenu->addChild('View Statistics')
             ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'stats')))
             ->setLabel('Website Statistics')
