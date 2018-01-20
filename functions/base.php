@@ -116,15 +116,15 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['domains'] = $client->mail_domain_get($session_id, $_options);
         }
         
-//        $response['quota'] = array();
-//        if ($function == 'mail_user_get') {
-//            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
-//            $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
-//            for ($a=0;$a<count($response['mailboxes']);$a++) {
-//            $client_quota = $client->mailquota_get_by_userid($session_id, $response['mailboxes'][$a]['mailuser_id']);
-//                    $response['quota'][$response['mailboxes'][$a]['email']] = $client_quota;
-//            }
-//        }
+        $response['quota'] = array();
+        if ($function == 'mail_user_get') {
+            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
+            $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
+            for ($a=0;$a<count($response['mailboxes']);$a++) {
+            $client_quota = $client->mailquota_get_by_userid($session_id, $response['mailboxes'][$a]['mailuser_id']);
+                    $response['quota'][$response['mailboxes'][$a]['email']] = $client_quota;
+            }
+        }
         
 		if ($function == 'client_get') {
             $response['client'] = $client->client_get($session_id, $user['client_id']);
