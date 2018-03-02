@@ -471,7 +471,12 @@ logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
         if ( $webcreation == 'on' ) {
             
             logModuleCall('ispconfig','PreCreateWebDomain',$website_id,$defaultwebserver,'','');
-            
+            $webphp = explode( ',', $tmpl['web_php_options'] );
+            if ( count( $webphp ) >= 0 ) {
+                $setphp = $webphp[0];
+            } else {
+                $setphp = null;
+            }
             $ispcparams = array(
                 'server_id'                 => $defaultwebserver,
                 'ip_address'                => '*',
@@ -481,6 +486,7 @@ logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
                 'vhost_type'                => 'name',
                 'hd_quota'                  => $tmpl['limit_web_quota'],
                 'traffic_quota'             => $tmpl['limit_traffic_quota'],
+		'php'                       => $setphp,
                 'cgi'                       => $tmpl['limit_cgi'],
                 'ssi'                       => $tmpl['limit_ssi'],
                 'perl'                      => $tmpl['limit_perl'],
