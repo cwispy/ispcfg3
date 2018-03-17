@@ -558,7 +558,7 @@ logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
                     'parent_domain_id'  => $website_id,
                     'username'          => $username . $ftpsuffix,
                     'password'          => $password,
-                    'quota_size'        => $tmpl['limit_web_domain'],
+                    'quota_size'        => $tmpl['limit_web_quota'],
                     'active'            => 'y',
                     'uid'               => $domain_arr['system_user'],
                     'gid'               => $domain_arr['system_group'],
