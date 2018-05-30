@@ -117,8 +117,6 @@ if (isset($_GET['view_action'])) {
 else {
     $client  = cwispy_soap_request($params, 'client_get');
     $crons = cwispy_soap_request($params, 'sites_cron_get');
-    
-    
     $return = array_merge_recursive($crons, $client);
     
     if (is_array($return['status'])) {
