@@ -4,7 +4,7 @@
 * Requires ISPConfig 3.1+
 * Requires WHMCS 7+
 
-Copyright (C) 2014 - 2017  Shane Chrisp
+Copyright (C) 2014 - 2018  Shane Chrisp
 
 ```
 This program is free software: you can redistribute it and/or modify
