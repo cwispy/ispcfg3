@@ -41,6 +41,28 @@ class remoting_cwispy extends remoting {
         return $quota;
 	}
 	
+    public function whmcsusage ( $session_id ) {
+    
+        global $app;
+        $app->uses('quota_lib');
+        
+		if(!$this->checkPerm($session_id, 'get_quota_data')) {
+			$this->server->fault('permission_denied', 'You do not have the permissions to access this function.');
+			return false;
+		}
+        
+		$value = $app->quota_lib->get_quota_data( null );
+        
+        for ($x=0;$x<count($value);$x++) {
+            if ($mailuser_id == $value[$x]['mailuser_id']) {
+                $quota = $value[$x];
+            }
+        }
+        
+        return $quota;
+        
+    }
+    
 }
 
 ?>
