@@ -23,8 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 For discussion and issues with this module, visit our [HowToForge discusion thread](https://www.howtoforge.com/community/threads/new-ispconfig-module-for-whmcs.67824/)
 
-**WARNING 07/Nov/2017 - DO NOT RUN IN PRODUCTION**
-
 Please report issues in our HowtoForge thread above.
 
 This module now requires that you have ISPConfig 3.1 or higher.
