@@ -69,7 +69,7 @@
 
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">Email</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="hidden" class="form-control" name="svrid" value="{$variables.domains.0.server_id}" id="svrid">
                                 <input type="text" class="form-control" name="email" id="email">
@@ -87,7 +87,7 @@
 
                     <div class="form-group">
                         <label for="destination" class="col-sm-4 control-label">Destination</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
                             <textarea rows="10" cols="40" name="destination" id="destination" type="text" class="form-control"></textarea>
                         </div>
                     </div>
