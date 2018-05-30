@@ -181,7 +181,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
         }
 
         if ($function == 'mail_forward_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['forwarders'] = $client->mail_forward_get($session_id, $_options);
         }
         if ($function == 'mail_forward_add') {
@@ -196,7 +196,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_ftp_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['accounts'] = $client->sites_ftp_user_get($session_id, $_options);
             $response['user'] = $user;
         }
@@ -214,7 +214,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
         if ($function == 'sites_database_get') {
 			$userdbid = $client->client_get_by_username($session_id, $username);
             $client_recordid = $client->client_get_id($session_id, $userdbid['userid']);
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['dbs'] = $client->sites_database_get($session_id, $_options);
         }
         if ($function == 'sites_database_add') {
@@ -229,7 +229,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_database_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['db_users'] = $client->sites_database_user_get($session_id, $_options);
         }
         if ($function == 'sites_database_user_add') {
@@ -244,15 +244,15 @@ function cwispy_soap_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_web_domain_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid'], 'type' => 'vhost');
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
             $response['domains'] = $client->sites_web_domain_get($session_id, $_options);
         }
         if ($function == 'sites_web_domain_add') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid'], 'type' => 'vhost');
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
             $response['websites'] = $client->sites_web_domain_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_web_domain_update') {
-            $_options = isset($options['domain_id']) ? $options['domain_id'] : array('sys_groupid' => $user['userid'], 'type' => 'vhost');
+            $_options = isset($options['domain_id']) ? $options['domain_id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
             $response['websites'] = $client->sites_web_domain_update($session_id, $user['client_id'], $_options, $options);
         }
         if ($function == 'sites_web_domain_delete') {
@@ -261,7 +261,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
         
         
         if ($function == 'sites_web_aliasdomain_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid'], 'type' => 'alias');
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'alias');
             $response['aliasdomains'] = $client->sites_web_aliasdomain_get($session_id, $_options);
         }
         if ($function == 'sites_web_aliasdomain_add') {
@@ -319,7 +319,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
         }
 
         if ($function == 'sites_cron_get') {
-            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['crons'] = $client->sites_cron_get($session_id, $_options);
             $response['servers'] = $client->server_get_serverid_by_ip($session_id, $params['serverip']);
         }
