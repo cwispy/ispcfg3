@@ -28,14 +28,12 @@ Please report issues in our HowtoForge thread above.
 This module now requires that you have ISPConfig 3.1 or higher.
 It will no longer work with older versions of ISPConfig
 
-This module is currently undergoing changes and is not 
-recommended to be run in production in its current status.
-
 *Installation*
 
 - Create a directory called *ispcfg3* on your WHMCS server in the modules/servers directory eg: */var/www/whmcs/modules/server/ispcfg3*
 - Download the zip file and extract the contents to the directory you just created, or from the shell change into the directory you just and use ```git clone https://github.com/cwispy/ispcfg3.git .``` to download the repository.
 - Edit the file ispcfg3.php and make sure that you turn off the display_errors is set to 0 ```ini_set("display_errors", 0);```
 
+It is no longer necessary to upload any files into the ispconfig remote.d directory.
 
 Further setup instrutions can be found in our [GitHub Wiki](https://github.com/cwispy/ispcfg3/wiki)
