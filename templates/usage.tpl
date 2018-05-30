@@ -100,10 +100,10 @@
             <tr>
                 <td class="text-left">{$databasedisk.database_name}</td>
 				<td class="text-right">
-                {$databasedisk.used} MB
+                {{$databasedisk.used / 1048576}|number_format:2} MB
 				</td>
 				<td class="text-right">
-				{$databasedisk.quota_raw} MB
+				{If $databasedisk.quota_raw == ''}Unlimited{else}{$databasedisk.quota_raw} MB{/If}
 				</td>
 				<td class="text-right">
 				
