@@ -20,7 +20,8 @@
 <h3>Manage Email Accounts ({$params.domain})</h3>
 <p>In this area you can manage the email accounts associated with your domain. You can create, delete and edit all settings associated with your email accounts. 
     You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>
-{*$variables.quota|print_r*}
+    {*$variables.quota|print_r*}
+
 <hr>
 <h5>Current Mailboxes ( {$variables.mailboxes|@count} of {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If} )</h5>
 
@@ -39,29 +40,30 @@
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>Email</th><th class="text-right">Used Space (MB)</th><th class="text-right">Quota (MB)</th><th>&nbsp;</th></tr></thead>
         <tbody>
-        {foreach $variables.quota as $mailbox}
+        {foreach $variables.quota as $quota}
+
             <tr>
-                 <td>{$mailbox.email}</td>
+                 <td>{$quota.email}</td>
                 <td class="text-right">
-                 {{$mailbox.used / 1048576}|number_format:2:".":""}
+                 {{$quota.used / 1048576}|number_format:2:".":""}
 				</td>
 				<td class="text-right">
-				{{$mailbox.quota / 1048576}|number_format:2:".":""}
+				{{$quota.quota / 1048576}|number_format:2:".":""}
 				</td>
                 <td class="text-right">
                     {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
                             <i class="fa fa-ban"></i>
                         {else}
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" 
-                       data-target-values="quota={$mailbox.quota / 1048576}&old_quota={$mailbox.quota / 1048576}&totalquota={$variables.client.limit_mailquota}&activeEmail={$mailbox.email}&mail_id={$mailbox.mailuser_id}&email={$mailbox.email}">
+                       data-target-values="quota={$quota.quota / 1048576}&old_quota={$quota.quota / 1048576}&totalquota={$variables.client.limit_mailquota}&activeEmail={$quota.email}&mail_id={$quota.mailuser_id}&email={$quota.email}">
                         <i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" 
-                       data-target-values="activeEmail={$mailbox.email}&mail_id={$mailbox.mailuser_id}&email={$mailbox.email}">
+                       data-target-values="activeEmail={$quota.email}&mail_id={$quota.mailuser_id}&email={$quota.email}">
                         <i class="fa fa-times"></i></a>
                         {/If}
                 </td>
             </tr>
-            {assign "emailtotal" {$emailtotal} + {$mailbox.quota / 1048576} }
+            {assign "emailtotal" {$emailtotal} + {$quota.quota / 1048576} }
         {/foreach}
             <tr>
                 <td class="text-left" colspan="2">Quota (Allocated / Assigned)</td>
@@ -93,24 +95,30 @@
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">Email</label>
                         <div class="col-sm-6">
-                            <div class="input-group">
+                        <div class="input-group">
                                 <input type="hidden" class="form-control" name="svrid" value="{$variables.domains.0.server_id}" id="svrid">
                                 <input type="hidden" class="form-control" name="totalquota" id="totalquota">
                                 <input type="hidden" class="form-control" name="old_quota" id="old_quota">
                                 <input type="hidden" class="form-control" name="emailtotal" id="emailtotal" value="{$emailtotal}">
                                 <input type="text" class="form-control" name="email" id="email" >
-                                <span class="input-group-addon">@</span>
-                                <select class="form-control" name="domain" readonly="readonly">
-                                    
-									 <option>{$domain}</option>
-                                </select>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="domain" class="col-sm-4 control-label">Domain</label>
+                        <div class="col-sm-6">
+                        <div class="input-group">
+                            <select class="form-control" name="domain" readonly="readonly">
+                                <option>{$domain}</option>
+                            </select>
+                        </div>
                         </div>
                     </div>
 
                     <div id="newPassword11" class="form-group has-feedback">
                         <label for="inputNewPassword11" class="col-sm-5 control-label">{$LANG.newpassword}</label>
                         <div class="col-sm-6">
+                        <div class="input-group">
                             <input type="password" class="form-control" name="password" id="inputNewPassword11" autocomplete="off" />
                             <span class="form-control-feedback glyphicon"></span>
                             <br />
@@ -201,6 +209,7 @@
                         });
 
                         </script>
+                        </div>
                         </div>
                     </div>
                     <div id="newPassword22" class="form-group has-feedback">

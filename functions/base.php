@@ -120,10 +120,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
         if ($function == 'mail_user_get') {
             $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
             $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
-            for ($a=0;$a<count($response['mailboxes']);$a++) {
-            $client_quota = $client->mailquota_get_by_userid($session_id, $response['mailboxes'][$a]['mailuser_id']);
-                    $response['quota'][$response['mailboxes'][$a]['email']] = $client_quota;
-            }
+            $response['quota'] = $client->mailquota_get_by_user($session_id, $user['client_id'] );
         }
         
 		if ($function == 'client_get') {
