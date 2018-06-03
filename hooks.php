@@ -41,22 +41,23 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
             ->setOrder(1)
 			->setIcon('fa-info-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'overview')));
-
+        
+if ( !empty( $params['configoption17'] ) || ( $params['configoption17'] != '' ) ) {
 		$accountMenu->addChild('Site Builder')
             ->setUri(cwispy_create_url(array('view' => 'sitebuilder')))
             ->setLabel('Site Builder')
             ->setOrder(1)
 			->setIcon('fa-pencil-square-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'sitebuilder')));
-			
+}
+if ( !empty( $params['configoption18'] ) || ( $params['configoption18'] != '' ) ) {
         $accountMenu->addChild('File Manager')
             ->setUri(cwispy_create_url(array('view' => 'file-manager')))
             ->setLabel('File Manager')
             ->setOrder(3)
 			->setIcon('fa-file')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'file-manager')));
-	
-		
+}
         $accountMenu->addChild('Emails')
             ->setUri(cwispy_create_url(array('view' => 'emails')))
             ->setLabel('Emails')

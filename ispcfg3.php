@@ -129,6 +129,14 @@ function ispcfg3_ConfigOptions() {
                     'Type' => 'password',
                     'Size' => '60',
                     'Description' => ' <br />Site.pro api password.'
+            ),
+        'Site.Pro Enable' => array(
+                    'Type' => 'yesno',
+                    'Description' => '<br/>Enable Site.Pro in Client Area?'
+            ),
+        'File Manager Enable' => array(
+                    'Type' => 'yesno',
+                    'Description' => '<br/>Enable File Manager in Client Area?'
             )
         );
     return $configarray;
