@@ -17,7 +17,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+use WHMCS\Database\Capsule;
+
 add_hook('ClientAreaSidebars', 1, function($vars) {
+    
+/*
+ * Get Site.pro and filemanager settings from Database.
+ */
+$prodid = Capsule::table('tblhosting')
+        ->select('packageid')
+        ->where('id', $_GET['id'])
+        ->get();
+
+$confd = Capsule::table('tblproducts')
+        ->where('id', $prodid[0]->packageid)
+        ->get();
+
     if (function_exists('cwispy_handle_view')) {
         $currentRequest = $_GET;
 
@@ -42,7 +58,7 @@ add_hook('ClientAreaSidebars', 1, function($vars) {
 			->setIcon('fa-info-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'overview')));
         
-if ( !empty( $params['configoption17'] ) || ( $params['configoption17'] != '' ) ) {
+if ( !empty( $confd[0]->configoption17 ) || ( $confd[0]->configoption17 != '' ) ) {
 		$accountMenu->addChild('Site Builder')
             ->setUri(cwispy_create_url(array('view' => 'sitebuilder')))
             ->setLabel('Site Builder')
@@ -50,7 +66,7 @@ if ( !empty( $params['configoption17'] ) || ( $params['configoption17'] != '' ) 
 			->setIcon('fa-pencil-square-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'sitebuilder')));
 }
-if ( !empty( $params['configoption18'] ) || ( $params['configoption18'] != '' ) ) {
+if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) ) {
         $accountMenu->addChild('File Manager')
             ->setUri(cwispy_create_url(array('view' => 'file-manager')))
             ->setLabel('File Manager')
