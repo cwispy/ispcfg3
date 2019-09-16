@@ -49,11 +49,11 @@ if (isset($_GET['view_action'])) {
             'access' => 'y'
         );
         $create = cwispy_api_request($params, 'mail_user_add', $domain_options);
-        if ($create['status'] == 'success') {
+        if ($create['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email account created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
