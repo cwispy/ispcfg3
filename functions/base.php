@@ -110,7 +110,7 @@ function cwispy_api_request($params, $function, $options=array()) {
         $client_recordid = $client->client_get_id( $user['response']['userid'] );
         
         if ($function == 'mail_domain_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'parent_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
+            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
             $domains = $client->mail_domain_get( $_options );
             logModuleCall('ispconfig','maildomainget',$domains, $domains ,'','');
             $result = makearray( $domains['response'], 'domains');

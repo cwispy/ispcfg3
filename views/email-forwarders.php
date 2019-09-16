@@ -31,17 +31,17 @@ if (isset($_GET['view_action'])) {
 
         $domain_options = array(
             'source' => $_REQUEST['email'].'@'.$_REQUEST['domain'],
-            'destination' => $_REQUEST['destination'].'@'.$_REQUEST['domain'],
+            'destination' => $_REQUEST['destination'],
             'server_id' => $_REQUEST['svrid'],
             'type' => 'forward',
             'active' => 'y'
         );
         $create = cwispy_api_request($params, 'mail_forward_add', $domain_options);
-        if ($create['status'] == 'success') {
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -55,11 +55,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $update = cwispy_api_request($params, 'mail_forward_update', $domain_options);
-        if ($update['status'] == 'success') {
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -68,11 +68,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $delete = cwispy_api_request($params, 'mail_forward_delete', $domain_options);
-        if ($delete['status'] == 'success') {
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {

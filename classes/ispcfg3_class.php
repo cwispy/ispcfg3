@@ -341,6 +341,41 @@ class ispcfg3 {
         return $result;
     }
 
+    public function mail_forward_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'mail_forward_add', $data );
+
+        return $result;
+    }
+    
+    public function mail_forward_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'mail_forward_delete', $data );
+
+        return $result;
+    }
+    
+    public function mail_forward_update( $client_id, $primary_id = null , array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'mail_forward_update', $data );
+
+        return $result;
+    }
+
     public function mail_forward_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
