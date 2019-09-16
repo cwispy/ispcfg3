@@ -523,10 +523,25 @@ class ispcfg3 {
         return $result;
     }
 
-    public function sites_ftp_user_add( $client_id, array $params ) {
-        $data = [ 'client_id' => $client_id ];
-        $data['params'] = $params;
+    public function sites_ftp_user_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
         $result = self::restpost( 'sites_ftp_user_add', $data );
+
+        return $result;
+    }
+    
+    public function sites_ftp_user_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = ['primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'sites_ftp_user_delete', $data );
 
         return $result;
     }
