@@ -60,7 +60,7 @@ if (isset($_GET['view_action'])) {
             'active' => 'y',
             'traffic_quota_lock' => 'n'
         );
-        $create = cwispy_soap_request($params, 'sites_web_domain_add', $options);
+        $create = cwispy_api_request( $params, 'sites_web_domain_add', $options );
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website created successfully'));
         }
@@ -74,7 +74,7 @@ if (isset($_GET['view_action'])) {
         }
         if ( ( ( $_REQUEST['old_hd_quota'] < $_REQUEST['hd_quota'] ) && ( $_REQUEST['client_hd_quota'] != "-1" ) ) || 
              ( ( $_REQUEST['old_traffic_quota'] < $_REQUEST['traffic_quota'] ) && ( $_REQUEST['old_traffic_quota'] != "-1" ) ) ) {
-            //$website = cwispy_soap_request($params, 'sites_web_domain_get');
+            //$website = cwispy_api_request($params, 'sites_web_domain_get');
             //print_r($_REQUEST);
             
             $availablehdquota = ( ($_REQUEST['client_hd_quota'] - $_REQUEST['client_hd_used']) + $_REQUEST['old_hd_quota'] );
@@ -129,7 +129,7 @@ if (isset($_GET['view_action'])) {
             'traffic_quota_lock' => 'n'
         );
 
-        $update = cwispy_soap_request($params, 'sites_web_domain_update', $options);
+        $update = cwispy_api_request($params, 'sites_web_domain_update', $options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website updated successfully'));
         }
@@ -142,7 +142,7 @@ if (isset($_GET['view_action'])) {
             'domain_id' => $_REQUEST['domain_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_web_domain_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_web_domain_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website deleted successfully'));
         }
@@ -156,8 +156,12 @@ if (isset($_GET['view_action'])) {
 }
 else {
 
-    $websites = cwispy_soap_request($params, 'sites_web_domain_get');
-    $client  = cwispy_soap_request($params, 'client_get');
+    $websites = cwispy_api_request($params, 'sites_web_domain_get');
+    logModuleCall('ispconfig','webapiget',$websites, $websites ,'','');
+
+    $client  = cwispy_api_request($params, 'client_get');
+    logModuleCall('ispconfig','clientapiget',$client, $client ,'','');
+
     $return   = array_merge_recursive($client, $websites);
     
     if ($websites) {

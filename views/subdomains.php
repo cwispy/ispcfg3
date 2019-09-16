@@ -43,7 +43,7 @@ if (isset($_GET['view_action'])) {
             'ihost_zone_domain' => $_REQUEST['domain'].'.',
         );
 
-        $create = cwispy_soap_request($params, 'sites_web_subdomain_add', $options);
+        $create = cwispy_api_request($params, 'sites_web_subdomain_add', $options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain created successfully'));
         }
@@ -76,7 +76,7 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $update = cwispy_soap_request($params, 'sites_web_subdomain_update', $options);
+        $update = cwispy_api_request($params, 'sites_web_subdomain_update', $options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain updated successfully'));
         }
@@ -89,7 +89,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['subdomain_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_web_subdomain_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_web_subdomain_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain deleted successfully'));
         }
@@ -102,9 +102,9 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $domains = cwispy_soap_request($params, 'sites_web_domain_get');
-    $client  = cwispy_soap_request($params, 'client_get');
-    $subdomains = cwispy_soap_request($params, 'sites_web_subdomain_get');
+    $domains = cwispy_api_request($params, 'sites_web_domain_get');
+    $client  = cwispy_api_request($params, 'client_get');
+    $subdomains = cwispy_api_request($params, 'sites_web_subdomain_get');
 
     $return = array_merge_recursive($domains, $subdomains, $client);
 

@@ -51,7 +51,7 @@ if ( isset( $_GET['view_action'] ) ) {
         );
         if ($_REQUEST['directory']) $options['dir'] .= '/'.$_REQUEST['directory'];
 
-        $create = cwispy_soap_request($params, 'sites_ftp_user_add', $options);
+        $create = cwispy_api_request($params, 'sites_ftp_user_add', $options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account created successfully'));
         }
@@ -80,7 +80,7 @@ if ( isset( $_GET['view_action'] ) ) {
         if ($_REQUEST['directory']) $options['dir'] .= '/'.$_REQUEST['directory'];
         if ($_REQUEST['password']) $options['password'] = $_REQUEST['password'];
 
-        $update = cwispy_soap_request($params, 'sites_ftp_user_update', $options);
+        $update = cwispy_api_request($params, 'sites_ftp_user_update', $options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account updated successfully'));
         }
@@ -93,7 +93,7 @@ if ( isset( $_GET['view_action'] ) ) {
             'id' => $_REQUEST['ftp_user_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_ftp_user_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_ftp_user_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account deleted successfully'));
         }
@@ -106,9 +106,9 @@ if ( isset( $_GET['view_action'] ) ) {
     }
 }
 else {
-    $client  = cwispy_soap_request($params, 'client_get');
-    $ftpusers = cwispy_soap_request($params, 'sites_ftp_user_get');
-    $webdomain = cwispy_soap_request($params, 'sites_web_domain_get');
+    $client  = cwispy_api_request($params, 'client_get');
+    $ftpusers = cwispy_api_request($params, 'sites_ftp_user_get');
+    $webdomain = cwispy_api_request($params, 'sites_web_domain_get');
     $return = array_merge_recursive($ftpusers, $client, $webdomain);
     
     if (is_array($return['status'])) {

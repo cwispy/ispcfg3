@@ -49,7 +49,7 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $create = cwispy_soap_request($params, 'sites_cron_add', $options);
+        $create = cwispy_api_request($params, 'sites_cron_add', $options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job created successfully'));
         }
@@ -89,7 +89,7 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $update = cwispy_soap_request($params, 'sites_cron_update', $options);
+        $update = cwispy_api_request($params, 'sites_cron_update', $options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job updated successfully'));
         }
@@ -102,7 +102,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['cron_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_cron_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_cron_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job deleted successfully'));
         }
@@ -115,8 +115,8 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client  = cwispy_soap_request($params, 'client_get');
-    $crons = cwispy_soap_request($params, 'sites_cron_get');
+    $client = cwispy_api_request($params, 'client_get');
+    $crons  = cwispy_api_request($params, 'sites_cron_get');
     $return = array_merge_recursive($crons, $client);
     
     if (is_array($return['status'])) {

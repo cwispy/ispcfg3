@@ -36,7 +36,7 @@ if (isset($_GET['view_action'])) {
             'type' => 'forward',
             'active' => 'y'
         );
-        $create = cwispy_soap_request($params, 'mail_forward_add', $domain_options);
+        $create = cwispy_api_request($params, 'mail_forward_add', $domain_options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder created successfully'));
         }
@@ -54,7 +54,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['forwarder_id'],
         );
 
-        $update = cwispy_soap_request($params, 'mail_forward_update', $domain_options);
+        $update = cwispy_api_request($params, 'mail_forward_update', $domain_options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder updated successfully'));
         }
@@ -67,7 +67,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['forwarder_id']
         );
 
-        $delete = cwispy_soap_request($params, 'mail_forward_delete', $domain_options);
+        $delete = cwispy_api_request($params, 'mail_forward_delete', $domain_options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email forwarder deleted successfully'));
         }
@@ -80,9 +80,9 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client  = cwispy_soap_request($params, 'client_get');
-    $domains = cwispy_soap_request($params, 'mail_domain_get');
-    $forwarders = cwispy_soap_request($params, 'mail_forward_get');
+    $client  = cwispy_api_request($params, 'client_get');
+    $domains = cwispy_api_request($params, 'mail_domain_get');
+    $forwarders = cwispy_api_request($params, 'mail_forward_get');
 
     $return = array_merge_recursive($domains, $forwarders, $client);
 

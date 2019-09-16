@@ -43,7 +43,7 @@ if (isset($_GET['view_action'])) {
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_add',
         );
 
-        $create = cwispy_soap_request($params, 'dns_record_add', $options);
+        $create = cwispy_api_request($params, 'dns_record_add', $options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record created successfully'));
         }
@@ -76,7 +76,7 @@ if (isset($_GET['view_action'])) {
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_update',
         );
 
-        $update = cwispy_soap_request($params, 'dns_record_update', $options);
+        $update = cwispy_api_request($params, 'dns_record_update', $options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record updated successfully'));
         }
@@ -89,7 +89,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['record_id'],
         );
 
-        $delete = cwispy_soap_request($params, 'dns_a_delete', $options);
+        $delete = cwispy_api_request($params, 'dns_a_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record deleted successfully'));
         }
@@ -102,9 +102,9 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $records = cwispy_soap_request($params, 'dns_a_get');
-    $client  = cwispy_soap_request($params, 'client_get');
-    $zones = cwispy_soap_request($params, 'dns_zone_get');
+    $records = cwispy_api_request($params, 'dns_a_get');
+    $client  = cwispy_api_request($params, 'client_get');
+    $zones = cwispy_api_request($params, 'dns_zone_get');
 
     $return = array_merge_recursive($records, $zones, $client);
 

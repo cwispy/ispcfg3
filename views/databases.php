@@ -49,7 +49,7 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $create = cwispy_soap_request($params, 'sites_database_add', $create_options);
+        $create = cwispy_api_request($params, 'sites_database_add', $create_options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database created successfully'));
         }
@@ -80,7 +80,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_id'],
         );
 
-        $update = cwispy_soap_request($params, 'sites_database_update', $update_options);
+        $update = cwispy_api_request($params, 'sites_database_update', $update_options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database updated successfully'));
         }
@@ -93,7 +93,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_database_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_database_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database deleted successfully'));
         }
@@ -118,7 +118,7 @@ if (isset($_GET['view_action'])) {
             'database_password' => $_REQUEST['password'],
         );
 
-        $create = cwispy_soap_request($params, 'sites_database_user_add', $create_options);
+        $create = cwispy_api_request($params, 'sites_database_user_add', $create_options);
         if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user created successfully'));
         }
@@ -141,7 +141,7 @@ if (isset($_GET['view_action'])) {
         );
         if ($_REQUEST['database_password']) $update_options['database_password'] = $_REQUEST['password'];
 
-        $update = cwispy_soap_request($params, 'sites_database_user_update', $update_options);
+        $update = cwispy_api_request($params, 'sites_database_user_update', $update_options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user updated successfully'));
         }
@@ -154,7 +154,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_user_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_database_user_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_database_user_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user deleted successfully'));
         }
@@ -167,11 +167,11 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $dbs      = cwispy_soap_request($params, 'sites_database_get');
-    $db_users = cwispy_soap_request($params, 'sites_database_user_get');
-    $domains = cwispy_soap_request($params, 'sites_web_domain_get');
-	$clientP  = cwispy_soap_request($params, 'client_get_by_username');
-    $client   = cwispy_soap_request($params, 'client_get');
+    $dbs      = cwispy_api_request($params, 'sites_database_get');
+    $db_users = cwispy_api_request($params, 'sites_database_user_get');
+    $domains  = cwispy_api_request($params, 'sites_web_domain_get');
+    $clientP  = cwispy_api_request($params, 'client_get_by_username');
+    $client   = cwispy_api_request($params, 'client_get');
     
     // Create the Customer number based on the ISPConfig settings. 
     // eg: C[CUSTOMER_NO] would become C45
