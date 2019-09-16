@@ -125,8 +125,7 @@ function cwispy_api_request($params, $function, $options=array()) {
         
         $result['quota'] = array();
         if ($function == 'mail_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['sys_userid'],  
-                                                                                    'sys_groupid' => $user['response']['default_group'] ] ];
+            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_groupid' => $user['response']['default_group'] ] ];
             $mailboxes = $client->mail_user_get( $_options );
             $mbx = makearray( $mailboxes['response'], 'mailboxes' );
             $quota = $client->mailquota_get_by_user( $user['response']['client_id'] );
