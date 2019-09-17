@@ -30,7 +30,8 @@ if (isset($_GET['view_action'])) {
         if ( !isset($_REQUEST['parent_domain_id']) || $_REQUEST['parent_domain_id'] == '' ) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Site is required.'));
         }
-        if ( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) {
+        if (( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) && 
+                ( $_REQUEST['limit_database_quota'] != '-1' )) {
             $used = ( $_REQUEST['limit_database_quota'] - $_REQUEST['hdtotalused'] );
             if ( $_REQUEST['database_quota'] > $used ) {
                 cwispy_return_ajax_response(array('status' => 'error', 'message' => "Database Quota Error. Maximum available $used MB"));
@@ -49,12 +50,12 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $create = cwispy_soap_request($params, 'sites_database_add', $create_options);
-        if ($create['status'] == 'success') {
+        $create = cwispy_api_request($params, 'sites_database_add', $create_options);
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'db-edit') {
@@ -64,7 +65,8 @@ if (isset($_GET['view_action'])) {
         if (!isset($_REQUEST['database_user_id']) || !$_REQUEST['database_user_id']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Database user is required'));
         }
-        if ( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) {
+        if (( $_REQUEST['database_quota'] >= $_REQUEST['old_database_quota'] ) && 
+                ( $_REQUEST['limit_database_quota'] != '-1' )) {
         $used = ( $_REQUEST['limit_database_quota'] - $_REQUEST['hdtotalused'] ) + $_REQUEST['old_database_quota'];
             if ( $_REQUEST['database_quota'] > $used ) {
                 cwispy_return_ajax_response(array('status' => 'error', 'message' => "Database Quota Error. Maximum available $used MB"));
@@ -80,12 +82,12 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_id'],
         );
 
-        $update = cwispy_soap_request($params, 'sites_database_update', $update_options);
-        if ($update['status'] == 'success') {
+        $update = cwispy_api_request($params, 'sites_database_update', $update_options);
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'db-delete') {
@@ -93,12 +95,12 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_database_delete', $options);
+        $delete = cwispy_api_request($params, 'sites_database_delete', $options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'db-user-add') {
@@ -118,35 +120,35 @@ if (isset($_GET['view_action'])) {
             'database_password' => $_REQUEST['password'],
         );
 
-        $create = cwispy_soap_request($params, 'sites_database_user_add', $create_options);
-        if ($create['status'] == 'success') {
+        $create = cwispy_api_request($params, 'sites_database_user_add', $create_options);
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'db-user-edit') {
-        if (!isset($_REQUEST['username']) || !$_REQUEST['username']) {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Username name is required'));
+        if (!isset($_REQUEST['database_user']) || !$_REQUEST['database_user']) {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Username name not set'));
         }
         if (!isset($_REQUEST['password2']) || $_REQUEST['password2'] != $_REQUEST['password']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Passwords do not match'));
         }
 
         $update_options = array(
-            'database_user' => $_REQUEST['prefix'].$_REQUEST['username'],
-            'database_user_prefix' => $_REQUEST['prefix'],
+            'database_user' => $_REQUEST['database_user'],
+            'database_user_prefix' => $_REQUEST['database_user_prefix'],
             'id' => $_REQUEST['database_user_id'],
         );
         if ($_REQUEST['database_password']) $update_options['database_password'] = $_REQUEST['password'];
 
-        $update = cwispy_soap_request($params, 'sites_database_user_update', $update_options);
-        if ($update['status'] == 'success') {
+        $update = cwispy_api_request($params, 'sites_database_user_update', $update_options);
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'db-user-delete') {
@@ -154,12 +156,12 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['database_user_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_database_user_delete', $options);
-        if ($delete['status'] == 'success') {
+        $delete = cwispy_api_request($params, 'sites_database_user_delete', $options);
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Database user deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {
@@ -167,11 +169,11 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $dbs      = cwispy_soap_request($params, 'sites_database_get');
-    $db_users = cwispy_soap_request($params, 'sites_database_user_get');
-    $domains = cwispy_soap_request($params, 'sites_web_domain_get');
-	$clientP  = cwispy_soap_request($params, 'client_get_by_username');
-    $client   = cwispy_soap_request($params, 'client_get');
+    $dbs      = cwispy_api_request($params, 'sites_database_get');
+    $db_users = cwispy_api_request($params, 'sites_database_user_get');
+    $domains  = cwispy_api_request($params, 'sites_web_domain_get');
+    $clientP  = cwispy_api_request($params, 'client_get_by_username');
+    $client   = cwispy_api_request($params, 'client_get');
     
     // Create the Customer number based on the ISPConfig settings. 
     // eg: C[CUSTOMER_NO] would become C45
