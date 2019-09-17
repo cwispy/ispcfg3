@@ -328,7 +328,7 @@ function cwispy_api_request($params, $function, $options=array()) {
 
         if ($function == 'dns_zone_get') {
             $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $zones = $client->dns_zone_get($session_id, $_options);
+            $zones = $client->dns_zone_get( $_options );
             $result = makearray( $zones['response'], 'zones' );
         }
 

@@ -52,7 +52,7 @@
     </table>
 {else}
     <p>No email forwarders found</p>
-    <!-- {$variables|print_r} -->
+    {*$variables|print_r*}
 {/if}
 
 <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-hidden="true">

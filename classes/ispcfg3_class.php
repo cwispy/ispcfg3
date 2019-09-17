@@ -238,6 +238,18 @@ class ispcfg3 {
         return $result;
     }
 
+    public function dns_a_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_a_add', $data );
+
+        return $result;
+    }
+    
     public function dns_a_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -249,6 +261,512 @@ class ispcfg3 {
         return $result;
     }
 
+    public function dns_a_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_a_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_a_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_a_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_aaaa_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_aaaa_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_aaaa_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_aaaa_get', $data );
+
+        return $result;
+    }
+
+    public function dns_aaaa_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_aaaa_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_aaaa_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_aaaa_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_alias_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_alias_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_alias_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_alias_get', $data );
+
+        return $result;
+    }
+
+    public function dns_alias_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_alias_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_alias_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_alias_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_cname_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_cname_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_cname_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_cname_get', $data );
+
+        return $result;
+    }
+
+    public function dns_cname_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_cname_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_cname_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_cname_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_hinfo_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_hinfo_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_hinfo_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_hinfo_get', $data );
+
+        return $result;
+    }
+
+    public function dns_hinfo_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_hinfo_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_hinfo_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_hinfo_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_mx_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_mx_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_mx_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_mx_get', $data );
+
+        return $result;
+    }
+
+    public function dns_mx_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_mx_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_mx_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_mx_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_ns_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_ns_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_ns_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_ns_get', $data );
+
+        return $result;
+    }
+
+    public function dns_ns_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_ns_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_ns_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_ns_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_ptr_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_ptr_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_ptr_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_ptr_get', $data );
+
+        return $result;
+    }
+
+    public function dns_ptr_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_ptr_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_ptr_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_ptr_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_rp_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_rp_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_rp_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_rp_get', $data );
+
+        return $result;
+    }
+
+    public function dns_rp_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_rp_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_rp_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_rp_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_srv_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_srv_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_srv_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_srv_get', $data );
+
+        return $result;
+    }
+
+    public function dns_srv_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_srv_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_srv_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_srv_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_txt_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_txt_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_txt_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_txt_get', $data );
+
+        return $result;
+    }
+
+    public function dns_txt_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_txt_delete', $data );
+
+        return $result;
+    }
+    
+    public function dns_txt_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_txt_update', $data );
+
+        return $result;
+    }
+    
+    public function dns_zone_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_zone_add', $data );
+
+        return $result;
+    }
+    
+    public function dns_zone_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'dns_zone_delete', $data );
+
+        return $result;
+    }
+    
     public function dns_zone_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -259,19 +777,49 @@ class ispcfg3 {
 
         return $result;
     }
+    
+    public function dns_zone_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'dns_zone_update', $data );
 
-
-    public function domains_domain_add( $client_id, array $params ) {
-        $client_id = [ 'client_id' => $client_id ];
-        $client_id['params'] = $params;
-        $result = self::restpost( 'domains_domain_add', $client_id );
+        return $result;
+    }
+    
+    public function domains_domain_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'domains_domain_add', $data );
         
         return $result;
     }
     
     public function domains_domain_delete(  $primary_id ) {
-        $data = [ 'primary_id' => $primary_id ];
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
         $result = self::restpost( 'domains_domain_delete', $data );
+        
+        return $result;
+    }
+    
+    public function domains_domain_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'domains_domain_get', $data );
         
         return $result;
     }

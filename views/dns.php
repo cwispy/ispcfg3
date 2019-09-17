@@ -44,11 +44,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $create = cwispy_api_request($params, 'dns_record_add', $options);
-        if ($create['status'] == 'success') {
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -77,11 +77,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $update = cwispy_api_request($params, 'dns_record_update', $options);
-        if ($update['status'] == 'success') {
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -90,11 +90,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $delete = cwispy_api_request($params, 'dns_a_delete', $options);
-        if ($delete['status'] == 'success') {
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'DNS record deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {
@@ -104,10 +104,11 @@ if (isset($_GET['view_action'])) {
 else {
     $records = cwispy_api_request($params, 'dns_a_get');
     $client  = cwispy_api_request($params, 'client_get');
-    $zones = cwispy_api_request($params, 'dns_zone_get');
+    $zones   = cwispy_api_request($params, 'dns_zone_get');
 
     $return = array_merge_recursive($records, $zones, $client);
-
+    logModuleCall( 'dns_zone_get', __FUNCTION__, $return, $return, $return );
+    
     if ($zones) {
         foreach($zones['response']['zones'] as $zone) {
             $return['response']['zones_processed'][$zone['id']] = $zone;
@@ -118,7 +119,7 @@ else {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
     }
 
-    $return['response']['types'] = array('a','aaaa','alias','cname','hinfo','mx','ns','ptr','rp','srv','txt');
+    $return['response']['types'] = array('a','aaaa','alias','caa', 'cname','hinfo','mx','ns','ptr','rp','srv','txt');
 
     $return['action_urls']['add'] = cwispy_create_url(array('view' => 'dns', 'view_action' => 'add'));
     $return['action_urls']['edit'] = cwispy_create_url(array('view' => 'dns', 'view_action' => 'edit'));
