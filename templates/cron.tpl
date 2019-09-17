@@ -47,7 +47,7 @@
                 {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
                     <i class="fa fa-ban"></i>
                 {else}
-                    <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="cron_id={$cron.id}&minute_val={$cron.run_min}&hour_val={$cron.run_hour}&day_val={$cron.run_mday}&month_val={$cron.run_month}&weekday_val={$cron.run_wday}&command={$cron.command}"><i class="fa fa-pencil"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEdit" data-target-values="cron_server_id={$cron.server_id}&cron_id={$cron.id}&minute_val={$cron.run_min}&hour_val={$cron.run_hour}&day_val={$cron.run_mday}&month_val={$cron.run_month}&weekday_val={$cron.run_wday}&command={$cron.command}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDelete" data-target-values="cron_id={$cron.id}"><i class="fa fa-times"></i></a>
                 {/If}
                 </td>
@@ -70,8 +70,21 @@
                 <form class="form-horizontal ajax-form" id="frmAdd">
                     <div id="ajax-params" data-action="{$action_urls.add}" data-method="POST" data-loader="#ajax-loader-add" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
                     <div id="ajax-messages"></div>
-                    <input type="hidden" name="server_id" value="{$server_id}">
 
+                    <div class="form-group">
+                        <label for="server_id" class="col-sm-4 control-label">Website</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="server_id" id="parent_domain_id">
+                                <option value="">- select site -</option>
+                                {if is_array($variables.domains) && count($variables.domains) > 0}
+                                    {foreach $variables.domains as $domain}
+                                        <option value="{$domain.server_id}">{$domain.domain}</option>
+                                    {/foreach}
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="common_settings" class="col-sm-4 control-label">Common Settings</label>
                         <div class="col-sm-6">
@@ -357,7 +370,7 @@
                 <form class="form-horizontal ajax-form" id="frmEdit">
                     <div id="ajax-params" data-action="{$action_urls.edit}" data-method="POST" data-loader="#ajax-loader-edit" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
                     <div id="ajax-messages"></div>
-                    <input type="hidden" name="server_id" value="{$server_id}">
+                    <input type="hidden" name="server_id" id="cron_server_id">
                     <input type="hidden" name="cron_id" id="cron_id">
 
                     <div class="form-group">

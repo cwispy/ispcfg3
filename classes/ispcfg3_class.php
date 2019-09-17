@@ -444,14 +444,6 @@ class ispcfg3 {
 
         return $result;
     }
-    
-    public function sites_database_add( $client_id, array $params ) {
-        $data = [ 'client_id' => $client_id ];
-        $data['params'] = $params;
-        $result = self::restpost( 'sites_database_add', $data );
-
-        return $result;
-    }
 
     public function server_get ( $server_id, $section = '' ) {
         $server_id = ['server' => $server_id, 'section' => $section ];
@@ -482,6 +474,29 @@ class ispcfg3 {
         return $result;
     }
     
+    public function sites_cron_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_cron_add', $data );
+
+        return $result;
+    }
+    
+    public function sites_cron_delete( $cron_id ) {
+        if ( !is_array( $cron_id ) ) {
+            $data = [ 'cron_id' => $cron_id ];
+        } else {
+            $data = $cron_id;
+        }
+        $result = self::restpost( 'sites_cron_delete', $data );
+
+        return $result;
+    }
+    
     public function sites_cron_get( $cron_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'cron_id' => $cron_id ];
@@ -493,6 +508,37 @@ class ispcfg3 {
         return $result;
     }
 
+    public function sites_cron_update( $client_id, $cron_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'cron_id' => $cron_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_cron_update', $data );
+
+        return $result;
+    }
+    
+    public function sites_database_add( $client_id, array $params ) {
+        $data = [ 'client_id' => $client_id ];
+        $data['params'] = $params;
+        $result = self::restpost( 'sites_database_add', $data );
+
+        return $result;
+    }
+
+    public function sites_database_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'sites_database_delete', $data );
+
+        return $result;
+    }
+    
     public function sites_database_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -504,6 +550,41 @@ class ispcfg3 {
         return $result;
     }
 
+    public function sites_database_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_database_update', $data );
+
+        return $result;
+    }
+    
+    public function sites_database_user_add( $client_id, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+        $data = [ 'client_id' => $client_id ];
+        $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_database_user_add', $data );
+
+        return $result;
+    }
+    
+    public function sites_database_user_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+        $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'sites_database_user_delete', $data );
+
+        return $result;
+    }
+    
     public function sites_database_user_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -515,14 +596,18 @@ class ispcfg3 {
         return $result;
     }
 
-    public function sites_database_user_add( $client_id, array $params ) {
-        $data = [ 'client_id' => $client_id ];
-        $data['params'] = $params;
-        $result = self::restpost( 'sites_database_user_add', $data );
+    public function sites_database_user_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_database_user_update', $data );
 
         return $result;
     }
-
+    
     public function sites_ftp_user_add( $client_id, array $params = null ) {
         if ( !is_array( $client_id ) ) {
             $data = [ 'client_id' => $client_id ];
@@ -565,6 +650,18 @@ class ispcfg3 {
         return $result;
     }
     
+    public function sites_web_aliasdomain_add( $client_id, array $params = null, $readonly = false ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'readonly' => $readonly ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_web_aliasdomain_add', $data );
+
+        return $result;
+    }
+    
     public function sites_web_aliasdomain_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -576,10 +673,36 @@ class ispcfg3 {
         return $result;
     }
 
+    public function sites_web_aliasdomain_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'sites_web_aliasdomain_delete', $data );
 
-    public function sites_web_domain_add( $client_id, array $params, $readonly = false) {
-        $data = [ 'client_id' => $client_id, 'readonly' => $readonly ];
-        $data['params'] = $params;
+        return $result;
+    }
+    
+    public function sites_web_aliasdomain_update( $client_id, $primary_id = null , array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_web_aliasdomain_update', $data );
+
+        return $result;
+    }
+    
+    public function sites_web_domain_add( $client_id, array $params = null, $readonly = false) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'readonly' => $readonly ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
         $result = self::restpost( 'sites_web_domain_add', $data );
 
         return $result;
@@ -613,6 +736,28 @@ class ispcfg3 {
         return $result;
     }
     
+    public function sites_web_subdomain_add( $client_id, array $params = null, $readonly = false ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'readonly' => $readonly ];
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_web_subdomain_add', $data );
+
+        return $result;
+    }
+    
+    public function sites_web_subdomain_delete( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'sites_web_subdomain_delete', $data );
+
+        return $result;
+    }
+    
     public function sites_web_subdomain_get( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
@@ -620,6 +765,18 @@ class ispcfg3 {
             $data = $primary_id;
         }
         $result = self::restpost( 'sites_web_subdomain_get', $data );
+
+        return $result;
+    }
+    
+    public function sites_web_subdomain_update( $client_id, $primary_id = null, array $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'sites_web_subdomain_update', $data );
 
         return $result;
     }

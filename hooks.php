@@ -170,7 +170,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
 	
 	
         $loginMenu->addChild('Webmail')
-            ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'webmail')))
+            ->setUri('https://webmail.2000cn.com.au')
             ->setLabel('Webmail')
             ->setOrder(3)
 			->setIcon('fa-envelope')
@@ -178,7 +178,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
 	
         
         $loginMenu->addChild('phpMyAdmin')
-            ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'phpmyadmin')))
+            ->setUri('https://cp.2000cn.com.au:8080/phpmyadmin/')
             ->setLabel('phpMyAdmin')
             ->setOrder(4)
 			->setIcon('fa-database')

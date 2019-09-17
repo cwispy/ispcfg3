@@ -33,7 +33,7 @@ This is the folder to put the content for your aliasdomain.<p>
     {/If}
     >Add Aliasdomain</button>
 </div>
-{*$variables.domains.0|print_r*}
+{*$variables.domains|print_r*}
 {assign "server_id" "{$variables.domains.0.server_id}"}
 {assign "domain_id" "{$variables.domains.0.domain_id}"}
 
@@ -80,7 +80,7 @@ This is the folder to put the content for your aliasdomain.<p>
                     <input type="hidden" name="server_id" value="{$server_id}">
                     <input type="hidden" name="domain_id" id="domain_id" value="{$domain_id}">
                     <input type="hidden" name="dir_prefix" value="{$dir_prefix}">
-
+                            
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">From Domain</label>
                         <div class="col-sm-6">

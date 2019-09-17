@@ -44,11 +44,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $create = cwispy_api_request($params, 'sites_web_subdomain_add', $options);
-        if ($create['status'] == 'success') {
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -77,11 +77,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $update = cwispy_api_request($params, 'sites_web_subdomain_update', $options);
-        if ($update['status'] == 'success') {
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -90,11 +90,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $delete = cwispy_api_request($params, 'sites_web_subdomain_delete', $options);
-        if ($delete['status'] == 'success') {
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Subdomain deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {

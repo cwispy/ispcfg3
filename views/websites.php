@@ -61,11 +61,11 @@ if (isset($_GET['view_action'])) {
             'traffic_quota_lock' => 'n'
         );
         $create = cwispy_api_request( $params, 'sites_web_domain_add', $options );
-        if ($create['status'] == 'success') {
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -130,11 +130,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $update = cwispy_api_request($params, 'sites_web_domain_update', $options);
-        if ($update['status'] == 'success') {
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -143,11 +143,11 @@ if (isset($_GET['view_action'])) {
         );
 
         $delete = cwispy_api_request($params, 'sites_web_domain_delete', $options);
-        if ($delete['status'] == 'success') {
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Website deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {

@@ -50,14 +50,12 @@ if (isset($_GET['view_action'])) {
         );
 
         $create = cwispy_api_request($params, 'sites_web_aliasdomain_add', $options);
-        if ($create['status'] == 'success') {
+        if ( $create['response']['code'] == 'ok' ) {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Aliasdomain created successfully'));
+        } else {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
-        else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
-        }
-    }
-    elseif ($_GET['view_action'] == 'edit') {
+    } elseif ($_GET['view_action'] == 'edit') {
         if (!isset($_REQUEST['aliasdomain']) || !$_REQUEST['aliasdomain']) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'Aliasdomain is required'));
         }
@@ -84,39 +82,34 @@ if (isset($_GET['view_action'])) {
         );
 
         $update = cwispy_api_request($params, 'sites_web_aliasdomain_update', $options);
-        if ($update['status'] == 'success') {
+        if ( $update['response']['code'] == 'ok' ) {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Aliasdomain updated successfully'));
+        } else {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
-        else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
-        }
-    }
-    elseif ($_GET['view_action'] == 'delete') {
+    } elseif ($_GET['view_action'] == 'delete') {
         $options = array(
             'id' => $_REQUEST['aliasdomain_id']
         );
 
         $delete = cwispy_api_request($params, 'sites_web_aliasdomain_delete', $options);
-        if ($delete['status'] == 'success') {
+        if ( $delete['response']['code'] == 'ok' ) {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Aliasdomain deleted successfully'));
+        } else {
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
-        else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
-        }
-    }
-    else {
+    } else {
         cwispy_return_ajax_response(array('status' => 'error', 'message' => 'View action missing'));
     }
-}
-else {
+} else {
     $domains = cwispy_api_request($params, 'sites_web_domain_get');
     $client  = cwispy_api_request($params, 'client_get');
     $aliasdomains = cwispy_api_request($params, 'sites_web_aliasdomain_get');
 
     $return = array_merge_recursive($domains, $aliasdomains, $client);
-
+    logModuleCall( 'sites_web_aliasdomain_get', __FUNCTION__, $return, $return, $return );
     if ($domains) {
-        foreach($domains['response']['domains'] as $domain) {
+        foreach( $domains['response']['domains'] as $domain ) {
             $return['response']['domains_processed'][$domain['domain_id']] = $domain;
         }
     }

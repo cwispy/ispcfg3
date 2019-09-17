@@ -273,20 +273,20 @@ function cwispy_api_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_web_domain_get') {
-            $_options = isset($options['id']) ? $options['id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
+            $_options = isset($options['id']) ? $options['id'] : ['primary_id' => [ 'sys_groupid' => $user['response']['default_group'], 'type' => 'vhost' ] ];
             $web = $client->sites_web_domain_get( $_options );
             $result = makearray( $web['response'], 'domains');
         }
         if ($function == 'sites_web_domain_add') {
             $_options = isset($options['id']) ? $options['id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
-            $result['websites'] = $client->sites_web_domain_add( $user['response']['client_id'], $options );
+            $result = $client->sites_web_domain_add( $user['response']['client_id'], $options );
         }
         if ($function == 'sites_web_domain_update') {
             $_options = isset($options['domain_id']) ? $options['domain_id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
-            $result['websites'] = $client->sites_web_domain_update( $user['response']['client_id'], $_options, $options );
+            $result = $client->sites_web_domain_update( $user['response']['client_id'], $_options, $options );
         }
         if ($function == 'sites_web_domain_delete') {
-            $result['websites'] = $client->sites_web_domain_delete( $options['domain_id'] );
+            $result = $client->sites_web_domain_delete( $options['domain_id'] );
         }
         
         
@@ -294,6 +294,7 @@ function cwispy_api_request($params, $function, $options=array()) {
             $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'alias' ] ];
             $aliasdomains = $client->sites_web_aliasdomain_get( $_options );
             $result = makearray( $aliasdomains['response'], 'aliasdomains' );
+            logModuleCall( 'sites_web_aliasdomain_get', __FUNCTION__, $result, $result, $result );
         }
         if ($function == 'sites_web_aliasdomain_add') {
             $result = $client->sites_web_aliasdomain_add( $user['response']['client_id'], $options );
@@ -309,7 +310,7 @@ function cwispy_api_request($params, $function, $options=array()) {
 
         
         if ($function == 'sites_web_subdomain_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'subdomain' ] ];
+            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_groupid' => $user['response']['default_group'], 'type' => 'subdomain' ] ];
             $subdomains = $client->sites_web_subdomain_get( $_options );
             $result = makearray( $subdomains['response'], 'subdomains' );
         }
