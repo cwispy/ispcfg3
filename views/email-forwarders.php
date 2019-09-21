@@ -80,8 +80,8 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client  = cwispy_api_request($params, 'client_get');
-    $domains = cwispy_api_request($params, 'mail_domain_get');
+    $client     = cwispy_api_request($params, 'client_get');
+    $domains    = cwispy_api_request($params, 'mail_domain_get');
     $forwarders = cwispy_api_request($params, 'mail_forward_get');
 
     $return = array_merge_recursive($domains, $forwarders, $client);

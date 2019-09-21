@@ -21,7 +21,7 @@
  * @version 20190911
  */
 
-namespace ISPCFG;
+namespace ISPCFG3;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;

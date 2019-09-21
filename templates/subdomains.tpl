@@ -17,7 +17,6 @@
  */
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
-{*$variables|print_r*}
 <span class="icon-header icon-subdomain"></span>
 <h3>Manage Subdomains ({$params.domain})</h3>
 <p>Subdomains are extensions of your domain name that you can forward to URLs or point to IP addresses and directories within your hosting account. It can be a second website, with its own unique content. The document root you select when creating it, is the name folder to which to upload your files to. <br /><br />e.g If you create a subdomain shop.mydomain.com with the document root as 'shop', you will see the shop folder in the file manager. This is the folder to put the content for your subdomain.<p>

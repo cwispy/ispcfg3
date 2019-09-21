@@ -17,7 +17,7 @@
  */
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
-{*$variables|print_r*}
+
 <span class="icon-header icon-subdomain"></span>
 <h3>Manage Websites ({$params.domain})</h3>
 <p>This page lets you manage your Websites and their settings.<p>
@@ -33,7 +33,7 @@
     {/If}
     >Add Websites</button>
 </div>
-
+{*$variables.client|print_r*}
 {assign "web_php_options" ","|explode:$variables.client.web_php_options}
 {assign "server_id" "{$variables.client.web_servers}"}
 

@@ -17,6 +17,7 @@
  */
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
+
 <span class="icon-header icon-dns"></span>
 <div data-view="dns">
     <h3>Manage DNS Records ({$params.domain})</h3>
@@ -24,12 +25,67 @@
     <hr>
     <h5>Current DNS Records ( {$variables.records|@count} of {If $variables.client.limit_dns_record == -1}Unlimited{else}{$variables.client.limit_dns_record}{/If} )</h5>
 
-    <div class="text-right">
-        <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
+    <div class="text-left">
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="A"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
         disabled="disabled"
         {/If}        
-        >Add DNS Record</button>
+        >A Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="AAAA"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >AAAA Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="ALIAS"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >ALIAS Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="CAA"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >CAA Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="CNAME"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >CNAME Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="HINFO"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >HINFO Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="MX"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >MX Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="NS"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}
+        >NS Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="PTR"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >PTR Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="RP"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}        
+        >RP Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="SRV"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}
+        >SRV Record</button>
+        <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#modalAdd" data-dnstype="TXT"
+        {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
+        disabled="disabled"
+        {/If}
+        >TXT Record</button>
     </div>
     {assign "server_id" "{$variables.zones[0].server_id}"}
     {if is_array($variables.records) && count($variables.records) > 0}
@@ -92,13 +148,7 @@
                         <div class="form-group">
                             <label for="type" class="col-sm-4 control-label">Type</label>
                             <div class="col-sm-6">
-                                <select class="form-control" name="type" id="type">
-                                    {if is_array($variables.types) && count($variables.types) > 0}
-                                        {foreach $variables.types as $type}
-                                        <option value="{$type}">{$type|upper}</option>
-                                        {/foreach}
-                                    {/if}
-                                </select>
+                                <input type="text" class="form-control" name="type" id="dnstype" value="" readonly=""/>
                             </div>
                         </div>
 
@@ -132,7 +182,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-success" onclick="$('#frmAdd #zone_name').val($('#frmAdd #zone :selected').html());$('#frmAdd').submit()"><span id="ajax-loader-add"></span> Create DNS Record</button>
+                    <button class="btn btn-success" onclick="$('#frmAdd #zone_name').val($('#frmAdd #zone :selected').html());$('#frmAdd').submit()">
+                        <span id="ajax-loader-add"></span> Create DNS Record</button>
                 </div>
             </div>
         </div>
@@ -238,3 +289,12 @@
         </div>
     </div>
 </div>
+                        
+<script type="text/javascript">
+$('#modalAdd').on('show.bs.modal', function (e) {
+  var button = $(e.relatedTarget);
+  var btntype = button.data('dnstype');
+  var modal = $(this);
+  modal.find('.modal-body #dnstype').val( btntype );
+});
+</script>

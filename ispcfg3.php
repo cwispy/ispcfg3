@@ -26,13 +26,13 @@ if (!defined("WHMCS")) {
 }
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
-ini_set("display_errors", 1); // Set this option to Zero on a production machine.
+ini_set("display_errors", 0); // Set this option to Zero on a production machine.
 openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
 require_once(__DIR__.'/classes/ispcfg3_class.php');
 include_once(__DIR__.'/functions/base.php');
 
 use WHMCS\Database\Capsule;
-use ISPCFG\ispcfg3;
+use ISPCFG3\ispcfg3;
 
 function ispcfg3_MetaData() {
     return array(
