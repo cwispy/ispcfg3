@@ -124,7 +124,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['quota'] = $client->mailquota_get_by_user($session_id, $user['client_id'] );
         }
         
-        if ($function == 'client_get') {
+		if ($function == 'client_get') {
             $response['client'] = $client->client_get($session_id, $user['client_id']);
             $response['ipv4']['all'] = $client->server_ip_get($session_id, 
                     array( 'server_id' => $response['client']['default_webserver'], 
@@ -299,7 +299,6 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['zones'] = $client->dns_zone_get($session_id, $_options);
         }
 
-        
         if ($function == 'dns_a_get') {
             $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
             $response['records'] = $client->dns_a_get($session_id, $_options);
@@ -311,7 +310,6 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response = $client->dns_a_delete($session_id, $options['id']);
         }
 
-        
         if ($function == 'dns_record_add') {
             $actual_function = $options['ihost_dns_function'];
             $response = $client->{$actual_function}($session_id, $user['client_id'], $options);

@@ -49,12 +49,12 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $create = cwispy_soap_request($params, 'sites_cron_add', $options);
-        if ($create['status'] == 'success') {
+        $create = cwispy_api_request($params, 'sites_cron_add', $options);
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -89,12 +89,12 @@ if (isset($_GET['view_action'])) {
             'active' => 'y'
         );
 
-        $update = cwispy_soap_request($params, 'sites_cron_update', $options);
-        if ($update['status'] == 'success') {
+        $update = cwispy_api_request($params, 'sites_cron_update', $options);
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -102,12 +102,12 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['cron_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_cron_delete', $options);
-        if ($delete['status'] == 'success') {
+        $delete = cwispy_api_request($params, 'sites_cron_delete', $options);
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {
@@ -115,9 +115,10 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client  = cwispy_soap_request($params, 'client_get');
-    $crons = cwispy_soap_request($params, 'sites_cron_get');
-    $return = array_merge_recursive($crons, $client);
+    $client = cwispy_api_request($params, 'client_get');
+    $crons  = cwispy_api_request($params, 'sites_cron_get');
+    $websites = cwispy_api_request($params, 'sites_web_domain_get');
+    $return = array_merge_recursive($crons, $client, $websites);
     
     if (is_array($return['status'])) {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';

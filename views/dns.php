@@ -34,12 +34,12 @@ if (isset($_GET['view_action'])) {
 
         $options = array(
             'server_id' => $_REQUEST['server_id'],
-            'zone'      => $_REQUEST['zone'],
-            'name'      => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
-            'type'      => $_REQUEST['type'],
-            'data'      => $_REQUEST['destination'],
-            'ttl'       => $_REQUEST['ttl'],
-            'active'    => 'y',
+            'zone' => $_REQUEST['zone'],
+            'name' => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
+            'type' => $_REQUEST['type'],
+            'data' => $_REQUEST['destination'],
+            'ttl' => $_REQUEST['ttl'],
+            'active' => 'y',
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_add',
         );
 
@@ -65,14 +65,14 @@ if (isset($_GET['view_action'])) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'TTL is required'));
         }
         $options = array(
-            'id'        => $_REQUEST['record_id'],
+            'id' => $_REQUEST['record_id'],
             'server_id' => $_REQUEST['server_id'],
-            'zone'      => $_REQUEST['zone'],
-            'name'      => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
-            'type'      => $_REQUEST['type'],
-            'data'      => $_REQUEST['destination'],
-            'ttl'       => $_REQUEST['ttl'],
-            'active'    => 'y',
+            'zone' => $_REQUEST['zone'],
+            'name' => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
+            'type' => $_REQUEST['type'],
+            'data' => $_REQUEST['destination'],
+            'ttl' => $_REQUEST['ttl'],
+            'active' => 'y',
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_update',
         );
 

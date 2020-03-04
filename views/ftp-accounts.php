@@ -51,12 +51,12 @@ if ( isset( $_GET['view_action'] ) ) {
         );
         if ($_REQUEST['directory']) $options['dir'] .= '/'.$_REQUEST['directory'];
 
-        $create = cwispy_soap_request($params, 'sites_ftp_user_add', $options);
-        if ($create['status'] == 'success') {
+        $create = cwispy_api_request($params, 'sites_ftp_user_add', $options);
+        if ($create['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -80,12 +80,12 @@ if ( isset( $_GET['view_action'] ) ) {
         if ($_REQUEST['directory']) $options['dir'] .= '/'.$_REQUEST['directory'];
         if ($_REQUEST['password']) $options['password'] = $_REQUEST['password'];
 
-        $update = cwispy_soap_request($params, 'sites_ftp_user_update', $options);
-        if ($update['status'] == 'success') {
+        $update = cwispy_api_request($params, 'sites_ftp_user_update', $options);
+        if ($update['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -93,12 +93,12 @@ if ( isset( $_GET['view_action'] ) ) {
             'id' => $_REQUEST['ftp_user_id']
         );
 
-        $delete = cwispy_soap_request($params, 'sites_ftp_user_delete', $options);
-        if ($delete['status'] == 'success') {
+        $delete = cwispy_api_request($params, 'sites_ftp_user_delete', $options);
+        if ($delete['response']['code'] == 'ok') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'FTP account deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
         }
     }
     else {
@@ -106,9 +106,9 @@ if ( isset( $_GET['view_action'] ) ) {
     }
 }
 else {
-    $client  = cwispy_soap_request($params, 'client_get');
-    $ftpusers = cwispy_soap_request($params, 'sites_ftp_user_get');
-    $webdomain = cwispy_soap_request($params, 'sites_web_domain_get');
+    $client  = cwispy_api_request($params, 'client_get');
+    $ftpusers = cwispy_api_request($params, 'sites_ftp_user_get');
+    $webdomain = cwispy_api_request($params, 'sites_web_domain_get');
     $return = array_merge_recursive($ftpusers, $client, $webdomain);
     
     if (is_array($return['status'])) {

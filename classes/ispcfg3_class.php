@@ -25,6 +25,7 @@ namespace ISPCFG3;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Cookie\CookieJar;
 use WHMCS\Exception;
 
 /**
@@ -41,15 +42,19 @@ class ispcfg3 {
     protected $session_id;
     
     public $client;
+    public $jar;
     
     public function __construct( $base_uri, $base_url ) {
-      
+
+        $this->jar = new CookieJar;
+        
         $this->uri = $base_uri;
         $this->url = $base_url;
         
         $this->client = new Client([
             'base_uri' => $this->uri,
             'timeout'  => 30,
+            'cookies'  => $jar
         ]);
     }
 
@@ -82,21 +87,23 @@ class ispcfg3 {
         
         $body = json_decode( $response->getBody(), true );
         
-        if ( $body['code'] !== 'ok' ) {
+        if ( $body['response'] == 'false' ) {
             
-                logModuleCall(
-                'login failed',
-                __FUNCTION__,
-                $body,
-                $this->session_id,
-                $this->session_id
-            );
-        } else {
-            $this->session_id = $body['response'];
+            
             logModuleCall(
             'login success',
             __FUNCTION__,
-            $body,
+            $this->session_id,
+            $this->session_id,
+            $this->session_id
+        );
+            Throw new ErrorException('Login failed');
+        } else {
+            $this->session_id = $body['response'];
+            logModuleCall(
+            'login fail',
+            __FUNCTION__,
+            $this->session_id,
             $this->session_id,
             $this->session_id
         );
@@ -1267,18 +1274,6 @@ class ispcfg3 {
             $data = $primary_id;
         }
         $result = self::restpost( 'sites_web_domain_get', $data );
-        return $result;
-    }
-    
-    public function sites_web_domain_update( $client_id, $primary_id = null, $params = null ) {
-        if ( !is_array( $client_id ) ) {
-            $data = [ 'client_id' => $client_id, 'primary_id' => $primary_id ];
-            $data['params'] = $params;
-        } else {
-            $data = $client_id;
-        }
-        $result = self::restpost( 'sites_web_domain_update', $data );
-
         return $result;
     }
     
