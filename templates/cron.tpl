@@ -19,7 +19,8 @@
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-cron"></span>
 <h3>Manage Cron Jobs ({$params.domain})</h3>
-<p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p><p>If you are unsure of how to create one contact support to set it up for you.</p>
+<p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p>
+<p>If you are unsure of how to create one contact support to set it up for you.</p>
 <hr>
 <h5>Current Cron Jobs ( {$variables.crons|@count} of {If $variables.client.limit_cron == -1}Unlimited{else}{$variables.client.limit_cron}{/If} )</h5>
 
@@ -30,7 +31,7 @@
     {/If}
     >Add Cron Job</button>
 </div>
-{assign "server_id" "{$variables.servers[0].server_id}"}
+{assign "server_id" "{$variables.servers.server_id}"}
 {if is_array($variables.crons) && count($variables.crons) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
         <thead><tr><th>Command</th><th>Minute</th><th>Hour</th><th>Day</th><th>Month</th><th>Weekday</th><th>&nbsp;</th></tr></thead>
