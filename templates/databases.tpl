@@ -20,6 +20,7 @@
 <span class="icon-header icon-database"></span>
 <h3>Manage Databases ({$params.domain})</h3>
 <p>MySQL databases are required by many web applications . To use a database, you will need to create one first. </p>
+{*$variables.client|print_r*}
 <hr>
 <h5>Current Databases ( {$variables.dbs|@count} of {If $variables.client.limit_database == -1}Unlimited{else}{$variables.client.limit_database}{/If} )</h5>
 <div class="text-right">
@@ -32,7 +33,7 @@
     >Add Database</button>
 </div>
 
-{*$variables|print_r*}
+{*$variables.domains|print_r*}
 {assign "userid" "{$variables.client.customer_no_template}"}
 {if is_array($variables.dbs) && count($variables.dbs) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
@@ -88,7 +89,7 @@
                 {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
                     <i class="fa fa-ban"></i>
                 {else}
-                    <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEditDBUser" data-target-values="database_user_id={$db_user.database_user_id}&database_user={$db_user.database_user}&database_user_prefix={$db_user.database_user_prefix}"><i class="fa fa-pencil"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalEditDBUser" data-target-values="database_user_id={$db_user.database_user_id}&username={$db_user.database_user}"><i class="fa fa-pencil"></i></a>
                     <a href="javascript:;" class="btn btn-xs btn-default" id="btnAction" data-toggle="modal" data-target="#modalDeleteDBUser" data-target-values="database_user_id={$db_user.database_user_id}"><i class="fa fa-times"></i></a>
                 {/If}
                 </td>
@@ -467,11 +468,19 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmEdit">
-                    <div id="ajax-params" data-action="{$action_urls.db_user.edit}" data-method="POST" data-loader="#modalEditDBUser #ajax-loader-edit" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.db_user.edit}" 
+                         data-method="POST" 
+                         data-loader="#modalEditDBUser #ajax-loader-edit" 
+                         data-loader-position="outside" 
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()">
+                    </div>
                     <div id="ajax-messages"></div>
                     <input name="database_user_id" type="hidden" id="database_user_id">
-                    <input name="database_user" type="hidden" id="database_user">
-                    <input name="database_user_prefix" type="hidden" id="database_user_prefix">
+                    <input name="username" type="hidden" id="username">
+
                     <div id="newPassword33" class="form-group has-feedback">
                         <label for="inputNewPassword33" class="col-sm-5 control-label">{$LANG.newpassword}</label>
                         <div class="col-sm-6">
