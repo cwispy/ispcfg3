@@ -23,10 +23,20 @@
     {*$variables.quota|print_r*}
 
 <hr>
-<h5>Current Mailboxes ( {$variables.mailboxes|@count} of {If $variables.client.limit_mailbox == -1}Unlimited{else}{$variables.client.limit_mailbox}{/If} )</h5>
+<h5>Current Mailboxes ( 
+    {$variables.mailboxes|@count} 
+    of 
+    {If $variables.client.limit_mailbox == -1}
+        Unlimited
+    {else}
+        {$variables.client.limit_mailbox}{/If} )
+    </h5>
 
 <div class="text-right">
-    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd" 
+    <button 
+        class="btn btn-sm btn-success" 
+        data-toggle="modal" 
+        data-target="#modalAdd" 
     {If $variables.client.locked == "y" || 
         $variables.client.canceled == "y" ||
         ( {$variables.mailboxes|@count} >= $variables.client.limit_mailbox &&
@@ -88,8 +98,14 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmAddEmail">
-                    <div id="ajax-params" data-action="{$action_urls.add}" data-method="POST" data-loader="#ajax-loader-add" data-loader-position="outside"
-                         data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.add}" 
+                         data-method="POST" data-loader="#ajax-loader-add" 
+                         data-loader-position="outside"
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()">
+                    </div>
                     <div id="ajax-messages"></div>
 
                     <div class="form-group">

@@ -103,7 +103,7 @@
                 {{$databasedisk.used / 1048576}|number_format:2} MB
 				</td>
 				<td class="text-right">
-				{If $databasedisk.quota_raw == ''}Unlimited{else}{$databasedisk.quota_raw} MB{/If}
+				{If $databasedisk.quota_raw == ''||$databasedisk.quota_raw == '-1'}Unlimited{else}{$databasedisk.quota_raw} MB{/If}
 				</td>
 				<td class="text-right">
 				

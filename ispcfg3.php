@@ -26,13 +26,11 @@ if (!defined("WHMCS")) {
 }
 
 ini_set('error_reporting', E_ALL & ~E_NOTICE);
-ini_set("display_errors", 1); // Set this option to Zero on a production machine.
+ini_set("display_errors", 0); // Set this option to Zero on a production machine.
 openlog( "ispconfig3", LOG_PID | LOG_PERROR, LOG_LOCAL0 );
-require_once(__DIR__.'/classes/ispcfg3_class.php');
 include_once(__DIR__.'/functions/base.php');
 
 use WHMCS\Database\Capsule;
-use ISPCFG\ispcfg3;
 
 function ispcfg3_MetaData() {
     return array(
@@ -144,58 +142,72 @@ function ispcfg3_ConfigOptions() {
     return $configarray;
 }
 
-function ispcfg3_TestConnection( array $params )
+function ispcfg3_TestConnection(array $params)
 {
+    
+    if (!extension_loaded( 'soap')) {
+        die('The PHP SOAP module is required to run this module.');
+    }
 
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
-        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        if ( ( $params['serverport'] != '80') && ($params['serverport'] != '443') ) {
+            $soap_uri .= ':'.$params['serverport'];
         }
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
-        $rest_url = $rest_uri.'/remote/json.php';
     }
-    
-    $client = new ispcfg3( $rest_uri, $rest_url );
-
-    $creds = array(
-        'username' => $params['serverusername'],
-        'password' => $params['serverpassword'],
-    );
-
-    $response = $client->login( $creds );
-
-    if ( $response == TRUE ) {
+    try {
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+            array( 'location' => $soap_url,
+                    'uri' => $soap_uri,
+                    'exceptions' => 1,
+                    'stream_context'=> stream_context_create(
+                        array('ssl'=> array(
+                                'verify_peer'=>false,
+                                'verify_peer_name'=>false))
+                            ),
+                        'trace' => false
+            )
+        );
+        
+        /* Authenticate with the SOAP Server */
+        $serverusername = $params['serverusername'];
+        $serverpassword = $params['serverpassword'];
+        
+        $session_id = $client->login( $serverusername, $serverpassword );
         $success = true;
-        $errorMsg = 'Success';
-
+        $errorMsg = '';
+        
         logModuleCall(
-        'provisioningmodule-testsuccess',
-        __FUNCTION__,
-        $params,
-        'true',
-        'true'
+            'provisioningmodule',
+            __FUNCTION__,
+            $client,
+            $session_id,
+            $session_id
         );
-
-    } else {
-        $success = false;
-        $errorMsg = 'Login failed';
-
+        
+    } catch (Exception $e) {
+        // Record the error in WHMCS's module log.
         logModuleCall(
-        'provisioningmodule-testfail',
-        __FUNCTION__,
-        $params,
-        'false',
-        'false'
+            'provisioningmodule-err',
+            __FUNCTION__,
+            $params,
+            $e->getTrace(),
+            $e->getTrace()
+        );
+        $success = false;
+        $errorMsg = $e->getMessage();
+    } finally {
+        return array(
+            'success' => $success,
+            'error' => $errorMsg,
         );
     }
-
-    return array(
-        'error' => $errorMsg,
-        'success' => $success,
-    );
-
 }
 
 function ispcfg3_CreateAccount(array $params ) {
@@ -220,8 +232,8 @@ function ispcfg3_CreateAccount(array $params ) {
     $ftpsuffix          = $params['configoption12'];
     $dbcreate           = $params['configoption13'];
     $dbusers            = $params['configoption14'];
-    $siteprousername    = $params['configoption15'];
-    $sitepropass        = $params['configoption16'];
+	$siteprousername    = $params['configoption15'];
+	$sitepropass        = $params['configoption16'];
     $soaemail           = $dnssoaname . '@' . $domain;
 
     $webactive == 'on' ? $webactive = 'y' : $webactive = 'n';
@@ -241,16 +253,16 @@ function ispcfg3_CreateAccount(array $params ) {
     
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
+        $soap_uri .= '/remote/';
 
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_url = $soap_uri.'index.php';
 
     }
-    
-    logModuleCall('ispconfig','URI',$rest_uri,$rest_url,'','');
+logModuleCall('ispconfig','URI',$soap_uri,$soap_url,'','');
     /* 
      * Make sure that a username and password have been set
      * or exit with error.
@@ -265,15 +277,23 @@ function ispcfg3_CreateAccount(array $params ) {
         {
     
     try {
-        /* Connect to REST API */
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $result = $client->login( $creds );
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        //$session_id = $client->login( $soapuser, $soappassword );
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
         $fullname = htmlspecialchars_decode( $clientsdetails['firstname'] );
         $fullname .= ' ' . htmlspecialchars_decode( $clientsdetails['lastname'] );
@@ -292,14 +312,13 @@ function ispcfg3_CreateAccount(array $params ) {
         $customerno = $clientsdetails['userid'];
          
         // Retrieve an array of templates from ISPConfig
-        $templates = $client->client_templates_get_all();
-        logModuleCall('ispconfig','Templates',$templates,$templates,'','');
+        $templates = $client->client_templates_get_all($session_id);
         
         // Loop through the array and find the template matching the one in the
         // product configuration
 
         $match = 0;
-        foreach ($templates['response'] as $a) {
+        foreach ($templates as $a) {
             if ($a['template_id'] == $templateid) {
                 // Found a matching template.
                 $tmpl = $a;
@@ -343,11 +362,9 @@ function ispcfg3_CreateAccount(array $params ) {
         unset($a);
         unset($templates);
         
-        logModuleCall('ispconfig','PreCreateClient',$defaultwebserver,$defaultwebserver,'','');
+        logModuleCall('ispconfig','PreCreateClient',$server,$server,'','');
         
-        $reseller = 0;
-        
-        $ispcparams = [
+        $ispcparams = array(
             'company_name'                  => $companyname,
             'contact_name'                  => $fullname,
             'customer_no'                   => $accountid,
@@ -439,46 +456,38 @@ function ispcfg3_CreateAccount(array $params ) {
             'locked'                        => '0',
             'added_date'                    => date("Y-m-d"),
             'added_by'                      => $soapuser,
-            'created_at'                    => date('Y-m-d'),
-            'reseller_id'                   => 0
-            ];
+            'created_at'                    => date('Y-m-d')
+            );
         
-            
+            $reseller_id = 0;
 
-            $client_id = $client->client_add( $reseller , $ispcparams );
-            $client_id = $client_id['response'];
-            
-            logModuleCall( 'ispconfig','PostCreateClient',$client_id, $ispcparams, '','' );
+            $client_id = $client->client_add( $session_id, $reseller_id, $ispcparams );
+
+            logModuleCall('ispconfig','PostCreateClient',$client_id,$ispcparams,'','');
         
         if ( $domaintool == 'on' ) {
             
             $ispcparams = array( 'domain' => $domain );
-            logModuleCall('ispconfig','CreatePreDomainAdd',$client_id,$ispcparams,'','');
-            
-            $domain_id = $client->domains_domain_add( $client_id, $ispcparams );
-            $domain_id = $domain_id['response'];
-            
+            logModuleCall('ispconfig','CreatePreDomainAdd',$domain_id,$ispcparams,'','');
+            $domain_id = $client->domains_domain_add( $session_id, $client_id, $ispcparams );
             logModuleCall('ispconfig','CreatePostDomainAdd',$domain_id,$ispcparams,'','');
             
         }
         
         if ( $dns == 'on' ) {
             
-            $svr = $tmpl['web_servers'];
-            logModuleCall( 'ispconfig', 'CreatePostDomainAdd', $svr, $ispcparams, '', '');
-            
-            $zoneip = $client->server_get( $svr );
+            $zoneip = $client->server_get( $session_id, $tmpl['web_servers'] );
             $tmpip = $zoneip['server']['ip_address'];
-            
-            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id['response']." ".$dnstemplate." ".$domain." ".$tmpip." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
-            $dns_id = $client->dns_templatezone_add( $client_id, $dnstemplate, $domain, $tmpip, $nameserver1, $nameserver2, $soaemail );
-            logModuleCall('ispconfig','CreatePostDNSZone',$dns_id,'DNS Template '.$dnstemplate,'','');
+
+            logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id." ".$dnstemplate." ".$domain." ".$tmpip." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
+            $dns_id = $client->dns_templatezone_add( $session_id, $client_id, $dnstemplate, $domain,  $tmpip, $nameserver1, $nameserver2, $soaemail );
+            logModuleCall('ispconfig','CreatePostDNSZone',$domain,'DNS Template '.$dnstemplate,'','');
             
         }
 
         if ( $webcreation == 'on' ) {
             
-            logModuleCall('ispconfig','PreCreateWebDomain','Client id '.$client_id['response'],'Default webserver '.$defaultwebserver,'','');
+            logModuleCall('ispconfig','PreCreateWebDomain',$website_id,$defaultwebserver,'','');
             $webphp = explode( ',', $tmpl['web_php_options'] );
             if ( count( $webphp ) >= 0 ) {
                 $setphp = $webphp[0];
@@ -539,7 +548,6 @@ function ispcfg3_CreateAccount(array $params ) {
                 'http_port'                 => '80',
                 'https_port'                => '443',
                 'traffic_quota_lock'        => 'n',
-                'locked'                    => 'n',
                 'added_date'                => date("Y-m-d"),
                 'added_by'                  => $soapuser
                 );
@@ -554,35 +562,32 @@ function ispcfg3_CreateAccount(array $params ) {
                 
             }
 
-            $website_id = $client->sites_web_domain_add( $client_id, $ispcparams, $readonly );
+            $website_id = $client->sites_web_domain_add( $session_id, $client_id, $ispcparams, $readonly );
 
             logModuleCall('ispconfig','PostCreateWebDomain',$website_id,$ispcparams,'','');
             
             
             if ( ( $addftpuser == 'on' ) && ( $webcreation == 'on' ) ) {
                 
-                $domid = ['primary_id' => ['domain_id' => $website_id['response']]];
-                $domain_arr = $client->sites_web_domain_get( $domid );
-                logModuleCall('ispconfig','PreCreateFTP',$domain_arr,$domain_arr,'','');
+                $domain_arr = $client->sites_web_domain_get( $session_id, $website_id );
                 $ispcparams = array(
                     'server_id'         => $defaultwebserver,
-                    'parent_domain_id'  => $website_id['response'],
+                    'parent_domain_id'  => $website_id,
                     'username'          => $username . $ftpsuffix,
                     'password'          => $password,
                     'quota_size'        => $tmpl['limit_web_quota'],
                     'active'            => 'y',
-                    'uid'               => $domain_arr['response'][0]['system_user'],
-                    'gid'               => $domain_arr['response'][0]['system_group'],
-                    'dir'               => $domain_arr['response'][0]['document_root'],
+                    'uid'               => $domain_arr['system_user'],
+                    'gid'               => $domain_arr['system_group'],
+                    'dir'               => $domain_arr['document_root'],
                     'quota_files'       => -1,
                     'ul_ratio'          => -1,
                     'dl_ratio'          => -1,
                     'ul_bandwidth'      => -1,
                     'dl_bandwidth'      => -1
                     );
-                logModuleCall('ispconfig','PreCreateFTP',$website_id['response'],$ispcparams,'','');
                 
-                $ftp_id = $client->sites_ftp_user_add( $client_id, $ispcparams );
+                $ftp_id = $client->sites_ftp_user_add( $session_id, $client_id, $ispcparams );
                 
                 logModuleCall('ispconfig','CreateFtpUser',$ftp_id,$ispcparams,'','');
             }
@@ -597,9 +602,8 @@ function ispcfg3_CreateAccount(array $params ) {
                     'active'        => 'y' 
                 );
 
-            $maildomain_id = $client->mail_domain_add( $client_id, $ispcparams );
-            
-            logModuleCall('ispconfig','CreateMailDomain',$maildomain_id['response'],$ispcparams,'','');
+            $maildomain_id = $client->mail_domain_add( $session_id, $client_id, $ispcparams );
+            logModuleCall('ispconfig','CreateMailDomain',$maildomain_id,$ispcparams,'','');
             
         }
         
@@ -607,11 +611,10 @@ function ispcfg3_CreateAccount(array $params ) {
             
             // Create the Customer number based on the ISPConfig settings. 
             // eg: C[CUSTOMER_NO] would become C45
-            $temp = $client->client_get( $client_id );
-            $cust = str_replace('[CUSTOMER_NO]',$client_id['response']['client_id'],$temp['response']['customer_no_template']);
+            $temp = $client->client_get($session_id, $client_id);
+            $cust = str_replace('[CUSTOMER_NO]',$client_id,$temp['customer_no_template']);
             // Strip the square bracket
             $clientnumber = substr(strstr($cust, "]"), 1);
-            logModuleCall('ispconfig','PreCreateDBUsers',$cust,$temp['response']['customer_no_template'] ,'','');
     
             if ( $dbusers == 1 ) {
                 // Create only master db user.
@@ -622,9 +625,9 @@ function ispcfg3_CreateAccount(array $params ) {
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
-                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber.$dbun,$ispcparams,'','');
-                $dbuser_id = $client->sites_database_user_add( $client_id, $ispcparams );
-                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber.$dbun,$dbuser_id,'','');
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$dbuser_id,'','');
                 $rwuser = $dbuser_id;
                 $rouser = 0;
                 
@@ -637,9 +640,9 @@ function ispcfg3_CreateAccount(array $params ) {
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $password
                 );
-                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber.$dbun,$ispcparams,'','');
-                $dbuser_id = $client->sites_database_user_add( $client_id, $ispcparams);
-                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber.$dbun,$dbuser_id,'','');
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber,$dbuser_id,'','');
                 $rwuser = $dbuser_id;
                 
                 $dbun = "dbuRO";
@@ -651,9 +654,9 @@ function ispcfg3_CreateAccount(array $params ) {
                     'database_user_prefix' => $clientnumber,
                     'database_password' => $ropass
                 );
-                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber.$dbun,$ispcparams,'','');
-                $dbuser_id = $client->sites_database_user_add( $client_id, $ispcparams);
-                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber.$dbun,$dbuser_id,'','');
+                logModuleCall('ispconfig','PreCreateDBRwUser',$clientnumber,$ispcparams,'','');
+                $dbuser_id = $client->sites_database_user_add($session_id, $client_id, $ispcparams);
+                logModuleCall('ispconfig','PostCreateDBRwUser',$clientnumber,$dbuser_id,'','');
                 $rouser = $dbuser_id;
             }
             
@@ -661,12 +664,12 @@ function ispcfg3_CreateAccount(array $params ) {
             	$ispcparams = array(
                     'server_id' => $defaultdbserver,
                     'type' => 'mysql',
-                    'parent_domain_id' => $website_id['response'],
+                    'parent_domain_id' => $website_id,
                     'database_name' => $clientnumber."DB",
                     'database_name_prefix' => $clientnumber,
                     'database_quota' => $tmpl['limit_database_quota'],
-                    'database_user_id' => $rwuser['response'],
-                    'database_ro_user_id' => $rouser['response'],
+                    'database_user_id' => $rwuser,
+                    'database_ro_user_id' => $rouser,
                     'database_charset' => '',
                     'remote_access' => 'n',
                     'remote_ips' => '',
@@ -674,15 +677,15 @@ function ispcfg3_CreateAccount(array $params ) {
                 );
                 
                 logModuleCall('ispconfig','PreCreateDB',$clientnumber,$ispcparams,'','');
-                $database_id = $client->sites_database_add( $client_id, $ispcparams );
+                $database_id = $client->sites_database_add( $session_id, $client_id, $ispcparams );
                 logModuleCall('ispconfig','PostCreateDB',$clientnumber,$database_id,'','');
             
         }
         
         
 
-        if ( $result = $client->logout() ) {
-            logModuleCall('ispconfig','Logout',$result,$result,'','');
+        if ( $client->logout( $session_id ) ) {
+            
         }
         
         $successful = 1;
@@ -697,8 +700,8 @@ function ispcfg3_CreateAccount(array $params ) {
     }
 
     if ( $successful == 1 ) {
-
-        $result = "success";
+        
+         $result = "success";
          
     } else {
         
@@ -712,7 +715,7 @@ function ispcfg3_CreateAccount(array $params ) {
          */
         $result = 'Username or Password is Blank or Not Set';
     }
-
+            
     return $result;
 }
 
@@ -726,12 +729,13 @@ function ispcfg3_TerminateAccount( $params ) {
     
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
     }
 
@@ -744,50 +748,57 @@ function ispcfg3_TerminateAccount( $params ) {
         {
     
     try {
-        /* Connect to REST API */
-        $client = new ispcfg3( $rest_uri, $rest_url );
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
+        
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+              
+        $domain_id = $client->client_get_by_username( $session_id, $username );
 
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $response = $client->login( $creds );
-    
-        $domain_id = $client->client_get_by_username( $username );
-
-        $group_id = $domain_id['response']['default_group'];
-        $client_id = $domain_id['response']['client_id'];
-        logModuleCall('ispconfig','Terminate Lookups',$group_id, $client_id,'','');
+        $group_id = $domain_id['default_group'];
+        $client_id = $domain_id['client_id'];
         
         if ( $domaintool == 'on' ) {
-            
-            $result = $client->domains_get_all_by_user( $group_id );
+
+            $result = $client->domains_get_all_by_user( $session_id, $group_id );
             logModuleCall('ispconfig','Terminate Get Domains','Get Domains',$result,'','');
             if (!empty($result)) {
                 $key = '0';
-                foreach ( $result['response'] as $key => $value ) {
-                logModuleCall('ispconfig','loop Domain',$key, $result['response'][$key],'','');
-                    if ( $result['response'][$key]['domain'] = $domain ) {
-                    logModuleCall('ispconfig','loop Domain match',$key, $result['response'][$key],'','');
-                        $primary_id = $result['response'][$key]['domain_id'];
+                foreach ( $result as $key => $value ) {
+                
+                    if ( $result[$key]['domain'] = $domain ) {
+                    
+                        $primary_id = $result[$key]['domain_id'];
                         continue;
+                    
                     }
                 }
             
-                $result = $client->domains_domain_delete( $primary_id );
+                $result = $client->domains_domain_delete( $session_id, $primary_id );
                 logModuleCall('ispconfig','Terminate Domain',$primary_id, $result,'','');
             }
         }
 
-        $client_res = $client->client_delete_everything( $client_id );
+        $client_res = $client->client_delete_everything( $session_id, $client_id );
         logModuleCall('ispconfig','Terminate Client',$client_id, $client_res,'','');
         
-        if ( $result = $client->logout() ) {
-            logModuleCall('ispconfig','Logout',$result,$result,'','');
+        if ( $client->logout( $session_id ) ) {
+            
         }
 
-        $successful = 1;
+        $successful = '1';
         
     } catch (SoapFault $e) {
         
@@ -797,9 +808,13 @@ function ispcfg3_TerminateAccount( $params ) {
     }
 
     if ( $successful == 1 ) {
-        $result = true;
+        
+        $result = "success";
+        
     } else {
+        
         $result = $error;
+        
     }
 
     } else {
@@ -821,12 +836,13 @@ function ispcfg3_ChangePackage( $params ) {
 
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
     }
     
@@ -839,30 +855,33 @@ function ispcfg3_ChangePackage( $params ) {
         {
     
     try {
-        /* Connect to REST API */
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $response = $client->login( $creds );
+        /* Connect to SOAP Server */
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
         
-        $domain_id = $client->client_get_by_username( $username );
-
-        $client_id = $domain_id['response']['client_id'];
-
-        $client_record = $client->client_get( $client_id );
-        logModuleCall('ispconfig','Client',$client_record,$client_record,'','');
-        $ispcparams = $client_record['response'];
-        $ispcparams['template_master'] = $templateid;
-        logModuleCall('ispconfig','Params',$ispcparams,$client_record,'','');
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
-        $reseller_id = $client->client_get( $client_id );
-        $parent_client_id = $reseller_id['response']['parent_client_id'];
+        $domain_id = $client->client_get_by_username( $session_id, $username );
 
-        $affected_rows = $client->client_update( $client_id, $parent_client_id, $ispcparams );
+        $client_id = $domain_id['client_id'];
+
+        $client_record = $client->client_get( $session_id, $client_id );
+        $client_record['template_master'] = $templateid;
+        $reseller_id = $client->client_get( $session_id, $client_id );
+        $parent_client_id = $resellerid['parent_client_id'];
+
+        $affected_rows = $client->client_update( $session_id, $client_id, $parent_client_id, $client_record );
 
         if ($client->logout( $session_id )) {
         }
@@ -906,16 +925,16 @@ function ispcfg3_SuspendAccount( $params ) {
     $dns                = $params['configoption6'];
     $addmaildomain      = $params['configoption10'];
     $addftpuser         = $params['configoption11'];
-    $ftpsuffix          = $params['configoption12'];
     
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
     }
     
@@ -929,36 +948,41 @@ function ispcfg3_SuspendAccount( $params ) {
     
     try {
         /* Connect to SOAP Server */
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $response = $client->login( $creds );
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
         
-        $result_id = $client->client_get_by_username( $username );
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
-        $sys_userid = $result_id['response']['client_id'];
-        $sys_groupid = $result_id['response']['groups'];
-        $client_detail = $client->client_get( $sys_userid );
-        $parent_client_id = $client_detail['response']['parent_client_id'];
+        $result_id = $client->client_get_by_username( $session_id, $username );
         
-        logModuleCall('ispconfig','Client Details',$client_detail['response']['default_dnsserver'], $parent_client_id,'','');
-        $domain_id = $client->dns_zone_get_by_user( $sys_userid,  $client_detail['response']['default_dnsserver'] );
-        logModuleCall('ispconfig','Domain Details',$domain_id, $domain_id['response'],'','');
+        $sys_userid = $result_id['client_id'];
+        $sys_groupid = $result_id['groups'];
+        $client_detail = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $client_detail['parent_client_id'];
+        
+        $domain_id = $client->dns_zone_get_by_user( $session_id, $sys_userid,  $client_detail['default_dnsserver'] );
         
         if ( $webcreation == 'on' ) {
             
-            $clientsites = $client->client_get_sites_by_user( $sys_userid, $sys_groupid );
+            $clientsites = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
             
             $i = 0;
             $j = 1;
-            while ($j <= count($clientsites['response']) ) {
+            while ($j <= count($clientsites) ) {
 
-                $domainres = $client->sites_web_domain_set_status( $clientsites['response'][$i]['domain_id'],  'inactive' );
-                logModuleCall('ispconfig','Suspend Web Domain',$domainres, $clientsites,'','');
+                $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'inactive' );
+                logModuleCall('ispconfig','Suspend Web Domain',$clientsites[$i]['domain_id'], $clientsites[$i],'','');
                 $i++;
                 $j++;
                 
@@ -968,17 +992,16 @@ function ispcfg3_SuspendAccount( $params ) {
         
         if ( $addftpuser == 'on' ) {
            
-            $ftpclient = $client->sites_ftp_user_get( $username.'%' );
-            $ftpclient = $ftpclient['response'];
-            logModuleCall('ispconfig','Pre Suspend Ftp User',$ftpclient, $ftpclient,$ftpclient,'');
-
+            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username.'%' ) );
+           
             $i = 0;
             $j = 1;
             while ($j <= count($ftpclient) ) {
             
                 $ftpclient[$i]['active'] = 'n';
-                $ftpid = $client->sites_ftp_user_update( $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
-                logModuleCall('ispconfig','Suspend Ftp User',$ftpid, $ftpid,'','');
+                $ftpclient[$i]['password'] = '';
+                $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                logModuleCall('ispconfig','Suspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
                 $i++;
                 $j++;
 
@@ -988,10 +1011,9 @@ function ispcfg3_SuspendAccount( $params ) {
         
         if ( $addmaildomain == 'on' ) {
             
-            $emaildomain = $client->mail_domain_get_by_domain( $domain ); 
-            logModuleCall('ispconfig','Pre Suspend Email Domain',$emaildomain['response'], $mailid,'','');
-            $mailid = $client->mail_domain_set_status( $emaildomain['response'][0]['domain_id'], 'inactive' );
-            logModuleCall('ispconfig','Suspend Email Domain',$emaildomain['response'][0]['domain_id'], $mailid,'','');
+            $emaildomain = $client->mail_domain_get_by_domain( $session_id, $domain );            
+            $mailid = $client->mail_domain_set_status($session_id, $emaildomain[0]['domain_id'], 'inactive');
+            logModuleCall('ispconfig','Suspend Email Domain',$emaildomain[0]['domain_id'], $mailid,'','');
             
         }
         
@@ -999,12 +1021,12 @@ function ispcfg3_SuspendAccount( $params ) {
         
             $i = 0;
             $j = 1;
-            while ($j <= count($domain_id['response']) ) {
+            while ($j <= count($domain_id) ) {
 
-                $affected_rows = $client->dns_zone_set_status( $domain_id['response'][$i]['id'], 'inactive' );
+                $affected_rows = $client->dns_zone_set_status( $session_id, $domain_id[$i]['id'], 'inactive' );
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','Suspend Domain',$domain_id['response'][$i]['id'], $affected_rows,'','');
+                logModuleCall('ispconfig','Suspend Domain',$domain_id[$i]['id'], $affected_rows,'','');
                 
             }
             
@@ -1012,11 +1034,11 @@ function ispcfg3_SuspendAccount( $params ) {
 
         $client_detail['locked'] = 'y';
         $client_detail['password'] = '';
-        $client_result = $client->client_update( $sys_userid, $parent_client_id, $client_detail );
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $client_detail );
         
         logModuleCall('ispconfig','Suspend Client', $sys_userid.' '.$sys_groupid, $client_result,'','');
                 
-        if ( $client->logout( ) ) {
+        if ($client->logout( $session_id )) {
         }
 
         $successful = '1';
@@ -1061,12 +1083,13 @@ function ispcfg3_UnsuspendAccount( $params ) {
     
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
     }
     
@@ -1080,34 +1103,41 @@ function ispcfg3_UnsuspendAccount( $params ) {
     
     try {
         /* Connect to SOAP Server */
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $response = $client->login( $creds );
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
         
-        $result_id = $client->client_get_by_username( $username );
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
         
-        $sys_userid = $result_id['response']['client_id'];
-        $sys_groupid = $result_id['response']['groups'];
-        $client_detail = $client->client_get( $sys_userid );
-        $parent_client_id = $client_detail['response']['parent_client_id'];
+        $result_id = $client->client_get_by_username( $session_id, $username );
         
-        $domain_id = $client->dns_zone_get_by_user( $sys_userid,  $client_detail['response']['default_dnsserver'] );
+        $sys_userid = $result_id['client_id'];
+        $sys_groupid = $result_id['groups'];
+        $client_detail = $client->client_get( $session_id, $sys_userid );
+        $parent_client_id = $client_detail['parent_client_id'];
+        
+        $domain_id = $client->dns_zone_get_by_user( $session_id, $sys_userid,  $client_detail['default_dnsserver'] );
         
         if ( $webcreation == 'on' ) {
             
-            $clientsites = $client->client_get_sites_by_user( $sys_userid, $sys_groupid );
+            $clientsites = $client->client_get_sites_by_user( $session_id, $sys_userid, $sys_groupid );
             
             $i = 0;
             $j = 1;
-            while ($j <= count($clientsites['response']) ) {
+            while ($j <= count($clientsites) ) {
 
-                $domainres = $client->sites_web_domain_set_status( $clientsites['response'][$i]['domain_id'],  'active' );
-                logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites['response'][$i]['domain_id'], $domainres,'','');
+                $domainres = $client->sites_web_domain_set_status( $session_id, $clientsites[$i]['domain_id'],  'active' );
+                logModuleCall('ispconfig','UnSuspend Web Domain',$clientsites[$i]['domain_id'], $domainres,'','');
                 $i++;
                 $j++;
                 
@@ -1117,17 +1147,16 @@ function ispcfg3_UnsuspendAccount( $params ) {
         
         if ( $addftpuser == 'on' ) {
             
-            $ftpclient = $client->sites_ftp_user_get( $username.'%' );
+            $ftpclient = $client->sites_ftp_user_get( $session_id, array( 'username' => $username.'%' ) );
            
             $i = 0;
             $j = 1;
-            while ( $j <= count($ftpclient['response'] ) ) {
+            while ($j <= count($ftpclient) ) {
             
                 $ftpclient[$i]['active'] = 'y';
                 $ftpclient[$i]['password'] = '';
-                logModuleCall('ispconfig','Pre UnSuspend Ftp User',$ftpclient['response'][$i]['ftp_user_id'], $ftpclient['response'],'','');
-                $ftpid = $client->sites_ftp_user_update( $sys_userid, $ftpclient['response'][$i]['ftp_user_id'], $ftpclient['response'][$i] );
-                logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient['response'][$i]['ftp_user_id'], $ftpclient['response'][$i],'','');
+                $ftpid = $client->sites_ftp_user_update( $session_id, $sys_userid, $ftpclient[$i]['ftp_user_id'], $ftpclient[$i] );
+                logModuleCall('ispconfig','UnSuspend Ftp User',$ftpclient[$i]['ftp_user_id'], $ftpclient[$i],'','');
                 $i++;
                 $j++;
 
@@ -1137,9 +1166,9 @@ function ispcfg3_UnsuspendAccount( $params ) {
         
         if ( $addmaildomain == 'on' ) {
             
-            $emaildomain = $client->mail_domain_get_by_domain( $domain );            
-            $mailid = $client->mail_domain_set_status( $emaildomain['response'][0]['domain_id'], 'active');
-            logModuleCall('ispconfig','UnSuspend Email Domain',$emaildomain['response'][0]['domain_id'], $mailid,'','');
+            $emaildomain = $client->mail_domain_get_by_domain( $session_id, $domain );            
+            $mailid = $client->mail_domain_set_status($session_id, $emaildomain[0]['domain_id'], 'active');
+            logModuleCall('ispconfig','UnSuspend Email Domain',$emaildomain[0]['domain_id'], $mailid,'','');
             
         }
         
@@ -1147,19 +1176,19 @@ function ispcfg3_UnsuspendAccount( $params ) {
         
             $i = 0;
             $j = 1;
-            while ($j <= count($domain_id['response']) ) {
+            while ($j <= count($domain_id) ) {
 
-                $affected_rows = $client->dns_zone_set_status( $domain_id['response'][$i]['id'], 'active' );
+                $affected_rows = $client->dns_zone_set_status( $session_id, $domain_id[$i]['id'], 'active' );
                 $i++;
                 $j++;
-                logModuleCall('ispconfig','UnSuspend Domain',$domain_id['response'][$i]['id'], $affected_rows,'','');
+                logModuleCall('ispconfig','UnSuspend Domain',$domain_id[$i]['id'], $affected_rows,'','');
             }
             
         }
 
         $client_detail['locked'] = 'n';
         $client_detail['password'] = '';
-        $client_result = $client->client_update( $sys_userid, $parent_client_id, $client_detail );
+        $client_result = $client->client_update( $session_id, $sys_userid, $parent_client_id, $client_detail );
         
         logModuleCall('ispconfig','UnSuspend Client', $sys_userid.' '.$sys_groupid, $client_result,'','');
         
@@ -1203,12 +1232,13 @@ function ispcfg3_ChangePassword( $params ) {
 
     if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
         
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
+        $soap_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
         if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
+            $soap_uri .= ':'.$params['serverport'];
         }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+        $soap_uri .= '/remote/';
+            
+        $soap_url = $soap_uri.'index.php';
 
     }
     
@@ -1222,28 +1252,45 @@ function ispcfg3_ChangePassword( $params ) {
     
     try {
         /* Connect to SOAP Server */
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
-        );
-
-        $response = $client->login( $creds );
+        $client = new SoapClient( null, 
+                            array( 'location' => $soap_url,
+                                    'uri' => $soap_uri,
+                                    'exceptions' => 1,
+                                    'stream_context'=> stream_context_create(
+                                            array('ssl'=> array(
+                                                'verify_peer'=>false,
+                                                'verify_peer_name'=>false))
+                                            ),
+                                        'trace' => false
+                                    )
+                                );
         
-        $domain_id = $client->client_get_by_username( $username );
+        /* Authenticate with the SOAP Server */
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+        
+        $domain_id = $client->client_get_by_username( $session_id, $username );
 
-        $client_id = $domain_id['response']['client_id'];
+        $client_id = $domain_id['client_id'];
 
-        $returnresult = $client->client_change_password( $client_id, $password );
+        $returnresult = $client->client_change_password( $session_id, $client_id, $password );
 
         logModuleCall('ispconfig','ChangePassword', $clientsdetails, $returnresult,'','');
         
-        if ($client->logout( )) {
+        if ($client->logout( $session_id )) {
 
         }
 
-        $successful = 1;
+        if ($returnresult == 1 ) {
+            
+            $successful = '1';
+            
+        } else {
+            
+            $successful = '0';
+            $result = "Password change failed";
+            
+        }
+        
         
     } catch (SoapFault $e) {
         
@@ -1258,7 +1305,7 @@ function ispcfg3_ChangePassword( $params ) {
         
     } else {
         
-        $result = 'Password change failed';
+        $result = 'Error: ' . $error;
         
     }
     

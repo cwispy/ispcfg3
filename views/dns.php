@@ -34,12 +34,12 @@ if (isset($_GET['view_action'])) {
 
         $options = array(
             'server_id' => $_REQUEST['server_id'],
-            'zone' => $_REQUEST['zone'],
-            'name' => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
-            'type' => $_REQUEST['type'],
-            'data' => $_REQUEST['destination'],
-            'ttl' => $_REQUEST['ttl'],
-            'active' => 'y',
+            'zone'      => $_REQUEST['zone'],
+            'name'      => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
+            'type'      => $_REQUEST['type'],
+            'data'      => $_REQUEST['destination'],
+            'ttl'       => $_REQUEST['ttl'],
+            'active'    => 'y',
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_add',
         );
 
@@ -65,14 +65,14 @@ if (isset($_GET['view_action'])) {
             cwispy_return_ajax_response(array('status' => 'error', 'message' => 'TTL is required'));
         }
         $options = array(
-            'id' => $_REQUEST['record_id'],
+            'id'        => $_REQUEST['record_id'],
             'server_id' => $_REQUEST['server_id'],
-            'zone' => $_REQUEST['zone'],
-            'name' => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
-            'type' => $_REQUEST['type'],
-            'data' => $_REQUEST['destination'],
-            'ttl' => $_REQUEST['ttl'],
-            'active' => 'y',
+            'zone'      => $_REQUEST['zone'],
+            'name'      => ($_REQUEST['host'] ? $_REQUEST['host'].'.' : '').$_REQUEST['zone_name'],
+            'type'      => $_REQUEST['type'],
+            'data'      => $_REQUEST['destination'],
+            'ttl'       => $_REQUEST['ttl'],
+            'active'    => 'y',
             'ihost_dns_function' => 'dns_'.$_REQUEST['type'].'_update',
         );
 
@@ -118,7 +118,7 @@ else {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
     }
 
-    $return['response']['types'] = array('a','aaaa','alias','cname','hinfo','mx','ns','ptr','rp','srv','txt');
+    $return['response']['types'] = array('a','aaaa','alias','caa', 'cname','hinfo','mx','ns','ptr','rp','srv','txt');
 
     $return['action_urls']['add'] = cwispy_create_url(array('view' => 'dns', 'view_action' => 'add'));
     $return['action_urls']['edit'] = cwispy_create_url(array('view' => 'dns', 'view_action' => 'edit'));

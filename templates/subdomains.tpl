@@ -138,19 +138,27 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmEdit">
-                    <div id="ajax-params" data-action="{$action_urls.edit}" data-method="POST" data-loader="#ajax-loader-edit" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.edit}" 
+                         data-method="POST" 
+                         data-loader="#ajax-loader-edit" 
+                         data-loader-position="outside" 
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()"></div>
                     <div id="ajax-messages"></div>
+                    <input type="hidden" id="url" value="{$action_urls.edit}">
                     <input type="hidden" name="server_id" value="{$server_id}">
-                    <input type="hidden" name="subdomain_id" id="subdomain_id">
-                    <input type="hidden" name="domain_id" id="domain_id">
-                    <input type="hidden" name="domain" id="domain">
+                    <input type="hidden" name="subdomain_id" id="subdomain_id" value="{$subdomain.domain_id}">
+                    <input type="hidden" name="domain_id" id="domain_id" value="{$subdomain.parent_domain_id}">
+                    <input type="hidden" name="domain" id="domain" value="{$parent_domain}">
 
                     <div class="form-group">
                         <label for="email" class="col-sm-4 control-label">Subdomain</label>
                         <div class="col-sm-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="subdomain" id="subdomain">
-                                <span class="input-group-addon" id="subdomain_suffix"></span>
+                                <input type="text" class="form-control" name="subdomain" id="subdomain" value="{$subdomain_name}">
+                                <span class="input-group-addon" id="subdomain_suffix">{$subdomain_suffix}</span>
                             </div>
                         </div>
                     </div>
@@ -159,8 +167,8 @@
                         <label for="directory" class="col-sm-4 control-label">Document Root</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <span class="input-group-addon" id="directory_prefix"></span>
-                                <input type="text" class="form-control" name="directory" id="directory">
+                                <span class="input-group-addon" id="directory_prefix" value="{$document_root}"></span>
+                                <input type="text" class="form-control" name="directory" id="directory" value="{$subdomain.redirect_path}">
                             </div>
                         </div>
                     </div>
@@ -186,7 +194,10 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> Update</button>
+                <button class="btn btn-success" onclick="$('#frmEdit').submit()">
+                    <span id="ajax-loader-edit"></span> 
+                    Update
+                </button>
             </div>
         </div>
     </div>

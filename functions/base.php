@@ -17,9 +17,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-require_once(__DIR__.'/../classes/ispcfg3_class.php');
-use ISPCFG\ispcfg3;
-
 define('ELFINDER_DIR', dirname(dirname(__FILE__)).'/assets/elfinder/');
 
 function cwispy_handle_view($view, $params) {
@@ -56,11 +53,11 @@ function cwispy_create_url($params=array()) {
     return 'clientarea.php?'.http_build_query($request);
 }
 
-function cwispy_return_ajax_response($result) {
-    if (isset($result['response']) && !isset($result['message'])) {
-        $result['message'] = $result['response'];
+function cwispy_return_ajax_response($response) {
+    if (isset($response['response']) && !isset($response['message'])) {
+        $response['message'] = $response['response'];
     }
-    $out = json_encode($result);
+    $out = json_encode($response);
     header('Cache-Control: no-cache, must-revalidate');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
     header('Content-type: application/json');
@@ -75,19 +72,18 @@ function cwispy_get_menu_item_class($currentRequest=array(), $params=array()) {
     }
 }
 
-function cwispy_api_request($params, $function, $options=array()) {
+function cwispy_soap_request($params, $function, $options=array()) {
     $username = $params['username'];
     $password = $params['password'];
     $domain = $params['domain'];
 
-    if ( !empty( $params['serverhttpprefix'] ) && !empty( $params['serverhostname'] ) ) {
-        
-        $rest_uri = $params['serverhttpprefix']. '://' . $params['serverhostname'];
-        if ( $params['serverport'] != '80' || $params['serverport'] != '443' ) {
-            $rest_uri .= ':'.$params['serverport'];
-        }
-
-        $rest_url = $rest_uri.'/remote/json.php';
+    if ( $params['serversecure'] == 'on' ) {
+        $soap_url = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'https://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
+    }
+    else {
+        $soap_url = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/index.php';
+        $soap_uri = 'http://' . $params['serverhostname'].':'.$params['serverport'] . '/remote/';
     }
     
     if (!$username || !$password) {
@@ -95,283 +91,253 @@ function cwispy_api_request($params, $function, $options=array()) {
     }
 
     try {
-        $result = NULL;
-        $client = new ispcfg3( $rest_uri, $rest_url );
-
-        $creds = array(
-            'username' => $params['serverusername'],
-            'password' => $params['serverpassword'],
+        $response = NULL;
+        $stream_context = stream_context_create(
+            array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+            )
+        ));
+        $soap_options = array(
+            'location' => $soap_url, 
+            'uri' => $soap_uri, 
+            'exceptions' => 1, 
+            'trace' => false ,
+            'stream_context' => $stream_context
         );
-
-        $result = $client->login( $creds );
-        $user = $client->client_get_by_username( $username );
-        $clientall = $client->client_get( $user['response']['client_id'] );
-        logModuleCall('ispconfig','client_get_by_username',$user, $clientall ,'','');
-        $client_recordid = $client->client_get_id( $user['response']['userid'] );
+        $client = new SoapClient( null, $soap_options);
+        $session_id = $client->login( $params['serverusername'], $params['serverpassword'] );
+        $user = $client->client_get_by_username($session_id, $username);
+        $client_recordid = $client->client_get_id($session_id, $user['userid']);
         
         if ($function == 'mail_domain_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $domains = $client->mail_domain_get( $_options );
-            logModuleCall('ispconfig','maildomainget',$domains, $domains ,'','');
-            $result = makearray( $domains['response'], 'domains');
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['domains'] = $client->mail_domain_get($session_id, $_options);
         }
         
-        if ($function == 'mail_domain_get_by_domain') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'domain' => $params['domain'] ];
-            $domains = $client->mail_domain_get_by_domain( $_options );
-            logModuleCall('ispconfig','maildomainget',$domains, $domains ,'','');
-            $result = makearray( $domains['response'], 'domains');
-        }
-        
-        $result['quota'] = array();
+        $response['quota'] = array();
         if ($function == 'mail_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_groupid' => $user['response']['default_group'] ] ];
-            $mailboxes = $client->mail_user_get( $_options );
-            $mbx = makearray( $mailboxes['response'], 'mailboxes' );
-            $quota = $client->mailquota_get_by_user( $user['response']['client_id'] );
-            $qta = makearray( $quota['response'], 'quota' );
-            $result = array_merge_recursive( $mbx, $qta );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_groupid' => $user['default_group']);
+            $response['mailboxes'] = $client->mail_user_get($session_id, $_options);
+            $response['quota'] = $client->mailquota_get_by_user($session_id, $user['client_id'] );
         }
         
         if ($function == 'client_get') {
-            $clnt = $client->client_get( $user['response']['client_id'] );
-            $clntresult = makearray( $clnt['response'], 'client' );
-            logModuleCall('ispconfig','clientget',$myresult, $clnt ,'','');
-            $ipv4a = $client->server_ip_get( ['primary_id' =>
-                        ['server_id' => $clnt['response']['default_webserver'],
-                        'ip_type' => 'IPv4',
-                        'virtualhost' => 'y',
-                        'client_id' => 0 ] ] );
-            logModuleCall('ispconfig','ip4all',$ipv4a, $ipv4a['response'] ,'','');
-            $ipv4c = $client->server_ip_get( ['primary_id' =>
-                        [ 'server_id' => $clnt['response']['default_webserver'],
-                        'ip_type' => 'IPv4',
-                        'virtualhost' => 'y',
-                        'client_id' => $user['response']['client_id'] ] ] );
-            logModuleCall('ispconfig','ip4client',$ipv4c, $ipv4c['response'] ,'','');
-            $ipv6a = $client->server_ip_get( ['primary_id' =>
-                        [ 'server_id' => $clnt['response']['default_webserver'],
-                        'ip_type' => 'IPv6',
-                        'virtualhost' => 'y' ,
-                        'client_id' => 0 ] ] );
-            logModuleCall('ispconfig','ip6all',$ipv6a, $ipv6a ,'','');
-            $ipv6c = $client->server_ip_get( ['primary_id' =>
-                        [ 'server_id' => $clnt['response']['default_webserver'],
-                        'ip_type' => 'IPv6',
-                        'virtualhost' => 'y',
-                        'client_id' => $user['response']['client_id'] ] ] );
-            logModuleCall('ispconfig','ip6client',$ipv6c, $ipv6c ,'','');
+            $response['client'] = $client->client_get($session_id, $user['client_id']);
+            $response['ipv4']['all'] = $client->server_ip_get($session_id, 
+                    array( 'server_id' => $response['client']['default_webserver'], 
+                        'ip_type' => 'IPv4', 
+                        'virtualhost' => 'y', 
+                        'client_id' => 0 ) );
+            $response['ipv4']['client'] = $client->server_ip_get($session_id, 
+                    array( 'server_id' => $response['client']['default_webserver'], 
+                        'ip_type' => 'IPv4', 
+                        'virtualhost' => 'y', 
+                        'client_id' => $user['client_id'] ) );
+            $response['ipv6']['all'] = $client->server_ip_get($session_id, 
+                    array( 'server_id' => $response['client']['default_webserver'], 
+                        'ip_type' => 'IPv6', 
+                        'virtualhost' => 'y' , 
+                        'client_id' => 0 ) );
+            $response['ipv6']['client'] = $client->server_ip_get($session_id, 
+                    array( 'server_id' => $response['client']['default_webserver'], 
+                        'ip_type' => 'IPv6', 
+                        'virtualhost' => 'y', 
+                        'client_id' => $user['client_id'] ) );
             // Merge the arrays
-            $ipv4 = array_merge_recursive($ipv4a['response'], $ipv4c['response']);
-            $ip4result = makearray($ipv4, 'ipv4');
-            logModuleCall('ispconfig','ip4array',$myresult, $ipv4 ,'','');
-            $ipv6 = array_merge_recursive($ipv6a['response'], $ipv6c['response']);
-            $ip6result = makearray($ipv6, 'ipv6');
-            logModuleCall('ispconfig','ip6array',$myresult, $ipv6 ,'','');
-            
-            $result = array_merge_recursive( $clntresult, $ip4result, $ip6result );
-            logModuleCall('ispconfig','endclientget',$result, $result ,'','');
-
+            $response['ipv4'] = array_merge_recursive($response['ipv4']['all'], $response['ipv4']['client']);
+            $response['ipv6'] = array_merge_recursive($response['ipv6']['all'], $response['ipv6']['client']);
         }
         if ($function == 'quota_get_by_user') {
-            $result['disk'] = $client->quota_get_by_user( $user['response']['client_id'] );
+            $response['disk'] = $client->quota_get_by_user( $session_id, $user['client_id'] );
         }
         if ($function == 'trafficquota_get_by_user') {
-            $result['traffic'] = $client->trafficquota_get_by_user( $user['response']['client_id'] );
+            $response['traffic'] = $client->trafficquota_get_by_user( $session_id, $user['client_id'] );
         }
         if ($function == 'ftptrafficquota_data') {
-            $result['ftptraffic'] = $client->ftptrafficquota_data( $user['response']['client_id'] );
+            $response['ftptraffic'] = $client->ftptrafficquota_data( $session_id, $user['client_id'] );
         }
         if ($function == 'databasequota_get_by_user') {
-            $result['databasedisk'] = $client->databasequota_get_by_user( $user['response']['client_id'] );
+            $response['databasedisk'] = $client->databasequota_get_by_user( $session_id, $user['client_id'] );
         }
         if ($function == 'mailquota_get_by_user') {
-            $result['maildisk'] = $client->mailquota_get_by_user( $user['response']['client_id'] );
+            $response['maildisk'] = $client->mailquota_get_by_user( $session_id, $user['client_id'] );
         }
 	if ($function == 'client_get_by_username') {
-            $res = $client->client_get_by_username( $params['username'] );
-            $result = $res['response'];
+            $response = $client->client_get_by_username($session_id, $params['username']);
         }
-        if ($function == 'client_template_get_all') {
-            $result = $client->client_get_by_username( $params['username'] );
+	if ($function == 'client_template_get_all') {
+            $response = $client->client_get_by_username($session_id, $params['username']);
         }
         if ($function == 'mail_user_add') {
-            $result = $client->mail_user_add( $user['response']['client_id'], $options );
+            $response = $client->mail_user_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'mail_user_update') {
-            $result = $client->mail_user_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->mail_user_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'mail_user_delete') {
-            $result = $client->mail_user_delete( $options['id'] );
+            $response = $client->mail_user_delete($session_id, $options['id']);
         }
 
         if ($function == 'mail_forward_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $forwarders = $client->mail_forward_get( $_options );
-            $result = makearray( $forwarders['response'], 'forwarders' );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['forwarders'] = $client->mail_forward_get($session_id, $_options);
         }
         if ($function == 'mail_forward_add') {
-            $result = $client->mail_forward_add( $user['response']['client_id'], $options );
+            $response = $client->mail_forward_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'mail_forward_update') {
-            $result = $client->mail_forward_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->mail_forward_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'mail_forward_delete') {
-            $result = $client->mail_forward_delete( $options['id'] );
+            $response = $client->mail_forward_delete($session_id, $options['id']);
         }
 
         
         if ($function == 'sites_ftp_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : $user['response']['username']."%";
-            $accounts = $client->sites_ftp_user_get( $_options );
-            $result = makearray($accounts['response'], 'accounts');
-            $result['user'] = $user['response'];
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['accounts'] = $client->sites_ftp_user_get($session_id, $_options);
+            $response['user'] = $user;
         }
         if ($function == 'sites_ftp_user_add') {
-            $result = $client->sites_ftp_user_add( $user['response']['client_id'], $options );
+            $response = $client->sites_ftp_user_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_ftp_user_update') {
-            $result = $client->sites_ftp_user_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->sites_ftp_user_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'sites_ftp_user_delete') {
-            $result = $client->sites_ftp_user_delete( $options['id'] );
+            $response = $client->sites_ftp_user_delete($session_id, $options['id']);
         }
 
         
         if ($function == 'sites_database_get') {
-			$userdbid = $client->client_get_by_username( $username );
-            $client_recordid = $client->client_get_id( $user['response']['userid'] );
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $dbs = $client->sites_database_get( $_options );
-            $result = makearray( $dbs['response'], 'dbs' );
+			$userdbid = $client->client_get_by_username($session_id, $username);
+            $client_recordid = $client->client_get_id($session_id, $userdbid['userid']);
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['dbs'] = $client->sites_database_get($session_id, $_options);
         }
         if ($function == 'sites_database_add') {
-            $result = $client->sites_database_add( $user['response']['client_id'], $options );
+            $response = $client->sites_database_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_database_update') {
-            $result = $client->sites_database_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->sites_database_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'sites_database_delete') {
-            $result = $client->sites_database_delete( $options['id'] );
+            $response = $client->sites_database_delete($session_id, $options['id']);
         }
 
         
         if ($function == 'sites_database_user_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $db_users = $client->sites_database_user_get( $_options );
-            $result = makearray( $db_users['response'], 'db_users'); 
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['db_users'] = $client->sites_database_user_get($session_id, $_options);
         }
         if ($function == 'sites_database_user_add') {
-            $result = $client->sites_database_user_add( $user['response']['client_id'], $options );
+            $response = $client->sites_database_user_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_database_user_update') {
-            $result = $client->sites_database_user_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->sites_database_user_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'sites_database_user_delete') {
-            $result = $client->sites_database_user_delete( $options['id'] );
+            $response = $client->sites_database_user_delete($session_id, $options['id']);
         }
 
         
         if ($function == 'sites_web_domain_get') {
-            $_options = isset($options['id']) ? $options['id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
-            $web = $client->sites_web_domain_get( $_options );
-            $result = makearray( $web['response'], 'domains');
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
+            $response['domains'] = $client->sites_web_domain_get($session_id, $_options);
         }
         if ($function == 'sites_web_domain_add') {
-            $_options = isset($options['id']) ? $options['id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
-            $result['websites'] = $client->sites_web_domain_add( $user['response']['client_id'], $options );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
+            $response['websites'] = $client->sites_web_domain_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_web_domain_update') {
-            $_options = isset($options['domain_id']) ? $options['domain_id'] : ['primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'vhost' ] ];
-            $result['websites'] = $client->sites_web_domain_update( $user['response']['client_id'], $_options, $options );
+            $_options = isset($options['domain_id']) ? $options['domain_id'] : array('sys_userid' => $user['userid'], 'type' => 'vhost');
+            $response['websites'] = $client->sites_web_domain_update($session_id, $user['client_id'], $_options, $options);
         }
         if ($function == 'sites_web_domain_delete') {
-            $result['websites'] = $client->sites_web_domain_delete( $options['domain_id'] );
+            $response['websites'] = $client->sites_web_domain_delete($session_id, $options['domain_id']);
         }
         
         
         if ($function == 'sites_web_aliasdomain_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'alias' ] ];
-            $aliasdomains = $client->sites_web_aliasdomain_get( $_options );
-            $result = makearray( $aliasdomains['response'], 'aliasdomains' );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'alias');
+            $response['aliasdomains'] = $client->sites_web_aliasdomain_get($session_id, $_options);
         }
         if ($function == 'sites_web_aliasdomain_add') {
-            $result = $client->sites_web_aliasdomain_add( $user['response']['client_id'], $options );
+            $response = $client->sites_web_aliasdomain_add($session_id, $user['client_id'], $options);
             //create_ftp_dir($params, $options, $user);
             //create_dns_a_record($params, $options, $user);
         }
         if ($function == 'sites_web_aliasdomain_update') {
-            $result = $client->sites_web_aliasdomain_update( $user['response']['client_id'], $options['domain_id'], $options );
+            $response = $client->sites_web_aliasdomain_update($session_id, $user['client_id'], $options['domain_id'], $options);
         }
         if ($function == 'sites_web_aliasdomain_delete') {
-            $result = $client->sites_web_aliasdomain_delete( $options['id'] );
+            $response = $client->sites_web_aliasdomain_delete($session_id, $options['id']);
         }
 
         
         if ($function == 'sites_web_subdomain_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'], 'type' => 'subdomain' ] ];
-            $subdomains = $client->sites_web_subdomain_get( $_options );
-            $result = makearray( $subdomains['response'], 'subdomains' );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid'], 'type' => 'subdomain');
+            $response['subdomains'] = $client->sites_web_subdomain_get($session_id, $_options);
         }
         if ($function == 'sites_web_subdomain_add') {
-            $result = $client->sites_web_subdomain_add( $user['response']['client_id'], $options );
+            $response = $client->sites_web_subdomain_add($session_id, $user['client_id'], $options);
             //create_ftp_dir($params, $options, $user);
             //create_dns_a_record($params, $options, $user);
         }
         if ($function == 'sites_web_subdomain_update') {
-            $result = $client->sites_web_subdomain_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->sites_web_subdomain_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'sites_web_subdomain_delete') {
-            $result = $client->sites_web_subdomain_delete( $options['id'] );
+            $response = $client->sites_web_subdomain_delete($session_id, $options['id']);
         }
 
         if ($function == 'dns_zone_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $zones = $client->dns_zone_get($session_id, $_options);
-            $result = makearray( $zones['response'], 'zones' );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['zones'] = $client->dns_zone_get($session_id, $_options);
         }
 
+        
         if ($function == 'dns_a_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'primary_id' => [ 'sys_userid' => $user['response']['userid'] ] ];
-            $records = $client->dns_a_get( $_options );
-            $result = makearray( $records['response'], 'records' );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['records'] = $client->dns_a_get($session_id, $_options);
         }
         if ($function == 'dns_a_add') {
-            $result = $client->dns_a_add( $user['response']['client_id'], $options );
+            $response = $client->dns_a_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'dns_a_delete') {
-            $result = $client->dns_a_delete( $options['id'] );
+            $response = $client->dns_a_delete($session_id, $options['id']);
         }
 
+        
         if ($function == 'dns_record_add') {
             $actual_function = $options['ihost_dns_function'];
-            $result = $client->{$actual_function}( $user['response']['client_id'], $options );
+            $response = $client->{$actual_function}($session_id, $user['client_id'], $options);
         }
         if ($function == 'dns_record_update') {
             $actual_function = $options['ihost_dns_function'];
-            $result = $client->{$actual_function}( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->{$actual_function}($session_id, $user['client_id'], $options['id'], $options);
         }
 
         if ($function == 'sites_cron_get') {
-            $_options = isset($options['id']) ? $options['id'] : [ 'sys_userid' => $user['response']['userid'] ];
-            $res = $client->sites_cron_get( $_options );
-            $crons = makearray( $res['response'], 'crons' );
-            $res = $client->server_get( $clientall['response']['web_servers'] );
-            $servers = makearray( $res['response'], 'servers' );
-            $result = array_merge_recursive( $crons, $servers );
+            $_options = isset($options['id']) ? $options['id'] : array('sys_userid' => $user['userid']);
+            $response['crons'] = $client->sites_cron_get($session_id, $_options);
+            $response['servers'] = $client->server_get_serverid_by_ip($session_id, $params['serverip']);
         }
         if ($function == 'sites_cron_add') {
-            $result = $client->sites_cron_add( $user['response']['client_id'], $options );
+            $response = $client->sites_cron_add($session_id, $user['client_id'], $options);
         }
         if ($function == 'sites_cron_update') {
-            $result = $client->sites_cron_update( $user['response']['client_id'], $options['id'], $options );
+            $response = $client->sites_cron_update($session_id, $user['client_id'], $options['id'], $options);
         }
         if ($function == 'sites_cron_delete') {
-            $result = $client->sites_cron_delete( $options['id'] );
+            $response = $client->sites_cron_delete($session_id, $options['id']);
         }
 
         $client->logout($session_id);
-        return array('status' => 'success', 'response' => $result);
+        return array('status' => 'success', 'response' => $response);
     }
     catch (SoapFault $e) {
         $error = $e->getMessage();
@@ -380,7 +346,7 @@ function cwispy_api_request($params, $function, $options=array()) {
 }
 
 function create_dns_a_record($params, $options, $user) {
-    $zones = cwispy_api_request($params, 'dns_zone_get');
+    $zones = cwispy_soap_request($params, 'dns_zone_get');
     if (isset($zones['response']['zones']) && $zones['response']['zones']) {
         foreach($zones['response']['zones'] as $_zone) {
             if ($_zone['origin'] == $options['ihost_zone_domain']) {
@@ -398,7 +364,7 @@ function create_dns_a_record($params, $options, $user) {
                 'ttl' => '3600',
                 'active' => 'y'
             );
-            $create = cwispy_api_request($params, 'dns_a_add', $options);
+            $create = cwispy_soap_request($params, 'dns_a_add', $options);
         }
     }
 }
@@ -422,7 +388,7 @@ function create_ftp_dir($params, $options, $user) {
 }
 
 function change_ftp_password($params, $username, $password) {
-    $ftp_r = cwispy_api_request($params, 'sites_ftp_user_get');
+    $ftp_r = cwispy_soap_request($params, 'sites_ftp_user_get');
     if (isset($ftp_r['response']['accounts']) && $ftp_r['response']['accounts']) {
         foreach($ftp_r['response']['accounts'] as $account) {
             if ($account['username'] == $username) {
@@ -443,7 +409,7 @@ function change_ftp_password($params, $username, $password) {
                 'active' => 'y',
                 'id' => $ftp['ftp_user_id']
             );
-            cwispy_api_request($params, 'sites_ftp_user_update', $options);
+            cwispy_soap_request($params, 'sites_ftp_user_update', $options);
         }
     }
 }
@@ -471,18 +437,4 @@ function return_server( $list ) {
         $rand = rand( 0, ( count( $wtmp ) -1 ) );
         return $wtmp[$rand];
     }
-}
-
-function makearray( array $inarray, $outkey = null ) {
-    $a =0;
-    if ($outkey) {
-        foreach ($inarray as $key => $value) {
-            $arr[$outkey][$key] = $value;
-        }
-    } else {
-        foreach ($inarray as $key => $value) {
-            $arr[$key] = $value;
-        }
-    }
-    return $arr;
 }
