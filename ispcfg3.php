@@ -467,8 +467,15 @@ function ispcfg3_CreateAccount(array $params ) {
             $svr = $tmpl['web_servers'];
             logModuleCall( 'ispconfig', 'CreatePostDomainAdd', $svr, $ispcparams, '', '');
             
-            $zoneip = $client->server_get( $svr );
-            $tmpip = $zoneip['server']['ip_address'];
+            $zoneip = $client->server_get( $svr, 'server' );
+            $tmpip = $zoneip['response'][1]['ip_address'];
+            
+            if ( empty( $tmpip ) ) {
+                
+                $client->client_delete_everything( $client_id );
+                return "Webserver IP Address not found.";
+                end;
+            }
             
             logModuleCall('ispconfig','CreatePreDNSZone',$domain,'DNS Template '.$client_id['response']." ".$dnstemplate." ".$domain." ".$tmpip." ".$nameserver1." ".$nameserver2." ".$soaemail,'','');
             $dns_id = $client->dns_templatezone_add( $client_id, $dnstemplate, $domain, $tmpip, $nameserver1, $nameserver2, $soaemail );
