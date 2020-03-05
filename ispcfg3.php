@@ -612,6 +612,20 @@ function ispcfg3_CreateAccount(array $params ) {
             
             logModuleCall('ispconfig','CreateMailDomain',$maildomain_id['response'],$ispcparams,'','');
             
+            $policy = $client->mail_policy_get( array( 'primary_id' => array( 'policy_name' => 'Normal' ) ) );
+            
+            $ispcparams = array( 
+                    'server_id'     => $defaultmailserver,
+                    'priority'      => 5,
+                    'policy_id'     => $policy['response'][0]['id'],
+                    'email'         => '@'.$domain,
+                    'fullname'      => '@'.$domain,
+                    'local'         => 'y'
+                );
+            
+            $mailpolicy_id = $client->mail_spamfilter_user_add( $client_id, $ispcparams );
+            
+            logModuleCall('ispconfig','CreateMailPolicy',$mailpolicy_id['response'],$ispcparams,'','');
         }
         
         if ( $dbcreate == 'on' ) {

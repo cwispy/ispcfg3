@@ -982,6 +982,29 @@ class ispcfg3 {
         return $result;
     }
     
+    public function mail_spamfilter_user_add( $client_id, $params = null ) {
+        if ( !is_array( $client_id ) ) {
+            $data = [ 'client_id' => $client_id ];
+            $data['params'] = $params;
+        } else {
+            $data = $client_id;
+        }
+        $result = self::restpost( 'mail_spamfilter_user_add', $data );
+
+        return $result;
+    }
+    
+    public function mail_policy_get( $primary_id ) {
+        if ( !is_array( $primary_id ) ) {
+            $data = [ 'primary_id' => $primary_id ];
+        } else {
+            $data = $primary_id;
+        }
+        $result = self::restpost( 'mail_policy_get', $data );
+
+        return $result;
+    }
+    
     public function mailquota_get_by_user( $primary_id ) {
         if ( !is_array( $primary_id ) ) {
             $data = [ 'primary_id' => $primary_id ];
