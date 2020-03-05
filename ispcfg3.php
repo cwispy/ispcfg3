@@ -485,6 +485,10 @@ function ispcfg3_CreateAccount(array $params ) {
             } else {
                 $setphp = null;
             }
+            // Fix for error docs being enum field in client_template table
+            // and tinyint in the web_domain table.
+            $errdoc = ($tmpl['limit_hterror'] == "n") ? 0 : 1;
+                    
             $ispcparams = array(
                 'server_id'                 => $defaultwebserver,
                 'ip_address'                => '*',
@@ -501,7 +505,7 @@ function ispcfg3_CreateAccount(array $params ) {
                 'ruby'                      => $tmpl['limit_ruby'],
                 'python'                    => $tmpl['limit_python'],
                 'suexec'                    => $tmpl['force_suexec'],
-                'errordocs'                 => $tmpl['limit_hterror'],
+                'errordocs'                 => $errdoc,
                 'is_subdomainwww'           => 1,
                 'subdomain'                 => $subdomain,
                 'redirect_type'             => '',
