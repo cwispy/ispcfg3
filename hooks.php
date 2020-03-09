@@ -55,7 +55,7 @@ $confd = Capsule::table('tblproducts')
             ->setUri(cwispy_create_url(array('view' => 'overview')))
             ->setLabel('Product Details')
             ->setOrder(1)
-			->setIcon('fa-info-circle')
+            ->setIcon('fa-info-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'overview')));
         
 if ( !empty( $confd[0]->configoption17 ) || ( $confd[0]->configoption17 != '' ) ) {
@@ -63,92 +63,92 @@ if ( !empty( $confd[0]->configoption17 ) || ( $confd[0]->configoption17 != '' ) 
             ->setUri(cwispy_create_url(array('view' => 'sitebuilder')))
             ->setLabel('Site Builder')
             ->setOrder(1)
-			->setIcon('fa-pencil-square-o')
+            ->setIcon('fa-pencil-square-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'sitebuilder')));
 }
 if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) ) {
         $accountMenu->addChild('File Manager')
             ->setUri(cwispy_create_url(array('view' => 'file-manager')))
-            ->setLabel('File Manager')
+            ->setLabel(Lang::trans('ispcfg3_file_manager'))
             ->setOrder(3)
-			->setIcon('fa-file')
+            ->setIcon('fa-file')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'file-manager')));
 }
         $accountMenu->addChild('Emails')
             ->setUri(cwispy_create_url(array('view' => 'emails')))
-            ->setLabel('Emails')
+            ->setLabel(Lang::trans('ispcfg3_emails'))
             ->setOrder(4)
-			->setIcon('fa-envelope')
+            ->setIcon('fa-envelope')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'emails')));
 		
         
         $accountMenu->addChild('Email Forwarders')
             ->setUri(cwispy_create_url(array('view' => 'email-forwarders')))
-            ->setLabel('Email Forwarders')
+            ->setLabel(Lang::trans('ispcfg3_email_forwarders'))
             ->setOrder(5)
-			->setIcon('fa-forward')
+            ->setIcon('fa-forward')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'email-forwarders')));
 		
         
         $accountMenu->addChild('FTP Accounts')
             ->setUri(cwispy_create_url(array('view' => 'ftp-accounts')))
-            ->setLabel('FTP Accounts')
+            ->setLabel(Lang::trans('ispcfg3_ftp_accounts'))
             ->setOrder(6)
-			->setIcon('fa-files-o')
+            ->setIcon('fa-files-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'ftp-accounts')));
 		
         
         $accountMenu->addChild('Databases')
             ->setUri(cwispy_create_url(array('view' => 'databases')))
-            ->setLabel('Databases')
+            ->setLabel(Lang::trans('ispcfg3_databases'))
             ->setOrder(7)
-			->setIcon('fa-database')
+            ->setIcon('fa-database')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'databases')));
 			
         $accountMenu->addChild('Websites')
             ->setUri(cwispy_create_url(array('view' => 'websites')))
-            ->setLabel('Websites')
+            ->setLabel(Lang::trans('ispcfg3_websites'))
             ->setOrder(8)
-			->setIcon('fa-desktop')
+            ->setIcon('fa-desktop')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'websites')));
         
         $accountMenu->addChild('Alias Domains')
             ->setUri(cwispy_create_url(array('view' => 'aliasdomains')))
-            ->setLabel('Alias Domains')
+            ->setLabel(Lang::trans('ispcfg3_alias_domains'))
             ->setOrder(9)
-			->setIcon('fa-plus-circle')
+            ->setIcon('fa-plus-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'aliasdomains')));
 	
         
         $accountMenu->addChild('Sub Domains')
             ->setUri(cwispy_create_url(array('view' => 'subdomains')))
-            ->setLabel('Sub Domains')
+            ->setLabel(Lang::trans('ispcfg3_sub_domains'))
             ->setOrder(10)
-			->setIcon('fa-sitemap')
+            ->setIcon('fa-sitemap')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'subdomains')));
 		
         
         $accountMenu->addChild('Cron Jobs')
             ->setUri(cwispy_create_url(array('view' => 'cron')))
-            ->setLabel('Cron Jobs')
+            ->setLabel(Lang::trans('ispcfg3_cron_jobs'))
             ->setOrder(11)
-			->setIcon('fa-clock-o')
+            ->setIcon('fa-clock-o')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'cron')));
 		
         
         $accountMenu->addChild('DNS Records')
             ->setUri(cwispy_create_url(array('view' => 'dns')))
-            ->setLabel('DNS Records')
+            ->setLabel(Lang::trans('ispcfg3_dns_records'))
             ->setOrder(12)
-			->setIcon('fa-external-link')
+            ->setIcon('fa-external-link')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'dns')));
 			
         
 		$accountMenu->addChild('Usage Statistics')
             ->setUri(cwispy_create_url(array('view' => 'usage')))
-            ->setLabel('Usage Statistics')
+            ->setLabel(Lang::trans('ispcfg3_usage_stats'))
             ->setOrder(13)
-			->setIcon('fa-area-chart')
+            ->setIcon('fa-area-chart')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'usage')));
 	
 	
@@ -165,7 +165,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
             ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'stats')))
             ->setLabel('Website Statistics')
             ->setOrder(2)
-			->setIcon('fa-bar-chart')
+            ->setIcon('fa-bar-chart')
             ->setAttribute('target', '_blank');
 	
 	
@@ -173,7 +173,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
             ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'webmail')))
             ->setLabel('Webmail')
             ->setOrder(3)
-			->setIcon('fa-envelope')
+            ->setIcon('fa-envelope')
             ->setAttribute('target', '_blank');
 	
         
@@ -181,7 +181,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
             ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'phpmyadmin')))
             ->setLabel('phpMyAdmin')
             ->setOrder(4)
-			->setIcon('fa-database')
+            ->setIcon('fa-database')
             ->setAttribute('target', '_blank');
     
 	}
