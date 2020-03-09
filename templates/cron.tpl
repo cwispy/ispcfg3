@@ -18,23 +18,23 @@
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-cron"></span>
-<h3>Manage Cron Jobs ({$params.domain})</h3>
+<h3>{$LANG.ispcfg3_manage_cron_jobs} ({$params.domain})</h3>
 <p>Cron jobs allow you to automate certain commands or scripts on your site. You can set a command or script to run at a specific time every day, week or month </p>
 <p>If you are unsure of how to create one contact support to set it up for you.</p>
 <hr>
-<h5>Current Cron Jobs ( {$variables.crons|@count} of {If $variables.client.limit_cron == -1}Unlimited{else}{$variables.client.limit_cron}{/If} )</h5>
+<h5>{$LANG.ispcfg3_current_cron_jobs} ( {$variables.crons|@count} {$LANG.ispcfg3_of} {If $variables.client.limit_cron == -1}{$LANG.ispcfg3_unlimited}{else}{$variables.client.limit_cron}{/If} )</h5>
 
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
     {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
         disabled="disabled"
     {/If}
-    >Add Cron Job</button>
+    >{$LANG.ispcfg3_add_cron_job}</button>
 </div>
 {assign "server_id" "{$variables.servers.server_id}"}
 {if is_array($variables.crons) && count($variables.crons) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Command</th><th>Minute</th><th>Hour</th><th>Day</th><th>Month</th><th>Weekday</th><th>&nbsp;</th></tr></thead>
+        <thead><tr><th>{$LANG.ispcfg3_cron_command}</th><th>{$LANG.ispcfg3_minute}</th><th>{$LANG.ispcfg3_hour}</th><th>{$LANG.ispcfg3_day}</th><th>{$LANG.ispcfg3_month}</th><th>{$LANG.ispcfg3_weekday}</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.crons as $cron}
             <tr>
@@ -93,7 +93,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="minute_val" class="col-sm-4 control-label">Minute</label>
+                        <label for="minute_val" class="col-sm-4 control-label">{$LANG.ispcfg3_minute}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="minute_val" id="minute_val">
                         </div>
@@ -172,7 +172,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="hour_val" class="col-sm-4 control-label">Hour</label>
+                        <label for="hour_val" class="col-sm-4 control-label">{$LANG.ispcfg3_hour}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="hour_val" id="hour_val">
                         </div>
@@ -219,7 +219,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="day_val" class="col-sm-4 control-label">Day</label>
+                        <label for="day_val" class="col-sm-4 control-label">{$LANG.ispcfg3_day}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="day_val" id="day_val">
                         </div>
@@ -272,7 +272,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="month_val" class="col-sm-4 control-label">Month</label>
+                        <label for="month_val" class="col-sm-4 control-label">{$LANG.ispcfg3_month}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="month_val" id="month_val">
                         </div>
@@ -304,7 +304,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="weekday_val" class="col-sm-4 control-label">Weekday</label>
+                        <label for="weekday_val" class="col-sm-4 control-label">{$LANG.ispcfg3_weekday}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="weekday_val" id="weekday_val">
                         </div>
@@ -331,7 +331,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="command" class="col-sm-4 control-label">Command</label>
+                        <label for="command" class="col-sm-4 control-label">{$LANG.ispcfg3_cron_command}</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="command" id="command">
                         </div>
@@ -381,7 +381,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="minute_val" class="col-sm-4 control-label">Minute</label>
+                        <label for="minute_val" class="col-sm-4 control-label">{$LANG.ispcfg3_minute}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="minute_val" id="minute_val">
                         </div>
@@ -460,7 +460,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="hour_val" class="col-sm-4 control-label">Hour</label>
+                        <label for="hour_val" class="col-sm-4 control-label">{$LANG.ispcfg3_hour}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="hour_val" id="hour_val">
                         </div>
@@ -507,7 +507,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="day_val" class="col-sm-4 control-label">Day</label>
+                        <label for="day_val" class="col-sm-4 control-label">{$LANG.ispcfg3_day}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="day_val" id="day_val">
                         </div>
@@ -560,7 +560,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="month_val" class="col-sm-4 control-label">Month</label>
+                        <label for="month_val" class="col-sm-4 control-label">{$LANG.ispcfg3_month}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="month_val" id="month_val">
                         </div>
@@ -592,7 +592,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="weekday_val" class="col-sm-4 control-label">Weekday</label>
+                        <label for="weekday_val" class="col-sm-4 control-label">{$LANG.ispcfg3_weekday}</label>
                         <div class="col-sm-2">
                             <input type="text" class="form-control" name="weekday_val" id="weekday_val">
                         </div>
@@ -619,7 +619,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="command" class="col-sm-4 control-label">Command</label>
+                        <label for="command" class="col-sm-4 control-label">{$LANG.ispcfg3_cron_command}</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="command" id="command">
                         </div>

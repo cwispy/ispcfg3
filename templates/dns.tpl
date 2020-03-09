@@ -19,22 +19,22 @@
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet">
 <span class="icon-header icon-dns"></span>
 <div data-view="dns">
-    <h3>Manage DNS Records ({$params.domain})</h3>
-	<p>DNS holds records such as the address of the server that handles e-mail, the web server, mail server among others. The default DNS settings are already configured for you. </p>
+    <h3>{$LANG.ispcfg3_manage_dns_records} ({$params.domain})</h3>
+	<p>{$LANG.ispcfg3_dns_description} </p>
     <hr>
-    <h5>Current DNS Records ( {$variables.records|@count} of {If $variables.client.limit_dns_record == -1}Unlimited{else}{$variables.client.limit_dns_record}{/If} )</h5>
+    <h5>{$LANG.ispcfg3_current_dns_records} ( {$variables.records|@count} {$LANG.ispcfg3_of} {If $variables.client.limit_dns_record == -1}{$LANG.ispcfg3_unlimited}{else}{$variables.client.limit_dns_record}{/If} )</h5>
 
     <div class="text-right">
         <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
         disabled="disabled"
-        {/If}        
-        >Add DNS Record</button>
+        {/If}
+        >{$LANG.ispcfg3_add_dns_record}</button>
     </div>
     {assign "server_id" "{$variables.zones[0].server_id}"}
     {if is_array($variables.records) && count($variables.records) > 0}
         <table class="table table-condensed table-striped table-hover ihost-smart-table" style="font-size: 1.3rem;" >
-            <thead><tr><th>Host</th><th>Type</th><th >Points to</th><th>TTL</th><th>&nbsp;</th></tr></thead>
+            <thead><tr><th>{$LANG.ispcfg3_host}</th><th>{$LANG.ispcfg3_type}</th><th >{$LANG.ispcfg3_points_to}</th><th>{$LANG.ispcfg3_ttl}</th><th>&nbsp;</th></tr></thead>
             <tbody>
             {foreach $variables.records as $record}
                 {assign "zone_name" "{$variables.zones_processed[$record.zone].origin}"}
@@ -59,7 +59,7 @@
             </tbody>
         </table>
     {else}
-        <p>No DNS records found</p>
+        <p>{$LANG.ispcfg3_no_dns_records_found}</p>
     {/if}
 
     <div class="modal fade" id="modalAdd" tabindex="-1" role="dialog" aria-hidden="true">
@@ -67,7 +67,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">Add DNS Record</h4>
+                    <h4 class="modal-title">{$LANG.ispcfg3_add_dns_record}</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal ajax-form" id="frmAdd">
@@ -90,7 +90,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="type" class="col-sm-4 control-label">Type</label>
+                            <label for="type" class="col-sm-4 control-label">{$LANG.ispcfg3_type}</label>
                             <div class="col-sm-6">
                                 <select class="form-control" name="type" id="type">
                                     {if is_array($variables.types) && count($variables.types) > 0}
@@ -103,7 +103,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="host" class="col-sm-4 control-label">Host</label>
+                            <label for="host" class="col-sm-4 control-label">{$LANG.ispcfg3_host}</label>
                             <div class="col-sm-6">
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="host" id="host">
@@ -114,7 +114,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="destination" class="col-sm-4 control-label">Points to</label>
+                            <label for="destination" class="col-sm-4 control-label">{$LANG.ispcfg3_points_to}</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="destination" id="destination">
                                 <!-- <p class="help-block">This could be either an IP or hostname, depending on the record type</p> -->
@@ -122,7 +122,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="ttl" class="col-sm-4 control-label">TTL</label>
+                            <label for="ttl" class="col-sm-4 control-label">{$LANG.ispcfg3_ttl}</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="ttl" id="ttl" value="86400">
                             </div>
@@ -131,8 +131,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-success" onclick="$('#frmAdd #zone_name').val($('#frmAdd #zone :selected').html());$('#frmAdd').submit()"><span id="ajax-loader-add"></span> Create DNS Record</button>
+                    <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                    <button class="btn btn-success" onclick="$('#frmAdd #zone_name').val($('#frmAdd #zone :selected').html());$('#frmAdd').submit()">
+                        <span id="ajax-loader-add"></span> {$LANG.ispcfg3_add_dns_record}</button>
                 </div>
             </div>
         </div>
@@ -143,7 +144,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">Update DNS Record</h4>
+                    <h4 class="modal-title">{$LANG.ispcfg3_update_dns_record}</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal ajax-form" id="frmEdit">
@@ -167,7 +168,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="type" class="col-sm-4 control-label">Type</label>
+                            <label for="type" class="col-sm-4 control-label">{$LANG.ispcfg3_type}</label>
                             <div class="col-sm-6">
                                 <select class="form-control" name="type" id="type">
                                     {if is_array($variables.types) && count($variables.types) > 0}
@@ -180,7 +181,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="host" class="col-sm-4 control-label">Host</label>
+                            <label for="host" class="col-sm-4 control-label">{$LANG.ispcfg3_host}</label>
                             <div class="col-sm-6">
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="host" id="host">
@@ -191,7 +192,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="destination" class="col-sm-4 control-label">Points to</label>
+                            <label for="destination" class="col-sm-4 control-label">{$LANG.ispcfg3_points_to}</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="destination" id="destination">
                                 <!-- <p class="help-block">This could be either an IP or hostname, depending on the record type</p> -->
@@ -199,7 +200,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="ttl" class="col-sm-4 control-label">TTL</label>
+                            <label for="ttl" class="col-sm-4 control-label">{$LANG.ispcfg3_ttl}</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" name="ttl" id="ttl" value="86400">
                             </div>
@@ -208,8 +209,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-success" onclick="$('#frmEdit #zone_name').val($('#frmEdit #zone :selected').html());$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> Update</button>
+                    <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                    <button class="btn btn-success" onclick="$('#frmEdit #zone_name').val($('#frmEdit #zone :selected').html());$('#frmEdit').submit()">
+                        <span id="ajax-loader-edit"></span> {$LANG.update}</button>
                 </div>
             </div>
         </div>
@@ -220,7 +222,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">Delete DNS Record</h4>
+                    <h4 class="modal-title">{$LANG.ispcfg3_delete_dns_record}</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal ajax-form" id="frmDelete">
@@ -228,11 +230,12 @@
                         <div id="ajax-messages"></div>
                         <input name="record_id" type="hidden" id="record_id">
                     </form>
-                    <p>Are you sure you want to delete this DNS record?</p>
+                    <p>{$LANG.ispcfg3_delete_dns_confirm}</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-danger" onclick="$('#frmDelete').submit()"><span id="ajax-loader-delete"></span> Confirm</button>
+                    <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                    <button class="btn btn-danger" onclick="$('#frmDelete').submit()">
+                        <span id="ajax-loader-delete"></span> {$LANG.confirm}</button>
                 </div>
             </div>
         </div>
