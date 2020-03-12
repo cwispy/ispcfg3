@@ -19,17 +19,20 @@
  */
 if (isset($_GET['view_action'])) {
     
-} else {
+}
+else {
 
-	$disk = cwispy_api_request($params, 'quota_get_by_user');
-        $traffic = cwispy_api_request($params, 'trafficquota_get_by_user');
-        $ftptraffic = cwispy_api_request($params, 'ftptrafficquota_data');
-        $databasedisk = cwispy_api_request($params, 'databasequota_get_by_user');
-        $maildisk = cwispy_api_request($params, 'mailquota_get_by_user');
+	$disk = cwispy_soap_request($params, 'quota_get_by_user');
+    $traffic = cwispy_soap_request($params, 'trafficquota_get_by_user');
+    $ftptraffic = cwispy_soap_request($params, 'ftptrafficquota_data');
+    $databasedisk = cwispy_soap_request($params, 'databasequota_get_by_user');
+    $maildisk = cwispy_soap_request($params, 'mailquota_get_by_user');
     
-        $return = array_merge_recursive($disk, $traffic, $ftptraffic, $databasedisk, $maildisk);
+
+    $return = array_merge_recursive($disk, $traffic, $ftptraffic, $databasedisk, $maildisk);
 	
-        if (is_array($return['status'])) {
-            $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
-        }
+
+    if (is_array($return['status'])) {
+        $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';
+    } 
 }

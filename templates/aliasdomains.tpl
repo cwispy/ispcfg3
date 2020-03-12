@@ -135,8 +135,9 @@ This is the folder to put the content for your aliasdomain.<p>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmAdd #domain').val($('#frmAdd #domain_id :selected').html());$('#frmAdd').submit()"><span id="ajax-loader-add"></span> Create Aliasdomain</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmAdd #domain').val($('#frmAdd #domain_id :selected').html());$('#frmAdd').submit()">
+                    <span id="ajax-loader-add"></span> Create Aliasdomain</button>
             </div>
         </div>
     </div>
@@ -215,8 +216,9 @@ This is the folder to put the content for your aliasdomain.<p>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> Update</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmEdit').submit()">
+                    <span id="ajax-loader-edit"></span> {$LANG.update}</button>
             </div>
         </div>
     </div>
@@ -238,8 +240,9 @@ This is the folder to put the content for your aliasdomain.<p>
                 <p>Are you sure you want to delete this aliasdomain?</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-danger" onclick="$('#frmDelete').submit()"><span id="ajax-loader-delete"></span> Confirm</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-danger" onclick="$('#frmDelete').submit()">
+                    <span id="ajax-loader-delete"></span> {$LANG.confirm}</button>
             </div>
         </div>
     </div>

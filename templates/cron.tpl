@@ -65,11 +65,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Add Cron Job</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3_add_cron_job}</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmAdd">
-                    <div id="ajax-params" data-action="{$action_urls.add}" data-method="POST" data-loader="#ajax-loader-add" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.add}" 
+                         data-method="POST" 
+                         data-loader="#ajax-loader-add" 
+                         data-loader-position="outside" 
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()">
+                    </div>
                     <div id="ajax-messages"></div>
                     <input type="hidden" name="server_id" value="{$server_id}">
 
@@ -340,8 +348,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmAdd').submit()"><span id="ajax-loader-add"></span> Create Cron Job</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmAdd').submit()">
+                    <span id="ajax-loader-add"></span> {$LANG.ispcfg3_add_cron_job}</button>
             </div>
         </div>
     </div>
@@ -356,7 +365,15 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmEdit">
-                    <div id="ajax-params" data-action="{$action_urls.edit}" data-method="POST" data-loader="#ajax-loader-edit" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.edit}" 
+                         data-method="POST" 
+                         data-loader="#ajax-loader-edit" 
+                         data-loader-position="outside" 
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()">
+                    </div>
                     <div id="ajax-messages"></div>
                     <input type="hidden" name="server_id" value="{$server_id}">
                     <input type="hidden" name="cron_id" id="cron_id">
@@ -628,8 +645,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> Update</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmEdit').submit()">
+                    <span id="ajax-loader-edit"></span> {$LANG.update}</button>
             </div>
         </div>
     </div>
@@ -644,15 +662,24 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmDelete">
-                    <div id="ajax-params" data-action="{$action_urls.delete}" data-method="POST" data-loader="#ajax-loader-delete" data-loader-position="outside" data-loader-type="inside-button" data-messages="#ajax-messages" data-callback-on-success="window.location.reload()"></div>
+                    <div id="ajax-params" 
+                         data-action="{$action_urls.delete}" 
+                         data-method="POST" 
+                         data-loader="#ajax-loader-delete" 
+                         data-loader-position="outside" 
+                         data-loader-type="inside-button" 
+                         data-messages="#ajax-messages" 
+                         data-callback-on-success="window.location.reload()">
+                    </div>
                     <div id="ajax-messages"></div>
                     <input name="cron_id" type="hidden" id="cron_id">
                 </form>
                 <p>Are you sure you want to delete this cron job?</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-danger" onclick="$('#frmDelete').submit()"><span id="ajax-loader-delete"></span> Confirm</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-danger" onclick="$('#frmDelete').submit()">
+                    <span id="ajax-loader-delete"></span> {$LANG.confirm}</button>
             </div>
         </div>
     </div>

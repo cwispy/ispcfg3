@@ -23,9 +23,9 @@ if (isset($_GET['view_action'])) {
 
 } else {
     
-    $domains = cwispy_api_request($params, 'sites_web_domain_get');
-    $subdomains = cwispy_api_request($params, 'sites_web_aliasdomain_get');
-	$ftpuser = cwispy_api_request($params, 'sites_ftp_user_get');
+    $domains = cwispy_soap_request($params, 'sites_web_domain_get');
+    $subdomains = cwispy_soap_request($params, 'sites_web_aliasdomain_get');
+	$ftpuser = cwispy_soap_request($params, 'sites_ftp_user_get');
     if ( ( empty($params['configoption15']) ) && ( empty($params['configoption16']) ) ) {
         $sitepro['response']['sitepro']['enabled'] = '0';
     } else {

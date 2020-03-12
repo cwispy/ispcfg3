@@ -40,21 +40,21 @@ if (isset($_GET['view_action'])) {
 
         $options = array(
             'server_id' => $_REQUEST['server_id'],
-            'command' => $_REQUEST['command'],
-            'run_min' => $_REQUEST['minute_val'],
-            'run_hour' => $_REQUEST['hour_val'],
-            'run_mday' => $_REQUEST['day_val'],
+            'command'   => $_REQUEST['command'],
+            'run_min'   => $_REQUEST['minute_val'],
+            'run_hour'  => $_REQUEST['hour_val'],
+            'run_mday'  => $_REQUEST['day_val'],
             'run_month' => $_REQUEST['month_val'],
-            'run_wday' => $_REQUEST['weekday_val'],
-            'active' => 'y'
+            'run_wday'  => $_REQUEST['weekday_val'],
+            'active'    => 'y'
         );
 
-        $create = cwispy_api_request($params, 'sites_cron_add', $options);
-        if ($create['response']['code'] == 'ok') {
+        $create = cwispy_soap_request($params, 'sites_cron_add', $options);
+        if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -78,23 +78,23 @@ if (isset($_GET['view_action'])) {
         }
 
         $options = array(
-            'id' => $_REQUEST['cron_id'],
+            'id'        => $_REQUEST['cron_id'],
             'server_id' => $_REQUEST['server_id'],
-            'command' => $_REQUEST['command'],
-            'run_min' => $_REQUEST['minute_val'],
-            'run_hour' => $_REQUEST['hour_val'],
-            'run_mday' => $_REQUEST['day_val'],
+            'command'   => $_REQUEST['command'],
+            'run_min'   => $_REQUEST['minute_val'],
+            'run_hour'  => $_REQUEST['hour_val'],
+            'run_mday'  => $_REQUEST['day_val'],
             'run_month' => $_REQUEST['month_val'],
-            'run_wday' => $_REQUEST['weekday_val'],
-            'active' => 'y'
+            'run_wday'  => $_REQUEST['weekday_val'],
+            'active'    => 'y'
         );
 
-        $update = cwispy_api_request($params, 'sites_cron_update', $options);
-        if ($update['response']['code'] == 'ok') {
+        $update = cwispy_soap_request($params, 'sites_cron_update', $options);
+        if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job updated successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']['message']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $update['response']));
         }
     }
     elseif ($_GET['view_action'] == 'delete') {
@@ -102,12 +102,12 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['cron_id']
         );
 
-        $delete = cwispy_api_request($params, 'sites_cron_delete', $options);
-        if ($delete['response']['code'] == 'ok') {
+        $delete = cwispy_soap_request($params, 'sites_cron_delete', $options);
+        if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Cron job deleted successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']['message']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $delete['response']));
         }
     }
     else {
@@ -115,10 +115,10 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client = cwispy_api_request($params, 'client_get');
-    $crons  = cwispy_api_request($params, 'sites_cron_get');
-    $websites = cwispy_api_request($params, 'sites_web_domain_get');
-    $return = array_merge_recursive($crons, $client, $websites);
+    $client  = cwispy_soap_request($params, 'client_get');
+    $crons   = cwispy_soap_request($params, 'sites_cron_get');
+
+    $return  = array_merge_recursive($crons, $client);
     
     if (is_array($return['status'])) {
         $return['status'] = (in_array('error', $return['status'])) ? 'error' : 'success';

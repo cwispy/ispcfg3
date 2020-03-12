@@ -124,7 +124,7 @@ function cwispy_soap_request($params, $function, $options=array()) {
             $response['quota'] = $client->mailquota_get_by_user($session_id, $user['client_id'] );
         }
         
-		if ($function == 'client_get') {
+	if ($function == 'client_get') {
             $response['client'] = $client->client_get($session_id, $user['client_id']);
             $response['ipv4']['all'] = $client->server_ip_get($session_id, 
                     array( 'server_id' => $response['client']['default_webserver'], 

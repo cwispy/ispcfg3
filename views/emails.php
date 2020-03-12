@@ -48,12 +48,12 @@ if (isset($_GET['view_action'])) {
             'postfix' => 'y',
             'access' => 'y'
         );
-        $create = cwispy_api_request($params, 'mail_user_add', $domain_options);
-        if ($create['code'] == 'ok') {
+        $create = cwispy_soap_request($params, 'mail_user_add', $domain_options);
+        if ($create['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email account created successfully'));
         }
         else {
-            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']['message']));
+            cwispy_return_ajax_response(array('status' => 'error', 'message' => $create['response']));
         }
     }
     elseif ($_GET['view_action'] == 'edit') {
@@ -76,7 +76,7 @@ if (isset($_GET['view_action'])) {
         );
         if ($_REQUEST['password']) $domain_options['password'] = $_REQUEST['password'];
 
-        $update = cwispy_api_request($params, 'mail_user_update', $domain_options);
+        $update = cwispy_soap_request($params, 'mail_user_update', $domain_options);
         if ($update['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email account updated successfully'));
         }
@@ -89,7 +89,7 @@ if (isset($_GET['view_action'])) {
             'id' => $_REQUEST['mail_id']
         );
 
-        $delete = cwispy_api_request($params, 'mail_user_delete', $domain_options);
+        $delete = cwispy_soap_request($params, 'mail_user_delete', $domain_options);
         if ($delete['status'] == 'success') {
             cwispy_return_ajax_response(array('status' => 'success', 'message' => 'Email account deleted successfully'));
         }
@@ -102,10 +102,10 @@ if (isset($_GET['view_action'])) {
     }
 }
 else {
-    $client  = cwispy_api_request($params, 'client_get');
-    $domains = cwispy_api_request($params, 'mail_domain_get_by_domain');
-    $mails   = cwispy_api_request($params, 'mail_user_get');
-    $limits  = cwispy_api_request($params, 'client_get_quota');
+    $client  = cwispy_soap_request($params, 'client_get');
+    $domains = cwispy_soap_request($params, 'mail_domain_get');
+    $mails   = cwispy_soap_request($params, 'mail_user_get');
+    $limits  = cwispy_soap_request($params, 'client_get_quota');
     $return  = array_merge_recursive($domains, $mails, $limits, $client);
 
     if (is_array($return['status'])) {
