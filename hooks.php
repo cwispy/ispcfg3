@@ -45,7 +45,7 @@ $confd = Capsule::table('tblproducts')
         $accountMenu = $primarySidebar->addChild(
             'ispcfg3 ISPConfig Account Nav',
             array(
-                'label' => 'Product Tools',
+                'label' => (Lang::trans('ispcfg3_product_tools')),
                 'order' => 10,
                 'icon' => 'fa-cog',
             )
@@ -53,7 +53,7 @@ $confd = Capsule::table('tblproducts')
 
         $accountMenu->addChild('Overview')
             ->setUri(cwispy_create_url(array('view' => 'overview')))
-            ->setLabel('Product Details')
+            ->setLabel(Lang::trans('ispcfg3_product_details'))
             ->setOrder(1)
             ->setIcon('fa-info-circle')
             ->setClass(cwispy_get_menu_item_class($currentRequest, array('view' => 'overview')));
@@ -155,7 +155,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
         $loginMenu = $primarySidebar->addChild(
             'iHost ISPConfig Login Nav',
             array(
-                'label' => 'Login To',
+                'label' => (Lang::trans('ispcfg3_login_to')),
                 'order' => 14,
                 'icon' => 'fa-lock',
             )
@@ -163,7 +163,7 @@ if ( !empty( $confd[0]->configoption18 ) || ( $confd[0]->configoption18 != '' ) 
 		
 		$loginMenu->addChild('View Statistics')
             ->setUri(cwispy_create_url(array('view' => 'login', 'view_action' => 'stats')))
-            ->setLabel('Website Statistics')
+            ->setLabel(Lang::trans('ispcfg3_website_statistics'))
             ->setOrder(2)
             ->setIcon('fa-bar-chart')
             ->setAttribute('target', '_blank');
