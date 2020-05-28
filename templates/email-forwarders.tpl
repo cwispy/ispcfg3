@@ -51,7 +51,7 @@
         </tbody>
     </table>
 {else}
-    <p>No email forwarders found</p>
+    <p>{$LANG.ispcfg3_no_email_forwarders_found}</p>
     {*$variables|print_r*}
 {/if}
 
