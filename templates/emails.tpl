@@ -17,17 +17,16 @@
  */
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email"></span>
-<h3>Manage Email Accounts ({$params.domain})</h3>
-<p>In this area you can manage the email accounts associated with your domain. You can create, delete and edit all settings associated with your email accounts. 
-    You can also see the current usage and adjust the quota to ensure the mailbox is not full and unable to receive new email.</p>
+<h3>{$LANG.ispcfg3_manage_email_accounts} ({$params.domain})</h3>
+<p>{$LANG.ispcfg3_manage_email_accounts_desc}</p>
     {*$variables.quota|print_r*}
 
 <hr>
-<h5>Current Mailboxes ( 
+<h5>{$LANG.ispcfg3_current_mailboxes} ( 
     {$variables.mailboxes|@count} 
-    of 
+    {$LANG.ispcfg3_of} 
     {If $variables.client.limit_mailbox == -1}
-        Unlimited
+        {$LANG.ispcfg3_unlimited}
     {else}
         {$variables.client.limit_mailbox}{/If} )
     </h5>
@@ -43,12 +42,12 @@
         $variables.client.limit_mailbox != -1 )}
         disabled="disabled"
     {/If}
-    >Add Email</button>
+    >{$LANG.ispcfg3_add_email}</button>
 </div>
 
 {if is_array($variables.mailboxes) && count($variables.mailboxes) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Email</th><th class="text-right">Used Space (MB)</th><th class="text-right">Quota (MB)</th><th>&nbsp;</th></tr></thead>
+        <thead><tr><th>{$LANG.ispcfg3_email}</th><th class="text-right">{$LANG.ispcfg3_used_space} (MB)</th><th class="text-right">{$LANG.ispcfg3_quota} (MB)</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.quota as $quota}
 
@@ -76,15 +75,15 @@
             {assign "emailtotal" {$emailtotal} + {$quota.quota / 1048576} }
         {/foreach}
             <tr>
-                <td class="text-left" colspan="2">Quota (Allocated / Assigned)</td>
-                <td class="text-right">{$emailtotal} / {If $variables.client.limit_mailquota == -1}Unlimited{else}{$variables.client.limit_mailquota}{/If}</td>
+                <td class="text-left" colspan="2">{$LANG.ispcfg3_quota} ({$LANG.ispcfg3_allocated} / {$LANG.ispcfg3_assigned})</td>
+                <td class="text-right">{$emailtotal} / {If $variables.client.limit_mailquota == -1}{$LANG.ispcfg3_unlimited}{else}{$variables.client.limit_mailquota}{/If}</td>
                 <td>&nbsp;</td>
             </tr>
         </tbody>
     </table>
 
 {else}
-    <p>No emails found</p>
+    <p>{$LANG.ispcfg3_no_emails_found}</p>
     <!-- {$variables|print_r} -->
 	
 {/if}
@@ -94,7 +93,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Add Email Account</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3_add_email_account}</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmAddEmail">
@@ -121,7 +120,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="domain" class="col-sm-4 control-label">Domain</label>
+                        <label for="domain" class="col-sm-4 control-label">{$LANG.ispcfg3_domain}</label>
                         <div class="col-sm-6">
                         <div class="input-group">
                             <select class="form-control" name="domain" readonly="readonly">
@@ -238,7 +237,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="quota" class="col-sm-4 control-label">Quota</label>
+                        <label for="quota" class="col-sm-4 control-label">{$LANG.ispcfg3_quota}</label>
                         <div class="col-sm-4">
                             <div class="input-group">
                                 <input type="number" class="form-control" name="quota" 
@@ -258,8 +257,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmAddEmail').submit()"><span id="ajax-loader-add"></span> Create Email Account</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmAddEmail').submit()"><span id="ajax-loader-add"></span> {$LANG.ispcfg3_create_email_account}</button>
             </div>
         </div>
     </div>
@@ -270,7 +269,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Update Email Account (<span id="activeEmail"></span>)</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3_update_email_account} (<span id="activeEmail"></span>)</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmEditEmail">
@@ -387,7 +386,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="quota" class="col-sm-4 control-label">Quota</label>
+                        <label for="quota" class="col-sm-4 control-label">{$LANG.ispcfg3_quota}</label>
                         <div class="col-sm-4">
                             <div class="input-group">
                                 <input type="number" class="form-control" name="quota" 

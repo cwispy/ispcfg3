@@ -17,22 +17,22 @@
  */
  *}
 <link href="modules/servers/ispcfg3/assets/ispcfg3.css" rel="stylesheet"><span class="icon-header icon-email-forward"></span>
-<h3>Manage Email Forwarders ({$params.domain})</h3>
-<p>Forwarders allow you to send a copy of all mail from one email address to another. For example, if you have two different email accounts, info@mydomain.com and david@mydomain.com, you could forward info@mydomain.com to david@mydomain.com so that you do not need to check both accounts.</p>
+<h3>{$LANG.ispcfg3_manage_email_forwarders} ({$params.domain})</h3>
+<p>{$LANG.ispcfg3_manage_email_forwarders_desc}</p>
 <hr>
-<h5>Current Forwarders ( {$variables.forwarders|@count} of {If $variables.client.limit_mailforward == -1}Unlimited{else}{$variables.client.limit_mailforward}{/If} )</h5>
+<h5>{$LANG.ispcfg3_current_forwarders} ( {$variables.forwarders|@count} {$LANG.ispcfg3_of} {If $variables.client.limit_mailforward == -1} {$LANG.ispcfg3_unlimited} {else}{$variables.client.limit_mailforward}{/If} )</h5>
 
 <div class="text-right">
     <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalAdd"
         {If $variables.client.locked == "y" || $variables.client.canceled == "y"}
         disabled="disabled"
     {/If}        
-    >Add Forwarder</button>
+    >{$LANG.ispcfg3_add_forwarder}</button>
 </div>
 
 {if is_array($variables.forwarders) && count($variables.forwarders) > 0}
     <table class="table table-condensed table-striped table-hover ihost-smart-table">
-        <thead><tr><th>Source</th><th>Destination</th><th>&nbsp;</th></tr></thead>
+        <thead><tr><th>{$LANG.ispcfg3_source}</th><th>{$LANG.ispcfg3_destination}</th><th>&nbsp;</th></tr></thead>
         <tbody>
         {foreach $variables.forwarders as $forwarder}
             <tr>
@@ -51,7 +51,7 @@
         </tbody>
     </table>
 {else}
-    <p>No email forwarders found</p>
+    <p>{$LANG.ispcfg3_no_email_forwarders_found}</p>
     {*$variables|print_r*}
 {/if}
 
@@ -60,7 +60,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Add Email Forwarder</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3.add_forwarder}</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmAdd">
@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="destination" class="col-sm-4 control-label">Destination</label>
+                        <label for="destination" class="col-sm-4 control-label">{$LANG.ispcfg3_destination}</label>
                         <div class="col-sm-8">
                             <textarea rows="10" cols="40" name="destination" id="destination" type="text" class="form-control"></textarea>
                         </div>
@@ -95,8 +95,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmAdd').submit()"><span id="ajax-loader-add"></span> Create Email Forwarder</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.ispcfg3_cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmAdd').submit()"><span id="ajax-loader-add"></span>{$LANG.ispcfg3_create_email_forwarder}</button>
             </div>
         </div>
     </div>
@@ -107,7 +107,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Update Email Forwarder</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3_update_email_forwarder}</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmEdit">
@@ -116,14 +116,14 @@
                     <input name="forwarder_id" type="hidden" id="forwarder_id">
 
                     <div class="form-group">
-                        <label for="source" class="col-sm-4 control-label">Source</label>
+                        <label for="source" class="col-sm-4 control-label">{$LANG.ispcfg3_source}</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="source" id="source" readonly="readonly">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="destination" class="col-sm-4 control-label">Destination</label>
+                        <label for="destination" class="col-sm-4 control-label">{$LANG.ispcfg3_destination}</label>
                         <div class="col-sm-6">
                            <textarea rows="10" cols="40" name="destination" id="destination" type="text" class="form-control"></textarea>
                         </div>
@@ -131,8 +131,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" onclick="$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> Update</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.ispcfg3_cancel}</button>
+                <button class="btn btn-success" onclick="$('#frmEdit').submit()"><span id="ajax-loader-edit"></span> {$LANG.ispcfg3_update}</button>
             </div>
         </div>
     </div>
@@ -143,7 +143,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title">Delete Email Forwarder</h4>
+                <h4 class="modal-title">{$LANG.ispcfg3_delete_email_forwarder}</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal ajax-form" id="frmDelete">
@@ -151,11 +151,11 @@
                     <div id="ajax-messages"></div>
                     <input name="forwarder_id" type="hidden" id="forwarder_id">
                 </form>
-                <p>Are you sure you want to delete this email forwarder?</p>
+                <p>{$LANG.ispcfg3_delete_email_forwarder_desc}</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-danger" onclick="$('#frmDelete').submit()"><span id="ajax-loader-delete"></span> Confirm</button>
+                <button class="btn btn-default" data-dismiss="modal">{$LANG.ispcfg3_cancel}</button>
+                <button class="btn btn-danger" onclick="$('#frmDelete').submit()"><span id="ajax-loader-delete"></span>{$LANG.ispcfg3_confirm}</button>
             </div>
         </div>
     </div>

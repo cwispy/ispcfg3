@@ -36,3 +36,7 @@ $_LANG['ispcfg3_unlimited'] = "Unlimited";
 $_LANG['ispcfg3_usage_stats'] = "Usage Statistics";
 $_LANG['ispcfg3_websites'] = "Websites";
 $_LANG['ispcfg3_weekday'] = "Weekday";
+$_LANG['ispcfg3_product_details'] = "Product Details";
+$_LANG['ispcfg3_product_tools'] = "Product Tools";
+$_LANG['ispcfg3_login_to'] = "Login To";
+$_LANG['ispcfg3_website_statistics'] = "Website Statistics";
