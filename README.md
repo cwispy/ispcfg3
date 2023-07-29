@@ -1,4 +1,6 @@
-# ISPConfig module for WHMCS
+#This module is no longer maintained.
+
+## ISPConfig module for WHMCS
 
 * module name: ispcfg3
 * Requires ISPConfig 3.1+
